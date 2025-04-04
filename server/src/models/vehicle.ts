@@ -23,4 +23,8 @@ const getVehicle = async (id: string, userId: string) => {
   return db.vehicle.findFirst({ where: { id, userId } });
 };
 
-export default { createVehicle, updateVehicle, getVehicles, getVehicle };
+const deleteVehicle = async (id: string, userId: string) => {
+  return db.vehicle.delete({ where: { id, userId } });
+};
+
+export default { createVehicle, updateVehicle, getVehicles, getVehicle, deleteVehicle };

@@ -52,6 +52,23 @@ export const findVehicle = async (id: string, userId: string) => {
   return formatVehicleResponse(vehicle);
 };
 
+export const removeVehicle = async (id: string, userId: string) => {
+  if (!id) {
+    throw new APIError('No vehicleId provided', 400);
+  }
+  if (!userId) {
+    throw new APIError('No userId provided', 400);
+  }
+
+  const vehicle = await vehicleModel.default.deleteVehicle(id, userId);
+
+  if (!vehicle) {
+    throw new APIError('No vehicle found', 404);
+  }
+
+  return formatVehicleResponse(vehicle);
+};
+
 const formatVehicleResponse = (vehicle: Vehicle) => {
   return { ...vehicle, dateCreated: Number(vehicle.dateCreated) };
 };

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { register, completeRegistration, login, getUser } from '../controllers/userController';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { getVehicle, getVehicles, postVehicle, putVehicle } from '../controllers/vehicleController';
+import { deleteVehicle, getVehicle, getVehicles, postVehicle, putVehicle } from '../controllers/vehicleController';
 import { scopesMiddleware } from '../middleware/scopesMiddleware';
 import { AUTH_SCOPES } from '../constants';
 
@@ -20,6 +20,12 @@ router.get('/users/info', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_
 // Vehicle routes
 router.get('/users/:userId/vehicles/:id', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]), getVehicle);
 router.put('/users/:userId/vehicles/:id', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]), putVehicle);
+router.delete(
+  '/users/:userId/vehicles/:id',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
+  deleteVehicle
+);
 router.get('/users/:userId/vehicles', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]), getVehicles);
 router.post('/users/:userId/vehicles', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]), postVehicle);
 
