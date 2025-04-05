@@ -49,7 +49,7 @@ export const register = async (request: RegisterRequest): Promise<string> => {
 
   const user = existingUser ?? (await userModel.default.createUser(email, password, ROLES.USER_ROLE));
   const registrationToken = generateRegistrationToken(user.id, email);
-  const completeLink = `${baseUrl}/register/complete?token=${registrationToken}`;
+  const completeLink = `${baseUrl}/api/users/register/complete?token=${registrationToken}`;
 
   await sendRegistrationEmail(email, completeLink);
   return completeLink;
