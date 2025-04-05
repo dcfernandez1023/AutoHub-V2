@@ -1,12 +1,15 @@
 import fs from 'fs';
 import path from 'path';
+import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 
 const environment = process.argv[2];
 
-// Determine the database provider
-const provider = environment === 'dev' ? 'sqlite' : 'postgresql';
-const providerUrl = environment === 'dev' ? 'file:./database.sqlite' : '';
+const envFile = environment === 'dev' ? '.env.dev' : '.env.prod';
+dotenv.config({ path: envFile });
+
+const provider = 'postgresql';
+const providerUrl = process.env.DATABASE_URL;
 
 // Define the schema file path
 const __filename = fileURLToPath(import.meta.url);

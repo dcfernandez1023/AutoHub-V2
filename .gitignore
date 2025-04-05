@@ -20,3 +20,4 @@
 /server/.env
 /server/.env.dev
 /server/.env.prod
+/server/prisma/schema.prisma
