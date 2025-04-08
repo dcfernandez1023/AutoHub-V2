@@ -69,6 +69,6 @@ export const removeVehicle = async (id: string, userId: string) => {
   return formatVehicleResponse(vehicle);
 };
 
-const formatVehicleResponse = (vehicle: Vehicle) => {
+export const formatVehicleResponse = (vehicle: Vehicle) => {
   return { ...vehicle, dateCreated: Number(vehicle.dateCreated) };
 };

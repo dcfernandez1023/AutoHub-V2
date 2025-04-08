@@ -25,3 +25,12 @@ export const ALLOWED_SCOPES = {
     AUTH_SCOPES.AUTOHUB_ADMIN,
   ],
 };
+
+export enum STORAGE_BUCKET_NAME {
+  USER = 'user',
+  VEHICLE = 'vehicle',
+}
+
+export const VEHICLE_ATTACHMENT_LIMIT = 200;
+
+export const VEHICLE_ATTACHMENT_FPATH = 'vehicles';

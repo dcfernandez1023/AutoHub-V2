@@ -10,7 +10,6 @@ export const CreateOrUpdateVehicleRequestSchema = z.object({
   vin: z.string(),
   notes: z.string(),
   dateCreated: z.number(),
-  sharedWith: z.string().optional(),
   base64Image: z.string().optional(),
 });
 

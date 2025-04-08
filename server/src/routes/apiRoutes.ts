@@ -1,7 +1,14 @@
 import { Router } from 'express';
 import { register, completeRegistration, login, getUser } from '../controllers/userController';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { deleteVehicle, getVehicle, getVehicles, postVehicle, putVehicle } from '../controllers/vehicleController';
+import {
+  deleteVehicle,
+  getVehicle,
+  getVehicles,
+  postVehicle,
+  postVehicleAttachment,
+  putVehicle,
+} from '../controllers/vehicleController';
 import { scopesMiddleware } from '../middleware/scopesMiddleware';
 import { AUTH_SCOPES } from '../constants';
 
@@ -18,6 +25,12 @@ router.post('/users/login', login);
 router.get('/users/info', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]), getUser);
 
 // Vehicle routes
+router.post(
+  '/users/:userId/vehicles/:id/attachments',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
+  postVehicleAttachment
+);
 router.get('/users/:userId/vehicles/:id', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]), getVehicle);
 router.put('/users/:userId/vehicles/:id', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]), putVehicle);
 router.delete(

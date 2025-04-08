@@ -33,7 +33,8 @@ model User {
   role       Role   @default(USER)
   registered Int @default(0)
 
-  Vehicle Vehicle[]
+  Vehicle      Vehicle[]
+  attachments  VehicleAttachment[]
 }
 
 model Vehicle {
@@ -48,14 +49,27 @@ model Vehicle {
   vin           String
   notes         String
   dateCreated   BigInt
-  sharedWith    String?
   base64Image   String?
 
   // Relation with User
   user          User     @relation(fields: [userId], references: [id])
 
-  // Prevents updated to id and userId
-  @@unique([id, userId])
+  attachments   VehicleAttachment[]
+
+  @@index([userId])
+}
+
+model VehicleAttachment {
+  id        String   @id @default(uuid())
+  vehicleId String
+  userId    String
+  url       String
+
+  user      User     @relation(fields: [userId], references: [id])
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+
+  @@index([vehicleId])
+  @@index([userId])
 }
 
 enum Role {
