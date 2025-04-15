@@ -3,10 +3,13 @@ import { register, completeRegistration, login, getUser } from '../controllers/u
 import { authMiddleware } from '../middleware/authMiddleware';
 import {
   deleteVehicle,
+  deleteVehicleShare,
   getVehicle,
   getVehicles,
+  getVehicleShare,
   postVehicle,
   postVehicleAttachment,
+  postVehicleShare,
   putVehicle,
 } from '../controllers/vehicleController';
 import { scopesMiddleware } from '../middleware/scopesMiddleware';
@@ -24,13 +27,35 @@ router.post('/users/login', login);
 // User routes
 router.get('/users/info', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]), getUser);
 
-// Vehicle routes
+// Vehicle share routes
+router.post(
+  '/users/:userId/vehicles/:id/share',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
+  postVehicleShare
+);
+router.get(
+  '/users/:userId/vehicles/:id/share',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
+  getVehicleShare
+);
+router.delete(
+  '/users/:userId/vehicles/:id/share',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
+  deleteVehicleShare
+);
+
+// Vehicle attachments
 router.post(
   '/users/:userId/vehicles/:id/attachments',
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
   postVehicleAttachment
 );
+
+// Vehicles
 router.get('/users/:userId/vehicles/:id', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]), getVehicle);
 router.put('/users/:userId/vehicles/:id', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]), putVehicle);
 router.delete(

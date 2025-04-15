@@ -13,4 +13,9 @@ export const CreateOrUpdateVehicleRequestSchema = z.object({
   base64Image: z.string().optional(),
 });
 
+export const ShareVehicleRequestSchema = z.object({
+  userId: z.string(),
+});
+
 export type CreateOrUpdateVehicleRequest = z.infer<typeof CreateOrUpdateVehicleRequestSchema>;
+export type ShareVehicleRequest = z.infer<typeof ShareVehicleRequestSchema>;

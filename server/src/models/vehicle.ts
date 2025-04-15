@@ -27,4 +27,15 @@ const deleteVehicle = async (id: string, userId: string) => {
   return db.vehicle.delete({ where: { id, userId } });
 };
 
-export default { createVehicle, updateVehicle, getVehicles, getVehicle, deleteVehicle };
+const getSharedVehicles = async (userId: string) => {
+  const sharedVehicles = await db.vehicleShare.findMany({
+    where: { userId },
+    include: {
+      vehicle: true, // pull the actual vehicle
+    },
+  });
+
+  return sharedVehicles.map((share) => share.vehicle);
+};
+
+export default { createVehicle, updateVehicle, getVehicles, getVehicle, deleteVehicle, getSharedVehicles };

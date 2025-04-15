@@ -2,6 +2,9 @@ import APIError from '../errors/APIError';
 import { CreateOrUpdateVehicleRequest } from '../types/vehicle';
 import * as vehicleModel from '../models/vehicle';
 import { Vehicle } from '@prisma/client';
+import { removeVehicleShares } from './vehicleShare';
+
+export type FormattedVehicle = ReturnType<typeof formatVehicleResponse>;
 
 export const createVehicle = async (userId: string, request: CreateOrUpdateVehicleRequest) => {
   if (!userId) {
@@ -66,7 +69,23 @@ export const removeVehicle = async (id: string, userId: string) => {
     throw new APIError('No vehicle found', 404);
   }
 
+  await removeVehicleShares(id);
+
   return formatVehicleResponse(vehicle);
+};
+
+export const findSharedVehicles = async (userId: string) => {
+  if (!userId) {
+    throw new APIError('No userId provided', 400);
+  }
+
+  const sharedVehicles = await vehicleModel.default.getSharedVehicles(userId);
+
+  if (!sharedVehicles) {
+    throw new APIError('No shared vehicles found', 404);
+  }
+
+  return sharedVehicles;
 };
 
 export const formatVehicleResponse = (vehicle: Vehicle) => {

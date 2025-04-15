@@ -35,6 +35,7 @@ model User {
 
   Vehicle      Vehicle[]
   attachments  VehicleAttachment[]
+  VehicleShare VehicleShare[]
 }
 
 model Vehicle {
@@ -57,6 +58,7 @@ model Vehicle {
   attachments   VehicleAttachment[]
 
   @@index([userId])
+  VehicleShare VehicleShare[]
 }
 
 model VehicleAttachment {
@@ -70,6 +72,19 @@ model VehicleAttachment {
 
   @@index([vehicleId])
   @@index([userId])
+}
+
+model VehicleShare {
+  id        String   @id @default(uuid())
+  vehicleId String
+  userId    String
+
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([vehicleId, userId]) // Prevent duplicate shares
+  @@index([userId])
+  @@index([vehicleId])
 }
 
 enum Role {
