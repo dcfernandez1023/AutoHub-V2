@@ -96,3 +96,5 @@ export const uploadVehicleAttachment = async (
 
   return { attachmentId, attachmentUrl: buildStorageFileUrl(bucketName, VEHICLE_ATTACHMENT_FPATH, storageFilename) };
 };
+
+// TODO: Method to delete attachment from storage

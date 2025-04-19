@@ -53,6 +53,7 @@ export const findVehicle = async (id: string, userId: string) => {
   return formatVehicleResponse(vehicle);
 };
 
+// TODO: Delete vehicle attachments from storage when vehicle is deleted (also when user is deleted)
 export const removeVehicle = async (id: string, userId: string) => {
   if (!id) {
     throw new APIError('No vehicleId provided', 400);
