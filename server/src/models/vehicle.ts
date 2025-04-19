@@ -23,6 +23,10 @@ const getVehicle = async (id: string, userId: string) => {
   return db.vehicle.findFirst({ where: { id, userId } });
 };
 
+const getVehicleById = async (id: string) => {
+  return db.vehicle.findFirst({ where: { id } });
+};
+
 const deleteVehicle = async (id: string, userId: string) => {
   return db.vehicle.delete({ where: { id, userId } });
 };
@@ -38,4 +42,12 @@ const getSharedVehicles = async (userId: string) => {
   return sharedVehicles.map((share) => share.vehicle);
 };
 
-export default { createVehicle, updateVehicle, getVehicles, getVehicle, deleteVehicle, getSharedVehicles };
+export default {
+  createVehicle,
+  updateVehicle,
+  getVehicles,
+  getVehicle,
+  getVehicleById,
+  deleteVehicle,
+  getSharedVehicles,
+};

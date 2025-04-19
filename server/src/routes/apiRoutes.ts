@@ -54,6 +54,8 @@ router.post(
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
   postVehicleAttachment
 );
+// TODO: Add route to delete vehicle attachments
+// TODO: Add route to get vehicle attachments
 
 // Vehicles
 router.get('/users/:userId/vehicles/:id', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]), getVehicle);

@@ -89,26 +89,25 @@ export const deleteVehicle = async (req: Request, res: Response) => {
   }
 };
 
+// TODO: Optimize this. uploadVehicleAttachment() and createVehicleAttachment() both call checkIfCanAccessVehicle()
 export const postVehicleAttachment = async (req: Request, res: Response) => {
   try {
     const params = req.params;
     const vehicleId = params.id;
     const userId = params.userId;
 
-    // Ensure the vehicle exists
-    const vehicle = await findVehicle(vehicleId, userId);
-
     const { buffer, filename, mimeType } = await getFileBuffer(req);
 
     const { attachmentId, attachmentUrl } = await uploadVehicleAttachment(
-      vehicle.id,
+      vehicleId,
+      userId,
       STORAGE_BUCKET_NAME.VEHICLE,
       buffer,
       filename,
       mimeType
     );
 
-    const attachment = await createVehicleAttachment(attachmentId, vehicle.id, userId, attachmentUrl);
+    const attachment = await createVehicleAttachment(attachmentId, vehicleId, userId, attachmentUrl);
 
     res.status(200).json({ attachmentId, attachmentUrl });
   } catch (error) {
@@ -124,10 +123,7 @@ export const postVehicleShare = async (req: Request, res: Response) => {
 
     const requestBody: ShareVehicleRequest = ShareVehicleRequestSchema.parse(req.body);
 
-    // Ensure the vehicle exists
-    const vehicle = await findVehicle(vehicleId, userId);
-
-    const vehicleShare = await createVehicleShare(vehicle, requestBody.userId);
+    const vehicleShare = await createVehicleShare(vehicleId, userId, requestBody.userId);
 
     res.status(200).json({ vehicleShare });
   } catch (error) {
@@ -143,10 +139,7 @@ export const getVehicleShare = async (req: Request, res: Response) => {
 
     const requestBody: ShareVehicleRequest = ShareVehicleRequestSchema.parse(req.body);
 
-    // Ensure the vehicle exists
-    const vehicle = await findVehicle(vehicleId, userId);
-
-    const vehicleShare = await findVehicleShare(vehicle.id, requestBody.userId);
+    const vehicleShare = await findVehicleShare(vehicleId, userId, requestBody.userId);
 
     res.status(200).json({ vehicleShare });
   } catch (error) {
@@ -162,11 +155,9 @@ export const deleteVehicleShare = async (req: Request, res: Response) => {
 
     const requestBody: ShareVehicleRequest = ShareVehicleRequestSchema.parse(req.body);
 
-    const vehicle = await findVehicle(vehicleId, userId);
+    await removeVehicleShare(vehicleId, userId, requestBody.userId);
 
-    await removeVehicleShare(vehicle, requestBody.userId);
-
-    res.status(200).json({ vehicleId, userId });
+    res.status(200).json({ vehicleId, userId: requestBody.userId });
   } catch (error) {
     handleError(res, error as Error);
   }

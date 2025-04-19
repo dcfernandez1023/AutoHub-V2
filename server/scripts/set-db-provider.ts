@@ -53,7 +53,7 @@ model Vehicle {
   base64Image   String?
 
   // Relation with User
-  user          User     @relation(fields: [userId], references: [id])
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   attachments   VehicleAttachment[]
 
@@ -67,8 +67,8 @@ model VehicleAttachment {
   userId    String
   url       String
 
-  user      User     @relation(fields: [userId], references: [id])
-  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
 
   @@index([vehicleId])
   @@index([userId])
@@ -79,8 +79,8 @@ model VehicleShare {
   vehicleId String
   userId    String
 
-  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([vehicleId, userId]) // Prevent duplicate shares
   @@index([userId])

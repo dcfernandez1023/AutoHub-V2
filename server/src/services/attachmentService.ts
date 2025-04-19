@@ -1,5 +1,6 @@
 import APIError from '../errors/APIError';
 import * as vehicleAttachmentModel from '../models/vehicleAttachment';
+import { checkIfCanAccessVehicle } from './vehicleService';
 
 export const createVehicleAttachment = async (id: string, vehicleId: string, userId: string, url: string) => {
   if (!id) {
@@ -15,7 +16,10 @@ export const createVehicleAttachment = async (id: string, vehicleId: string, use
     throw new APIError('No attachment url provided', 400);
   }
 
-  return await vehicleAttachmentModel.default.createAttachment(id, vehicleId, userId, url);
+  // Check that requesting user has access to the vehicle
+  const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
+
+  return await vehicleAttachmentModel.default.createAttachment(id, vehicle.id, userId, url);
 };
 
 export const getVehicleAttachments = async (vehicleId: string, userId: string) => {
@@ -26,5 +30,8 @@ export const getVehicleAttachments = async (vehicleId: string, userId: string) =
     throw new APIError('No user id provided', 400);
   }
 
-  return await vehicleAttachmentModel.default.getAttachments(vehicleId, userId);
+  // Check that requesting user has access to the vehicle
+  const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
+
+  return await vehicleAttachmentModel.default.getAttachments(vehicle.id, userId);
 };

@@ -4,6 +4,7 @@ import APIError from '../errors/APIError';
 import { buildStorageFileUrl, getSupabaseClient } from '../supabase/supabase';
 import { v4 as uuidv4 } from 'uuid';
 import { Request } from 'express';
+import { checkIfCanAccessVehicle } from './vehicleService';
 
 const busboy = require('busboy');
 
@@ -55,6 +56,7 @@ export const getFileBuffer = (req: Request): Promise<FileBufferResult> => {
 
 export const uploadVehicleAttachment = async (
   id: string,
+  userId: string,
   bucketName: STORAGE_BUCKET_NAME,
   buffer: Buffer,
   filename: string,
@@ -76,11 +78,13 @@ export const uploadVehicleAttachment = async (
     throw new APIError('Could not read buffer or mimetype', 500);
   }
 
+  const vehicle = await checkIfCanAccessVehicle(id, userId);
+
   const supabaseClient = getSupabaseClient();
 
   const attachmentId = uuidv4();
   const timestamp = new Date().getTime();
-  const storageFilename = `${attachmentId}-${timestamp}-${filename}`;
+  const storageFilename = `${attachmentId}-${vehicle.id}-${timestamp}-${filename}`;
 
   const { data, error } = await supabaseClient.storage
     .from(bucketName)
