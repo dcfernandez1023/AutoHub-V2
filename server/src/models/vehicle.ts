@@ -8,9 +8,9 @@ const createVehicle = async (userId: string, request: CreateOrUpdateVehicleReque
   });
 };
 
-const updateVehicle = async (id: string, userId: string, request: CreateOrUpdateVehicleRequest) => {
+const updateVehicle = async (id: string, request: CreateOrUpdateVehicleRequest) => {
   return db.vehicle.update({
-    where: { id, userId },
+    where: { id },
     data: request,
   });
 };

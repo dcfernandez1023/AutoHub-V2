@@ -16,7 +16,11 @@ import {
 } from '../types/vehicle';
 import { getFileBuffer, uploadVehicleAttachment } from '../services/storageService';
 import { STORAGE_BUCKET_NAME } from '../constants';
-import { createVehicleAttachment } from '../services/attachmentService';
+import {
+  createVehicleAttachment,
+  findVehicleAttachments,
+  removeVehicleAttachment,
+} from '../services/attachmentService';
 import { createVehicleShare, findVehicleShare, removeVehicleShare } from '../services/vehicleShare';
 
 export const postVehicle = async (req: Request, res: Response) => {
@@ -98,7 +102,7 @@ export const postVehicleAttachment = async (req: Request, res: Response) => {
 
     const { buffer, filename, mimeType } = await getFileBuffer(req);
 
-    const { attachmentId, attachmentUrl } = await uploadVehicleAttachment(
+    const { attachmentId, attachmentUrl, filePath } = await uploadVehicleAttachment(
       vehicleId,
       userId,
       STORAGE_BUCKET_NAME.VEHICLE,
@@ -107,7 +111,7 @@ export const postVehicleAttachment = async (req: Request, res: Response) => {
       mimeType
     );
 
-    const attachment = await createVehicleAttachment(attachmentId, vehicleId, userId, attachmentUrl);
+    const attachment = await createVehicleAttachment(attachmentId, vehicleId, userId, attachmentUrl, filePath);
 
     res.status(200).json({ attachmentId, attachmentUrl });
   } catch (error) {
@@ -171,6 +175,35 @@ export const getSharedVehicles = async (req: Request, res: Response) => {
     const sharedVehicles = await findSharedVehicles(userId);
 
     res.status(200).json({ sharedVehicles });
+  } catch (error) {
+    handleError(res, error as Error);
+  }
+};
+
+export const deleteVehicleAttachment = async (req: Request, res: Response) => {
+  try {
+    const params = req.params;
+    const userId = params.userId;
+    const vehicleId = params.vehicleId;
+    const attachmentId = params.attachmentId;
+
+    const attachment = await removeVehicleAttachment(attachmentId, vehicleId, userId);
+
+    res.status(200).json({ attachment });
+  } catch (error) {
+    handleError(res, error as Error);
+  }
+};
+
+export const getVehicleAttachments = async (req: Request, res: Response) => {
+  try {
+    const params = req.params;
+    const userId = params.userId;
+    const vehicleId = params.vehicleId;
+
+    const attachments = await findVehicleAttachments(vehicleId, userId);
+
+    res.status(200).json({ attachments });
   } catch (error) {
     handleError(res, error as Error);
   }

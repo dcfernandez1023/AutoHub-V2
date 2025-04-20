@@ -5,6 +5,8 @@ import { buildStorageFileUrl, getSupabaseClient } from '../supabase/supabase';
 import { v4 as uuidv4 } from 'uuid';
 import { Request } from 'express';
 import { checkIfCanAccessVehicle } from './vehicleService';
+import * as vehicleAttachmentModel from '../models/vehicleAttachment';
+import { findVehicleAttachments, findVehicleAttachment } from './attachmentService';
 
 const busboy = require('busboy');
 
@@ -83,8 +85,7 @@ export const uploadVehicleAttachment = async (
   const supabaseClient = getSupabaseClient();
 
   const attachmentId = uuidv4();
-  const timestamp = new Date().getTime();
-  const storageFilename = `${attachmentId}-${vehicle.id}-${timestamp}-${filename}`;
+  const storageFilename = `${attachmentId}-${filename}`;
 
   const { data, error } = await supabaseClient.storage
     .from(bucketName)
@@ -94,7 +95,74 @@ export const uploadVehicleAttachment = async (
     throw new APIError('Failed to upload attachment', 400);
   }
 
-  return { attachmentId, attachmentUrl: buildStorageFileUrl(bucketName, VEHICLE_ATTACHMENT_FPATH, storageFilename) };
+  if (!data.fullPath) {
+    throw new APIError('Failed to get path to file in storage', 500);
+  }
+
+  return {
+    attachmentId,
+    attachmentUrl: buildStorageFileUrl(bucketName, VEHICLE_ATTACHMENT_FPATH, storageFilename),
+    filePath: data.fullPath,
+  };
 };
 
-// TODO: Method to delete attachment from storage
+// TODO: Optimize checkIfCanVehicleAccess, getting called twice in getVehicleAttachment
+export const deleteVehicleAttachment = async (
+  attachmentId: string,
+  vehicleId: string,
+  userId: string,
+  bucketName: string
+) => {
+  if (!attachmentId) {
+    throw new APIError('No attachmentId provided', 400);
+  }
+  if (!vehicleId) {
+    throw new APIError('No vehicleId provided', 400);
+  }
+  if (!userId) {
+    throw new APIError('No userId provided', 400);
+  }
+  if (!bucketName) {
+    throw new APIError('No bucket name provided', 400);
+  }
+
+  const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
+  const attachment = await findVehicleAttachment(attachmentId, vehicle.id, userId);
+
+  const supabaseClient = getSupabaseClient();
+
+  const { error } = await supabaseClient.storage.from(bucketName).remove([attachment.filePath]);
+
+  if (error) {
+    throw new APIError('Failed to delete attachment', 500);
+  }
+
+  return attachment;
+};
+
+// TODO: Optimize checkIfCanVehicleAccess, getting called twice in getVehicleAttachments
+export const deleteVehicleAttachments = async (vehicleId: string, userId: string, bucketName: string) => {
+  if (!vehicleId) {
+    throw new APIError('No vehicleId provided', 400);
+  }
+  if (!userId) {
+    throw new APIError('No userId provided', 400);
+  }
+  if (!bucketName) {
+    throw new APIError('No bucket name provided', 400);
+  }
+
+  const vehicle = await checkIfCanAccessVehicle(vehicleId, userId, true);
+  const attachments = await findVehicleAttachments(vehicle.id, userId);
+  const filePaths = attachments.map((attachment) => attachment.filePath);
+
+  const supabaseClient = getSupabaseClient();
+
+  const { error } = await supabaseClient.storage.from(bucketName).remove(filePaths);
+
+  if (error) {
+    throw new APIError('Failed to delete attachment', 500);
+  }
+
+  return attachments;
+};

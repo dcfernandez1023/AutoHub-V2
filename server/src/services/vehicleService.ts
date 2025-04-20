@@ -3,6 +3,8 @@ import { CreateOrUpdateVehicleRequest } from '../types/vehicle';
 import * as vehicleModel from '../models/vehicle';
 import { Vehicle } from '@prisma/client';
 import * as vehicleShareModel from '../models/vehicleShare';
+import { deleteVehicleAttachments } from './storageService';
+import { STORAGE_BUCKET_NAME } from '../constants';
 
 export type FormattedVehicle = ReturnType<typeof formatVehicleResponse>;
 
@@ -26,7 +28,7 @@ export const updateVehicle = async (id: string, userId: string, request: CreateO
   }
 
   const vehicle = await checkIfCanAccessVehicle(id, userId);
-  const updatedVehicle = await vehicleModel.default.updateVehicle(vehicle.id, userId, request);
+  const updatedVehicle = await vehicleModel.default.updateVehicle(vehicle.id, request);
 
   return formatVehicleResponse(updatedVehicle);
 };
@@ -53,7 +55,6 @@ export const findVehicle = async (id: string, userId: string) => {
   return formatVehicleResponse(vehicle);
 };
 
-// TODO: Delete vehicle attachments from storage when vehicle is deleted (also when user is deleted)
 export const removeVehicle = async (id: string, userId: string) => {
   if (!id) {
     throw new APIError('No vehicleId provided', 400);
@@ -62,8 +63,10 @@ export const removeVehicle = async (id: string, userId: string) => {
     throw new APIError('No userId provided', 400);
   }
 
-  const vehicle = await checkIfCanAccessVehicle(id, userId);
+  // Only the owner of the vehicle can delete it
+  const vehicle = await checkIfCanAccessVehicle(id, userId, true);
   const deletedVehicle = await vehicleModel.default.deleteVehicle(vehicle.id, userId);
+  await deleteVehicleAttachments(vehicle.id, userId, STORAGE_BUCKET_NAME.VEHICLE);
 
   return formatVehicleResponse(deletedVehicle);
 };
@@ -93,7 +96,7 @@ export const checkIfCanAccessVehicle = async (
     throw new APIError('No vehicle found', 404);
   }
 
-  // If the requesting user is the owner of the vehicle, then return true
+  // If the requesting user is the owner of the vehicle, then return vehicle
   if (vehicle.userId === userId) {
     return vehicle;
   }

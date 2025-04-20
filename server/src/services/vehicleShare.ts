@@ -25,7 +25,7 @@ export const createVehicleShare = async (vehicleId: string, userId: string, shar
     throw new APIError('No such user found', 404);
   }
 
-  // Ensure that the vehicle share doesn't alreadye exit
+  // Ensure that the vehicle share doesn't already exist
   const existingVehicleShare = await vehicleShareModel.default.getVehicleShare(vehicle.id, sharedUserId);
   if (existingVehicleShare) {
     throw new APIError('Vehicle is already shared with user', 400);

@@ -66,6 +66,7 @@ model VehicleAttachment {
   vehicleId String
   userId    String
   url       String
+  filePath  String
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
