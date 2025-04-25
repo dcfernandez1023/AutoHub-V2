@@ -18,7 +18,6 @@ export type UpdatedProperty = {
 
 // Base fields common to all actions
 type BaseChangelog = {
-  user: string;
   action: ACTION;
   subject: SUBJECT;
   subjectName: string;
@@ -43,3 +42,4 @@ type UpdatedLog = BaseChangelog & {
 };
 
 export type ChangelogPayload = CreatedLog | DeletedLog | SharedLog | UpdatedLog;
+export type ChangelogPayloadWithUser = ChangelogPayload & { user: string };

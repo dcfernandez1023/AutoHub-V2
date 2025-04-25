@@ -2,10 +2,10 @@ import { User } from '@prisma/client';
 import { db } from '../database/database';
 import { hash } from 'bcryptjs';
 
-const createUser = async (email: string, password: string, role: 'USER' | 'ADMIN'): Promise<User> => {
+const createUser = async (username: string, email: string, password: string, role: 'USER' | 'ADMIN'): Promise<User> => {
   const hashedPassword = await hash(password, 10);
   return await db.user.create({
-    data: { email, password: hashedPassword, role },
+    data: { username, email, password: hashedPassword, role },
   });
 };
 

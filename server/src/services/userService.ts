@@ -36,10 +36,10 @@ export const getRegisteredUser = async (request: GetUserRequest) => {
 };
 
 export const register = async (request: RegisterRequest): Promise<string> => {
-  const { email, password, baseUrl } = request;
+  const { username, email, password, baseUrl } = request;
 
-  if (!email?.trim().length || !password?.trim().length) {
-    throw new APIError('Email and password not provided', 400);
+  if (!username?.trim().length || !email?.trim().length || !password?.trim().length) {
+    throw new APIError('Email, password, and username not provided', 400);
   }
 
   const existingUser = await getUser({ email });
@@ -47,7 +47,7 @@ export const register = async (request: RegisterRequest): Promise<string> => {
     throw new APIError('An account under this email is already registered', 400);
   }
 
-  const user = existingUser ?? (await userModel.default.createUser(email, password, ROLES.USER_ROLE));
+  const user = existingUser ?? (await userModel.default.createUser(username, email, password, ROLES.USER_ROLE));
   const registrationToken = generateRegistrationToken(user.id, email);
   const completeLink = `${baseUrl}/api/users/register/complete?token=${registrationToken}`;
 

@@ -2,6 +2,8 @@ import APIError from '../errors/APIError';
 import * as vehicleShareModel from '../models/vehicleShare';
 import * as userModel from '../models/user';
 import { checkIfCanAccessVehicle, FormattedVehicle } from './vehicleService';
+import { createVehicleChangelog } from './vehicleChangelogService';
+import { ACTION, SUBJECT } from '../types/changelog';
 
 export const createVehicleShare = async (vehicleId: string, userId: string, sharedUserId: string) => {
   if (!vehicleId) {
@@ -37,6 +39,13 @@ export const createVehicleShare = async (vehicleId: string, userId: string, shar
   if (!vehicleShare) {
     throw new APIError('Failed to share vehicle', 500);
   }
+
+  await createVehicleChangelog(vehicle.id, userId, {
+    action: ACTION.SHARED,
+    subject: SUBJECT.VEHICLE,
+    subjectName: vehicle.name,
+    targetName: userToShare.username,
+  });
 
   return vehicleShare;
 };

@@ -12,9 +12,9 @@ import { CONSTANTS, ROLES } from '../constants';
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { username, email, password } = req.body;
     const baseUrl = `${req.protocol}://${req.get('host')}`;
-    const completeLink = await handleRegister({ email, password, baseUrl });
+    const completeLink = await handleRegister({ username, email, password, baseUrl });
     res.status(200).json({ message: `Registration email sent: ${completeLink}` });
   } catch (error) {
     handleError(res, error as Error);

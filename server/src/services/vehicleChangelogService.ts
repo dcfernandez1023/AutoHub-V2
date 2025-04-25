@@ -1,34 +1,42 @@
 import * as vehicleChangelogModel from '../models/vehicleChangelog';
 import APIError from '../errors/APIError';
-import { ACTION, ChangelogPayload, SUBJECT, UpdatedProperty } from '../types/changelog';
+import { ACTION, ChangelogPayload, ChangelogPayloadWithUser, SUBJECT, UpdatedProperty } from '../types/changelog';
 import { checkIfCanAccessVehicle } from './vehicleService';
+import { getUser } from './userService';
 
 // <User> <action> <subject> <
 export const createVehicleChangelog = async (vehicleId: string, userId: string, payload: ChangelogPayload) => {
   try {
-    const { user, action, subject, subjectName } = payload;
-    if (!userId || !vehicleId || !user || !action || !subject || !subjectName) {
+    const { action, subject, subjectName } = payload;
+    if (!userId || !vehicleId || !action || !subject || !subjectName) {
       return;
     }
 
     const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
+    const user = await getUser({ id: userId });
 
-    const description = formatChangelog(payload);
+    if (!user) {
+      throw new APIError('No user found', 404);
+    }
+
+    const description = formatChangelog({ user: user.username, ...payload });
     await vehicleChangelogModel.default.createVehicleChangelog(vehicle.id, userId, description);
+
+    console.log(description);
   } catch (error) {
     // TODO: Log this error
   }
 };
 
 // The 'user' parameter should be the name of the user
-const formatChangelog = (payload: ChangelogPayload): string => {
+export const formatChangelog = (payload: ChangelogPayloadWithUser): string => {
   const { user, action, subject, subjectName } = payload;
   const defaultDescription = `${user} ${action} ${subject} ${subjectName}`;
 
   switch (action) {
     case ACTION.SHARED:
       const { targetName } = payload;
-      return `${user} ${action} ${subject} with ${targetName}`;
+      return `${user} ${action} ${subject} ${subjectName} with ${targetName}`;
     case ACTION.UPDATED:
       const { updatedProperties } = payload;
       if (!Array.isArray(updatedProperties) || updatedProperties.length === 0) {
@@ -40,10 +48,10 @@ const formatChangelog = (payload: ChangelogPayload): string => {
       for (i; i < updatedProperties.length; i++) {
         const formatted = formatUpdatedProperty(updatedProperties[i]);
         if (formatted) {
-          updatedDescription = `, ${formatted}`;
+          updatedDescription = `${updatedDescription}, ${formatted}`;
         }
       }
-      return `${defaultDescription}. Updated values: ${updatedDescription}`;
+      return `${defaultDescription}. Updated values = ${updatedDescription}`;
     default:
       return defaultDescription;
   }
