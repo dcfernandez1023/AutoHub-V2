@@ -36,6 +36,7 @@ model User {
   Vehicle      Vehicle[]
   attachments  VehicleAttachment[]
   VehicleShare VehicleShare[]
+  VehicleChangelog VehicleChangelog[]
 }
 
 model Vehicle {
@@ -59,6 +60,7 @@ model Vehicle {
 
   @@index([userId])
   VehicleShare VehicleShare[]
+  VehicleChangelog VehicleChangelog[]
 }
 
 model VehicleAttachment {
@@ -84,6 +86,19 @@ model VehicleShare {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([vehicleId, userId]) // Prevent duplicate shares
+  @@index([userId])
+  @@index([vehicleId])
+}
+
+model VehicleChangelog {
+  id          String   @id @default(uuid())
+  vehicleId   String
+  userId      String
+  description String
+
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([vehicleId])
 }
