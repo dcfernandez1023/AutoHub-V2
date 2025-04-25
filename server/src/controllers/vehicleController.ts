@@ -40,7 +40,7 @@ export const postVehicle = async (req: Request, res: Response) => {
 export const putVehicle = async (req: Request, res: Response) => {
   try {
     const params = req.params;
-    const vehicleId = params.id;
+    const vehicleId = params.vehicleId;
     const userId = params.userId;
 
     const requestBody: CreateOrUpdateVehicleRequest = CreateOrUpdateVehicleRequestSchema.parse(req.body);
@@ -70,7 +70,7 @@ export const getVehicles = async (req: Request, res: Response) => {
 export const getVehicle = async (req: Request, res: Response) => {
   try {
     const params = req.params;
-    const vehicleId = params.id;
+    const vehicleId = params.vehicleId;
     const userId = params.userId;
 
     const vehicle = await findVehicle(vehicleId, userId);
@@ -83,7 +83,7 @@ export const getVehicle = async (req: Request, res: Response) => {
 export const deleteVehicle = async (req: Request, res: Response) => {
   try {
     const params = req.params;
-    const vehicleId = params.id;
+    const vehicleId = params.vehicleId;
     const userId = params.userId;
 
     const vehicle = await removeVehicle(vehicleId, userId);
@@ -97,7 +97,7 @@ export const deleteVehicle = async (req: Request, res: Response) => {
 export const postVehicleAttachment = async (req: Request, res: Response) => {
   try {
     const params = req.params;
-    const vehicleId = params.id;
+    const vehicleId = params.vehicleId;
     const userId = params.userId;
 
     const { buffer, filename, mimeType } = await getFileBuffer(req);
@@ -122,7 +122,7 @@ export const postVehicleAttachment = async (req: Request, res: Response) => {
 export const postVehicleShare = async (req: Request, res: Response) => {
   try {
     const params = req.params;
-    const vehicleId = params.id;
+    const vehicleId = params.vehicleId;
     const userId = params.userId;
 
     const requestBody: ShareVehicleRequest = ShareVehicleRequestSchema.parse(req.body);
@@ -138,7 +138,7 @@ export const postVehicleShare = async (req: Request, res: Response) => {
 export const getVehicleShare = async (req: Request, res: Response) => {
   try {
     const params = req.params;
-    const vehicleId = params.id;
+    const vehicleId = params.vehicleId;
     const userId = params.userId;
 
     const requestBody: ShareVehicleRequest = ShareVehicleRequestSchema.parse(req.body);
@@ -154,7 +154,7 @@ export const getVehicleShare = async (req: Request, res: Response) => {
 export const deleteVehicleShare = async (req: Request, res: Response) => {
   try {
     const params = req.params;
-    const vehicleId = params.id;
+    const vehicleId = params.vehicleId;
     const userId = params.userId;
 
     const requestBody: ShareVehicleRequest = ShareVehicleRequestSchema.parse(req.body);

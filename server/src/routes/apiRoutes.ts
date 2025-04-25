@@ -31,19 +31,19 @@ router.get('/users/info', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_
 
 // Vehicle share routes
 router.post(
-  '/users/:userId/vehicles/:id/share',
+  '/users/:userId/vehicles/:vehicleId/share',
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
   postVehicleShare
 );
 router.get(
-  '/users/:userId/vehicles/:id/share',
+  '/users/:userId/vehicles/:vehicleId/share',
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
   getVehicleShare
 );
 router.delete(
-  '/users/:userId/vehicles/:id/share',
+  '/users/:userId/vehicles/:vehicleId/share',
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
   deleteVehicleShare
@@ -51,13 +51,13 @@ router.delete(
 
 // Vehicle attachments
 router.get(
-  '/users/:userId/vehicles/:id/attachments',
+  '/users/:userId/vehicles/:vehicleId/attachments',
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
   getVehicleAttachments
 );
 router.post(
-  '/users/:userId/vehicles/:id/attachments',
+  '/users/:userId/vehicles/:vehicleId/attachments',
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
   postVehicleAttachment
@@ -70,10 +70,20 @@ router.delete(
 );
 
 // Vehicles
-router.get('/users/:userId/vehicles/:id', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]), getVehicle);
-router.put('/users/:userId/vehicles/:id', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]), putVehicle);
+router.get(
+  '/users/:userId/vehicles/:vehicleId',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
+  getVehicle
+);
+router.put(
+  '/users/:userId/vehicles/:vehicleId',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
+  putVehicle
+);
 router.delete(
-  '/users/:userId/vehicles/:id',
+  '/users/:userId/vehicles/:vehicleId',
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
   deleteVehicle
