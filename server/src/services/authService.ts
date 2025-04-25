@@ -29,7 +29,6 @@ export const authenticateToken = (token: string) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     return decoded;
   } catch (error) {
-    console.error(error);
     throw new APIError('Invalid or expired token', 403);
   }
 };
