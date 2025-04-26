@@ -43,7 +43,7 @@ export const updateVehicle = async (id: string, userId: string, request: CreateO
     action: ACTION.UPDATED,
     subject: SUBJECT.VEHICLE,
     subjectName: vehicle.name,
-    updatedProperties: Object.entries(vehicle).map(([key, value]) => ({
+    updatedProperties: Object.entries(request).map(([key, value]) => ({
       property: key,
       value: (value ?? '').toString(),
     })),

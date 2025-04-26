@@ -7,6 +7,7 @@ import {
   deleteVehicleShare,
   getVehicle,
   getVehicleAttachments,
+  getVehicleChangelog,
   getVehicles,
   getVehicleShare,
   postVehicle,
@@ -28,6 +29,14 @@ router.post('/users/login', login);
 
 // User routes
 router.get('/users/info', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]), getUser);
+
+// Vehicle changelog
+router.get(
+  '/users/:userId/vehicles/:vehicleId/changelog',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
+  getVehicleChangelog
+);
 
 // Vehicle share routes
 router.post(

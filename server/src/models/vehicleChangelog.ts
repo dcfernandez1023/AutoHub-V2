@@ -6,4 +6,8 @@ const createVehicleChangelog = async (vehicleId: string, userId: string, descrip
   });
 };
 
-export default { createVehicleChangelog };
+const getVehicleChangelog = async (vehicleId: string) => {
+  return await db.vehicleChangelog.findMany({ where: { vehicleId } });
+};
+
+export default { createVehicleChangelog, getVehicleChangelog };

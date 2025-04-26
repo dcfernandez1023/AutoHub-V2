@@ -4,7 +4,6 @@ import { ACTION, ChangelogPayload, ChangelogPayloadWithUser, SUBJECT, UpdatedPro
 import { checkIfCanAccessVehicle } from './vehicleService';
 import { getUser } from './userService';
 
-// <User> <action> <subject> <
 export const createVehicleChangelog = async (vehicleId: string, userId: string, payload: ChangelogPayload) => {
   try {
     const { action, subject, subjectName } = payload;
@@ -26,6 +25,20 @@ export const createVehicleChangelog = async (vehicleId: string, userId: string, 
   } catch (error) {
     // TODO: Log this error
   }
+};
+
+export const findVehicleChangelog = async (vehicleId: string, userId: string) => {
+  if (!userId) {
+    throw new APIError('No userId provided', 400);
+  }
+  if (!vehicleId) {
+    throw new APIError('No vehicleId provided', 400);
+  }
+
+  const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
+  const changelog = await vehicleChangelogModel.default.getVehicleChangelog(vehicle.id);
+
+  return changelog;
 };
 
 // The 'user' parameter should be the name of the user

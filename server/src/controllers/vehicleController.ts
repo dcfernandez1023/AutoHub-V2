@@ -22,6 +22,7 @@ import {
   removeVehicleAttachment,
 } from '../services/attachmentService';
 import { createVehicleShare, findVehicleShare, removeVehicleShare } from '../services/vehicleShare';
+import { findVehicleChangelog } from '../services/vehicleChangelogService';
 
 export const postVehicle = async (req: Request, res: Response) => {
   try {
@@ -129,7 +130,7 @@ export const postVehicleShare = async (req: Request, res: Response) => {
 
     const vehicleShare = await createVehicleShare(vehicleId, userId, requestBody.userId);
 
-    res.status(200).json({ vehicleShare });
+    res.status(200).json(vehicleShare);
   } catch (error) {
     handleError(res, error as Error);
   }
@@ -145,7 +146,7 @@ export const getVehicleShare = async (req: Request, res: Response) => {
 
     const vehicleShare = await findVehicleShare(vehicleId, userId, requestBody.userId);
 
-    res.status(200).json({ vehicleShare });
+    res.status(200).json(vehicleShare);
   } catch (error) {
     handleError(res, error as Error);
   }
@@ -174,7 +175,7 @@ export const getSharedVehicles = async (req: Request, res: Response) => {
 
     const sharedVehicles = await findSharedVehicles(userId);
 
-    res.status(200).json({ sharedVehicles });
+    res.status(200).json(sharedVehicles);
   } catch (error) {
     handleError(res, error as Error);
   }
@@ -189,7 +190,7 @@ export const deleteVehicleAttachment = async (req: Request, res: Response) => {
 
     const attachment = await removeVehicleAttachment(attachmentId, vehicleId, userId);
 
-    res.status(200).json({ attachment });
+    res.status(200).json(attachment);
   } catch (error) {
     handleError(res, error as Error);
   }
@@ -203,7 +204,21 @@ export const getVehicleAttachments = async (req: Request, res: Response) => {
 
     const attachments = await findVehicleAttachments(vehicleId, userId);
 
-    res.status(200).json({ attachments });
+    res.status(200).json(attachments);
+  } catch (error) {
+    handleError(res, error as Error);
+  }
+};
+
+export const getVehicleChangelog = async (req: Request, res: Response) => {
+  try {
+    const params = req.params;
+    const userId = params.userId;
+    const vehicleId = params.vehicleId;
+
+    const changelog = await findVehicleChangelog(vehicleId, userId);
+
+    res.status(200).json(changelog);
   } catch (error) {
     handleError(res, error as Error);
   }
