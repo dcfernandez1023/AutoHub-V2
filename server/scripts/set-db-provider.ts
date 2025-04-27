@@ -38,6 +38,9 @@ model User {
   attachments  VehicleAttachment[]
   VehicleShare VehicleShare[]
   VehicleChangelog VehicleChangelog[]
+  ScheduledServiceType ScheduledServiceType[]
+
+  ScheduledServiceInstance ScheduledServiceInstance[]
 }
 
 model Vehicle {
@@ -62,6 +65,7 @@ model Vehicle {
   @@index([userId])
   VehicleShare VehicleShare[]
   VehicleChangelog VehicleChangelog[]
+  ScheduledServiceInstance ScheduledServiceInstance[]
 }
 
 model VehicleAttachment {
@@ -104,9 +108,47 @@ model VehicleChangelog {
   @@index([vehicleId])
 }
 
+model ScheduledServiceType {
+  id     String @id @default(uuid())
+  userId String
+  name   String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  ScheduledServiceInstance ScheduledServiceInstance[]
+
+  @@index([userId])
+}
+
+model ScheduledServiceInstance {
+  id                     String @id @default(uuid())
+  userId                 String
+  vehicleId              String
+  scheduledServiceTypeId String
+  mileInterval           Int
+  timeInterval           Int
+  timeUnits              TimeUnits
+
+  user                      User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle                   Vehicle                  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  scheduledServiceType      ScheduledServiceType     @relation(fields: [scheduledServiceTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([vehicleId, scheduledServiceTypeId]) // Only one ScheduledServiceInstance can be created for a single Vehicle and ScheduledServiceType
+  @@index([userId])
+  @@index([vehicleId])
+  @@index([scheduledServiceTypeId])
+}
+
 enum Role {
   USER
   ADMIN
+}
+
+enum TimeUnits {
+  DAY
+  WEEK
+  MONTH
+  YEAR
 }
 `;
 
