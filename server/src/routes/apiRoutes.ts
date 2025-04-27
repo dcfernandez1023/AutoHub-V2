@@ -17,6 +17,12 @@ import {
 } from '../controllers/vehicleController';
 import { scopesMiddleware } from '../middleware/scopesMiddleware';
 import { AUTH_SCOPES } from '../constants';
+import {
+  deleteScheduledServiceType,
+  getScheduledServiceTypes,
+  postScheduledServiceType,
+  putScheduledServiceType,
+} from '../controllers/scheduledServiceTypeController';
 
 const router = Router();
 
@@ -29,6 +35,32 @@ router.post('/users/login', login);
 
 // User routes
 router.get('/users/info', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]), getUser);
+
+// Scheduled service type routes
+router.get(
+  '/users/:userId/scheduledServiceType',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
+  getScheduledServiceTypes
+);
+router.post(
+  '/users/:userId/scheduledServiceType',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
+  postScheduledServiceType
+);
+router.put(
+  '/users/:userId/scheduledServiceType/:scheduledServiceTypeId',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
+  putScheduledServiceType
+);
+router.delete(
+  '/users/:userId/scheduledServiceType/:scheduledServiceTypeId',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
+  deleteScheduledServiceType
+);
 
 // Vehicle changelog
 router.get(

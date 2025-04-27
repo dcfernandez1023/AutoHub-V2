@@ -117,6 +117,7 @@ model ScheduledServiceType {
 
   ScheduledServiceInstance ScheduledServiceInstance[]
 
+  @@unique([userId, name]) // Prevents duplicate names for a user's scheduled service types
   @@index([userId])
 }
 

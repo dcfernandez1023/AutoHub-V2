@@ -6,7 +6,7 @@ import * as vehicleShareModel from '../models/vehicleShare';
 import { deleteVehicleAttachments } from './storageService';
 import { STORAGE_BUCKET_NAME } from '../constants';
 import { createVehicleChangelog } from './vehicleChangelogService';
-import { ACTION, SUBJECT, UpdatedProperty } from '../types/changelog';
+import { ACTION, SUBJECT } from '../types/changelog';
 
 export type FormattedVehicle = ReturnType<typeof formatVehicleResponse>;
 
