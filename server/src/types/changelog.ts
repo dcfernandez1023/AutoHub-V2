@@ -3,10 +3,13 @@ export enum ACTION {
   UPDATED = 'updated',
   DELETED = 'deleted',
   SHARED = 'shared',
+  APPLIED = 'applied',
 }
 
 export enum SUBJECT {
   VEHICLE = 'vehicle',
+  SCHEDULED_SERVICE_TYPE = 'scheduled service type(s)',
+  SCHEDULED_SERVICE_INSTANCE = 'scheduled service instance(s)',
   SCHEDULED_LOG = 'scheduled log',
   REPAIR_LOG = 'repair log',
 }
@@ -41,5 +44,10 @@ type UpdatedLog = BaseChangelog & {
   updatedProperties: UpdatedProperty[]; // required only for UPDATED
 };
 
-export type ChangelogPayload = CreatedLog | DeletedLog | SharedLog | UpdatedLog;
+type AppliedLog = BaseChangelog & {
+  action: ACTION.APPLIED;
+  targetName: string; // required only for APPLIED
+};
+
+export type ChangelogPayload = CreatedLog | DeletedLog | SharedLog | UpdatedLog | AppliedLog;
 export type ChangelogPayloadWithUser = ChangelogPayload & { user: string };

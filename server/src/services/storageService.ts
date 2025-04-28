@@ -141,9 +141,9 @@ export const deleteVehicleAttachment = async (
 };
 
 // TODO: Optimize checkIfCanVehicleAccess, getting called twice in getVehicleAttachments
-export const deleteVehicleAttachments = async (vehicleId: string, userId: string, bucketName: string) => {
-  if (!vehicleId) {
-    throw new APIError('No vehicleId provided', 400);
+export const deleteVehicleAttachments = async (vehicle: Vehicle, userId: string, bucketName: string) => {
+  if (!vehicle) {
+    throw new APIError('No vehicle found', 404);
   }
   if (!userId) {
     throw new APIError('No userId provided', 400);
@@ -152,7 +152,6 @@ export const deleteVehicleAttachments = async (vehicleId: string, userId: string
     throw new APIError('No bucket name provided', 400);
   }
 
-  const vehicle = await checkIfCanAccessVehicle(vehicleId, userId, true);
   const attachments = await findVehicleAttachments(vehicle.id, userId);
   const filePaths = attachments.map((attachment) => attachment.filePath);
 

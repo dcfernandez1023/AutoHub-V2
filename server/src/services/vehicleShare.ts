@@ -40,7 +40,7 @@ export const createVehicleShare = async (vehicleId: string, userId: string, shar
     throw new APIError('Failed to share vehicle', 500);
   }
 
-  await createVehicleChangelog(vehicle.id, userId, {
+  await createVehicleChangelog(vehicle, userId, {
     action: ACTION.SHARED,
     subject: SUBJECT.VEHICLE,
     subjectName: vehicle.name,

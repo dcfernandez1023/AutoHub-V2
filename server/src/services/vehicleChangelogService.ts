@@ -3,15 +3,15 @@ import APIError from '../errors/APIError';
 import { ACTION, ChangelogPayload, ChangelogPayloadWithUser, SUBJECT, UpdatedProperty } from '../types/changelog';
 import { checkIfCanAccessVehicle } from './vehicleService';
 import { getUser } from './userService';
+import { Vehicle } from '@prisma/client';
 
-export const createVehicleChangelog = async (vehicleId: string, userId: string, payload: ChangelogPayload) => {
+export const createVehicleChangelog = async (vehicle: Vehicle, userId: string, payload: ChangelogPayload) => {
   try {
     const { action, subject, subjectName } = payload;
-    if (!userId || !vehicleId || !action || !subject || !subjectName) {
+    if (!userId || !vehicle || !action || !subject || !subjectName) {
       return;
     }
 
-    const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
     const user = await getUser({ id: userId });
 
     if (!user) {
@@ -48,8 +48,9 @@ export const formatChangelog = (payload: ChangelogPayloadWithUser): string => {
 
   switch (action) {
     case ACTION.SHARED:
-      const { targetName } = payload;
-      return `${user} ${action} ${subject} ${subjectName} with ${targetName}`;
+      return `${user} ${action} ${subject} ${subjectName} with ${payload.targetName}`;
+    case ACTION.APPLIED:
+      return `${user} ${action} ${subject} ${subjectName} to ${payload.targetName}`;
     case ACTION.UPDATED:
       const { updatedProperties } = payload;
       if (!Array.isArray(updatedProperties) || updatedProperties.length === 0) {

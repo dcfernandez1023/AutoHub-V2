@@ -1,5 +1,5 @@
 import APIError from '../errors/APIError';
-import { CreateOrUpdateVehicleRequest } from '../types/vehicle';
+import { CreateOrUpdateVehicleRequest, CreateOrUpdateVehicleRequestInternalSchema } from '../types/vehicle';
 import * as vehicleModel from '../models/vehicle';
 import { Vehicle } from '@prisma/client';
 import * as vehicleShareModel from '../models/vehicleShare';
@@ -16,10 +16,13 @@ export const createVehicle = async (userId: string, request: CreateOrUpdateVehic
   }
 
   // Set the dateCreated to now
-  request.dateCreated = new Date().getTime();
-  const vehicle = await vehicleModel.default.createVehicle(userId, request);
+  const requestInternal = CreateOrUpdateVehicleRequestInternalSchema.parse({
+    dateCreated: new Date().getTime(),
+    ...request,
+  });
+  const vehicle = await vehicleModel.default.createVehicle(userId, requestInternal);
   // TODO: Implement generic function to get diff of properties that were updated
-  await createVehicleChangelog(vehicle.id, userId, {
+  await createVehicleChangelog(vehicle, userId, {
     action: ACTION.CREATED,
     subject: SUBJECT.VEHICLE,
     subjectName: vehicle.name,
@@ -39,7 +42,7 @@ export const updateVehicle = async (id: string, userId: string, request: CreateO
   const vehicle = await checkIfCanAccessVehicle(id, userId);
   const updatedVehicle = await vehicleModel.default.updateVehicle(vehicle.id, request);
   // TODO: Implement generic function to get diff of properties that were updated
-  await createVehicleChangelog(vehicle.id, userId, {
+  await createVehicleChangelog(vehicle, userId, {
     action: ACTION.UPDATED,
     subject: SUBJECT.VEHICLE,
     subjectName: vehicle.name,
@@ -85,9 +88,9 @@ export const removeVehicle = async (id: string, userId: string) => {
   // Only the owner of the vehicle can delete it
   const vehicle = await checkIfCanAccessVehicle(id, userId, true);
   const deletedVehicle = await vehicleModel.default.deleteVehicle(vehicle.id, userId);
-  await deleteVehicleAttachments(vehicle.id, userId, STORAGE_BUCKET_NAME.VEHICLE);
+  await deleteVehicleAttachments(vehicle, userId, STORAGE_BUCKET_NAME.VEHICLE);
   // TODO: Implement generic function to get diff of properties that were updated
-  await createVehicleChangelog(vehicle.id, userId, {
+  await createVehicleChangelog(vehicle, userId, {
     action: ACTION.DELETED,
     subject: SUBJECT.VEHICLE,
     subjectName: vehicle.name,

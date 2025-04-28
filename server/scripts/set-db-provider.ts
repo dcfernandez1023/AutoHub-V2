@@ -102,6 +102,7 @@ model VehicleChangelog {
   vehicleId   String
   userId      String
   description String
+  dateCreated DateTime @default(now())
 
   vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)

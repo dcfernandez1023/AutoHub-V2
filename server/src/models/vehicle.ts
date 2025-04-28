@@ -1,8 +1,8 @@
 import { Vehicle } from '@prisma/client';
 import { db } from '../database/database';
-import { CreateOrUpdateVehicleRequest } from '../types/vehicle';
+import { CreateOrUpdateVehicleRequest, CreateOrUpdateVehicleRequestInternal } from '../types/vehicle';
 
-const createVehicle = async (userId: string, request: CreateOrUpdateVehicleRequest) => {
+const createVehicle = async (userId: string, request: CreateOrUpdateVehicleRequestInternal) => {
   return await db.vehicle.create({
     data: { userId, ...request },
   });
