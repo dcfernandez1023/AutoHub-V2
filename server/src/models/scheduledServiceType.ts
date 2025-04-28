@@ -21,9 +21,14 @@ const getScheduledServiceTypes = async (userId: string) => {
   return db.scheduledServiceType.findMany({ where: { userId } });
 };
 
+const getScheduledServiceType = async (id: string, userId: string) => {
+  return db.scheduledServiceType.findFirst({ where: { id, userId } });
+};
+
 export default {
   createScheduledServiceType,
   updateScheduledServiceType,
   deleteScheduledServiceType,
   getScheduledServiceTypes,
+  getScheduledServiceType,
 };

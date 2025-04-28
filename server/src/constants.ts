@@ -33,4 +33,6 @@ export enum STORAGE_BUCKET_NAME {
 
 export const VEHICLE_ATTACHMENT_LIMIT = 200;
 
+export const SCHEDULED_SERVICE_INSTANCE_CREATE_LIMIT = 25;
+
 export const VEHICLE_ATTACHMENT_FPATH = 'vehicles';

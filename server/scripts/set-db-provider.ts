@@ -10,6 +10,7 @@ dotenv.config({ path: envFile });
 
 const provider = 'postgresql';
 const providerUrl = process.env.DATABASE_URL;
+const directUrl = process.env.DIRECT_URL;
 
 // Define the schema file path
 const __filename = fileURLToPath(import.meta.url);
@@ -22,8 +23,9 @@ generator client {
 }
 
 datasource db {
-  provider = "${provider}"
-  url      = "${providerUrl}"
+  provider  = "${provider}"
+  url       = "${providerUrl}"
+  directUrl = "${directUrl}"
 }
 
 model User {

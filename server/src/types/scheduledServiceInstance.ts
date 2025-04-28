@@ -1,21 +1,21 @@
 import { z } from 'zod';
 
-export const CreateOrUpdateManyScheduledServiceInstanceRequestSchema = z.object({
-  vehicleId: z.string(),
+export const ScheduledServiceInstanceRequestSchema = z.object({
+  scheduledServiceTypeId: z.string(),
   mileInterval: z.number(),
   timeInterval: z.number(),
   timeUnits: z.enum(['DAY', 'WEEK', 'MONTH', 'YEAR']),
 });
 
-export const CreateOrUpdateManyScheduledServiceInstanceInternalSchema =
-  CreateOrUpdateManyScheduledServiceInstanceRequestSchema.extend({
-    userId: z.string(),
-    scheduledServiceTypeId: z.string(),
-  });
+export const ScheduledServiceInstanceRequestArraySchema = z.array(ScheduledServiceInstanceRequestSchema);
 
-export type CreateOrUpdateManyScheduledServiceInstanceRequest = z.infer<
-  typeof CreateOrUpdateManyScheduledServiceInstanceRequestSchema
+export const CreateManyScheduledServiceInstanceInternalSchema = ScheduledServiceInstanceRequestSchema.extend({
+  userId: z.string(),
+  vehicleId: z.string(),
+  scheduledServiceTypeId: z.string(),
+});
+
+export type CreateManyScheduledServiceInstanceInternal = z.infer<
+  typeof CreateManyScheduledServiceInstanceInternalSchema
 >;
-export type CreateOrUpdateManyScheduledServiceInstanceInternal = z.infer<
-  typeof CreateOrUpdateManyScheduledServiceInstanceInternalSchema
->;
+export type ScheduledServiceInstanceRequest = z.infer<typeof ScheduledServiceInstanceRequestSchema>;
