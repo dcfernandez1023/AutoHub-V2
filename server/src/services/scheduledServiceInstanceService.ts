@@ -1,8 +1,11 @@
 import APIError from '../errors/APIError';
 import {
   CreateManyScheduledServiceInstanceInternal,
-  ScheduledServiceInstanceRequest,
+  CreateScheduledServiceInstanceRequest,
+  CreateScheduledServiceInstanceRequestSchema,
   ScheduledServiceInstanceRequestArraySchema,
+  UpdateScheduledServiceInstanceRequest,
+  UpdateScheduledServiceInstanceRequestSchema,
 } from '../types/scheduledServiceInstance';
 import * as scheduledServiceTypeModel from '../models/scheduledServiceType';
 import * as scheduledServiceInstanceModel from '../models/scheduledServiceInstance';
@@ -13,7 +16,7 @@ import { ACTION, SUBJECT } from '../types/changelog';
 export const createScheduledServiceInstances = async (
   vehicleId: string,
   userId: string,
-  request: ScheduledServiceInstanceRequest[]
+  request: CreateScheduledServiceInstanceRequest[]
 ) => {
   if (!userId) {
     throw new APIError('No userId provided', 400);
@@ -74,4 +77,56 @@ export const findVehicleScheduledServiceInstances = async (vehicleId: string, us
   );
 
   return scheduledServiceInstances;
+};
+
+export const updateScheduledServiceInstance = async (
+  id: string,
+  vehicleId: string,
+  userId: string,
+  request: UpdateScheduledServiceInstanceRequest
+) => {
+  if (!id) {
+    throw new APIError('No scheduled service instance id provided', 400);
+  }
+  if (!vehicleId) {
+    throw new APIError('No vehicle id provided', 400);
+  }
+  if (!userId) {
+    throw new APIError('No user id provided', 400);
+  }
+
+  const parsedRequest = UpdateScheduledServiceInstanceRequestSchema.parse(request);
+
+  const vehicle = await checkIfCanAccessVehicle(vehicleId, userId, true);
+
+  const scheduledServiceInstance = await scheduledServiceInstanceModel.default.updateScheduledServiceInstance(
+    id,
+    vehicle.id,
+    userId,
+    parsedRequest
+  );
+
+  return scheduledServiceInstance;
+};
+
+export const removeScheduledServiceInstance = async (id: string, vehicleId: string, userId: string) => {
+  if (!id) {
+    throw new APIError('No scheduled service instance id provided', 400);
+  }
+  if (!vehicleId) {
+    throw new APIError('No vehicle id provided', 400);
+  }
+  if (!userId) {
+    throw new APIError('No user id provided', 400);
+  }
+
+  const vehicle = await checkIfCanAccessVehicle(vehicleId, userId, true);
+
+  const scheduledServiceInstance = await scheduledServiceInstanceModel.default.deleteScheduledServiceInstance(
+    id,
+    vehicle.id,
+    userId
+  );
+
+  return scheduledServiceInstance;
 };

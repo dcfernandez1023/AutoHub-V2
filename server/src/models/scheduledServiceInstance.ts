@@ -1,7 +1,7 @@
 import { db } from '../database/database';
 import {
   CreateManyScheduledServiceInstanceInternal,
-  ScheduledServiceInstanceRequest,
+  UpdateScheduledServiceInstanceRequest,
 } from '../types/scheduledServiceInstance';
 
 const createScheduledServiceInstances = async (request: CreateManyScheduledServiceInstanceInternal[]) => {
@@ -10,13 +10,12 @@ const createScheduledServiceInstances = async (request: CreateManyScheduledServi
 
 const updateScheduledServiceInstance = async (
   id: string,
-  scheduledServiceTypeId: string,
   vehicleId: string,
   userId: string,
-  request: ScheduledServiceInstanceRequest
+  request: UpdateScheduledServiceInstanceRequest
 ) => {
   return await db.scheduledServiceInstance.update({
-    where: { id, scheduledServiceTypeId, vehicleId, userId },
+    where: { id, vehicleId, userId },
     data: request,
   });
 };

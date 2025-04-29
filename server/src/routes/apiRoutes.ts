@@ -42,25 +42,25 @@ router.get('/users/info', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_
 
 // Scheduled service type routes
 router.get(
-  '/users/:userId/scheduledServiceType',
+  '/users/:userId/scheduledServiceTypes',
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
   getScheduledServiceTypes
 );
 router.post(
-  '/users/:userId/scheduledServiceType',
+  '/users/:userId/scheduledServiceTypes',
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
   postScheduledServiceType
 );
 router.put(
-  '/users/:userId/scheduledServiceType/:scheduledServiceTypeId',
+  '/users/:userId/scheduledServiceTypes/:scheduledServiceTypeId',
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
   putScheduledServiceType
 );
 router.delete(
-  '/users/:userId/scheduledServiceType/:scheduledServiceTypeId',
+  '/users/:userId/scheduledServiceTypes/:scheduledServiceTypeId',
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
   deleteScheduledServiceType
@@ -126,6 +126,16 @@ router.get(
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
   getVehicleScheduledServiceInstances
+);
+router.put(
+  '/users:/userId/vehicles/:vehicleId/scheduledServiceInstances/:scheduledServiceInstanceId',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE])
+);
+router.delete(
+  '/users:/userId/vehicles/:vehicleId/scheduledServiceInstances/:scheduledServiceInstanceId',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE])
 );
 
 // Vehicles
