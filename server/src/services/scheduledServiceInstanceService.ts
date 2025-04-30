@@ -26,6 +26,19 @@ export const createScheduledServiceInstances = async (
   }
   const parsedRequestArray = ScheduledServiceInstanceRequestArraySchema.parse(request);
 
+  // Ensure there's no duplicate scheduled service types in the request
+  const uniqueScheduledServiceTypeIds = new Set();
+  for (const requestObj of parsedRequestArray) {
+    const { scheduledServiceTypeId } = requestObj;
+    if (uniqueScheduledServiceTypeIds.has(scheduledServiceTypeId)) {
+      throw new APIError(
+        `Cannot apply the same scheduled service type ${scheduledServiceTypeId} to a vehicle more than once`,
+        400
+      );
+    }
+    uniqueScheduledServiceTypeIds.add(scheduledServiceTypeId);
+  }
+
   const vehicle = await checkIfCanAccessVehicle(vehicleId, userId, true);
 
   const internalRequestArray: CreateManyScheduledServiceInstanceInternal[] = [];
@@ -34,6 +47,7 @@ export const createScheduledServiceInstances = async (
   // Ensure that all scheduled service types exist and can be accessed by the user
   for (const requestObj of parsedRequestArray) {
     const { scheduledServiceTypeId } = requestObj;
+
     const scheduledServiceType = await scheduledServiceTypeModel.default.getScheduledServiceType(
       scheduledServiceTypeId,
       userId

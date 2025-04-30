@@ -37,7 +37,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     }
 
     const userIdParam = req.params.userId;
-    if (userIdParam && userIdParam !== userDecodedTokenPayload.userId) {
+    if (userIdParam !== userDecodedTokenPayload.userId) {
       throw new APIError('Forbidden', 403);
     }
 

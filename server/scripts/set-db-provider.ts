@@ -43,6 +43,10 @@ model User {
   ScheduledServiceType ScheduledServiceType[]
 
   ScheduledServiceInstance ScheduledServiceInstance[]
+
+  ScheduledLog ScheduledLog[]
+
+  RepairLog RepairLog[]
 }
 
 model Vehicle {
@@ -68,6 +72,8 @@ model Vehicle {
   VehicleShare VehicleShare[]
   VehicleChangelog VehicleChangelog[]
   ScheduledServiceInstance ScheduledServiceInstance[]
+  ScheduledLog ScheduledLog[]
+  RepairLog RepairLog[]
 }
 
 model VehicleAttachment {
@@ -104,8 +110,8 @@ model VehicleChangelog {
   description String
   dateCreated DateTime @default(now())
 
-  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([vehicleId])
@@ -116,7 +122,7 @@ model ScheduledServiceType {
   userId String
   name   String
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   ScheduledServiceInstance ScheduledServiceInstance[]
 
@@ -133,14 +139,54 @@ model ScheduledServiceInstance {
   timeInterval           Int
   timeUnits              TimeUnits
 
-  user                      User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vehicle                   Vehicle                  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  scheduledServiceType      ScheduledServiceType     @relation(fields: [scheduledServiceTypeId], references: [id], onDelete: Cascade)
+  user                   User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle                Vehicle                  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  scheduledServiceType   ScheduledServiceType     @relation(fields: [scheduledServiceTypeId], references: [id], onDelete: Cascade)
 
   @@unique([vehicleId, scheduledServiceTypeId]) // Only one ScheduledServiceInstance can be created for a single Vehicle and ScheduledServiceType
   @@index([userId])
   @@index([vehicleId])
   @@index([scheduledServiceTypeId])
+  ScheduledLog ScheduledLog[]
+}
+
+model ScheduledLog {
+  id                         String @id @default(uuid())
+  userId                     String
+  vehicleId                  String
+  scheduledServiceInstanceId String
+  datePerformed              DateTime @default(now())
+  mileage                    Int
+  partsCost                  Int
+  laborCost                  Int
+  totalCost                  Int
+  notes                      String
+
+  user                       User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle                    Vehicle                  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  scheduledServiceInstance   ScheduledServiceInstance @relation(fields: [scheduledServiceInstanceId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([vehicleId])
+  @@index([scheduledServiceInstanceId])
+}
+
+model RepairLog {
+  id                         String @id @default(uuid())
+  userId                     String
+  vehicleId                  String
+  datePerformed              DateTime @default(now())
+  mileage                    Int
+  partsCost                  Int
+  laborCost                  Int
+  totalCost                  Int
+  notes                      String
+
+  user                       User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle                    Vehicle                  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([vehicleId])
 }
 
 enum Role {
