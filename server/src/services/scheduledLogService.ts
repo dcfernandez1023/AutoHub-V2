@@ -9,7 +9,7 @@ import {
   UpdateScheduledLogRequestSchemaInternalArray,
 } from '../types/scheduledLog';
 import { checkIfCanAccessVehicle } from './vehicleService';
-import scheduledLog, * as scheduledLogModel from '../models/scheduledLog';
+import * as scheduledLogModel from '../models/scheduledLog';
 import { ScheduledLog, ScheduledServiceInstance } from '@prisma/client';
 
 export const createScheduledLog = async (vehicleId: string, userId: string, request: CreateScheduledLogRequest) => {
