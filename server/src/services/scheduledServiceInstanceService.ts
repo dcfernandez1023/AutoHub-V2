@@ -2,7 +2,6 @@ import APIError from '../errors/APIError';
 import {
   CreateManyScheduledServiceInstanceInternal,
   CreateScheduledServiceInstanceRequest,
-  CreateScheduledServiceInstanceRequestSchema,
   ScheduledServiceInstanceRequestArraySchema,
   UpdateScheduledServiceInstanceRequest,
   UpdateScheduledServiceInstanceRequestSchema,
@@ -39,6 +38,7 @@ export const createScheduledServiceInstances = async (
     uniqueScheduledServiceTypeIds.add(scheduledServiceTypeId);
   }
 
+  // Only the owner of the vehicle can create a scheduled service instance for the vehicle
   const vehicle = await checkIfCanAccessVehicle(vehicleId, userId, true);
 
   const internalRequestArray: CreateManyScheduledServiceInstanceInternal[] = [];
@@ -84,6 +84,7 @@ export const findVehicleScheduledServiceInstances = async (vehicleId: string, us
     throw new APIError('No vehicleId provided', 400);
   }
 
+  // Shared users of the vehicle can query scheduled service instances for the vehicle
   const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
 
   const scheduledServiceInstances = await scheduledServiceInstanceModel.default.getVehicleScheduledServiceInstances(
@@ -111,6 +112,7 @@ export const updateScheduledServiceInstance = async (
 
   const parsedRequest = UpdateScheduledServiceInstanceRequestSchema.parse(request);
 
+  // Only the owner of the vehicle can update scheduled service instances for the vehicle
   const vehicle = await checkIfCanAccessVehicle(vehicleId, userId, true);
 
   const scheduledServiceInstance = await scheduledServiceInstanceModel.default.updateScheduledServiceInstance(
@@ -134,6 +136,7 @@ export const removeScheduledServiceInstance = async (id: string, vehicleId: stri
     throw new APIError('No user id provided', 400);
   }
 
+  // Only the owner of the vehicle can delete a scheduled service instance for the vehicle
   const vehicle = await checkIfCanAccessVehicle(vehicleId, userId, true);
 
   const scheduledServiceInstance = await scheduledServiceInstanceModel.default.deleteScheduledServiceInstance(

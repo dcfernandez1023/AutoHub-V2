@@ -25,7 +25,7 @@ export const createVehicleAttachment = async (
   // Check that requesting user has access to the vehicle
   const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
 
-  return await vehicleAttachmentModel.default.createAttachment(id, vehicle.id, userId, url, filePath);
+  return await vehicleAttachmentModel.default.createAttachment(id, vehicle.id, vehicle.userId, url, filePath);
 };
 
 export const findVehicleAttachments = async (vehicleId: string, userId: string) => {
