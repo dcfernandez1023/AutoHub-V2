@@ -7,7 +7,7 @@ import {
   UpdateScheduledLogRequest,
   UpdateScheduledLogRequestSchemaArray,
   UpdateScheduledLogRequestSchemaInternalArray,
-} from '../types/scheduledLog';
+} from '../types/log';
 import { checkIfCanAccessVehicle } from './vehicleService';
 import * as scheduledLogModel from '../models/scheduledLog';
 import { ScheduledLog, ScheduledServiceInstance } from '@prisma/client';

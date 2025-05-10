@@ -30,9 +30,13 @@ import {
   putScheduledServiceInstance,
 } from '../controllers/scheduledServiceInstanceController';
 import {
+  deleteRepairLog,
   deleteScheduledLog,
+  getVehicleRepairLogs,
   getVehicleScheduledLogs,
+  postRepairLog,
   postScheduledLog,
+  putRepairLogs,
   putScheduledLogs,
 } from '../controllers/vehicleLogController';
 
@@ -172,6 +176,32 @@ router.delete(
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
   deleteScheduledLog
+);
+
+// Repair logs
+router.post(
+  '/users/:userId/vehicles/:vehicleId/repairLogs',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
+  postRepairLog
+);
+router.put(
+  '/users/:userId/vehicles/:vehicleId/repairLogs',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
+  putRepairLogs
+);
+router.get(
+  '/users/:userId/vehicles/:vehicleId/repairLogs',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
+  getVehicleRepairLogs
+);
+router.delete(
+  '/users/:userId/vehicles/:vehicleId/repairLogs/:repairLogId',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
+  deleteRepairLog
 );
 
 // Vehicles

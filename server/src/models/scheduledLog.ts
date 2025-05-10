@@ -1,16 +1,23 @@
+import { Prisma } from '@prisma/client';
 import { db } from '../database/database';
-import { CreateScheduledLogRequestInternal, UpdateScheduledLogRequestSchemaInternal } from '../types/scheduledLog';
+import { CreateScheduledLogRequestInternal, UpdateScheduledLogRequestInternal } from '../types/log';
 
 const createScheduledLog = async (vehicleId: string, userId: string, request: CreateScheduledLogRequestInternal) => {
   return await db.scheduledLog.create({ data: { vehicleId, userId, ...request } });
 };
 
-const updateScheduledLogs = async (vehicleId: string, request: UpdateScheduledLogRequestSchemaInternal[]) => {
-  return await Promise.all(
-    request.map((record) => {
-      db.scheduledLog.update({ where: { id: record.scheduledServiceInstanceId, vehicleId }, data: record });
+const updateScheduledLogs = async (vehicleId: string, request: UpdateScheduledLogRequestInternal[]) => {
+  const updates: Prisma.PrismaPromise<any>[] = request.map((record) =>
+    db.scheduledLog.update({
+      where: {
+        id: record.id,
+        vehicleId,
+      },
+      data: record,
     })
   );
+
+  return await db.$transaction(updates);
 };
 
 const getVehicleScheduledLogs = async (vehicleId: string) => {
