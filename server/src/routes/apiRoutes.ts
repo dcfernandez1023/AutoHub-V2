@@ -39,6 +39,7 @@ import {
   putRepairLogs,
   putScheduledLogs,
 } from '../controllers/vehicleLogController';
+import { getUpcomingMaintenance } from '../controllers/upcomingMaintenanceController';
 
 const router = Router();
 
@@ -49,8 +50,19 @@ router.get('/users/register/complete', completeRegistration);
 // Login routes
 router.post('/users/login', login);
 
-// User routes
-router.get('/users/info', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]), getUser);
+// Upcoming maintenance
+router.get(
+  '/users/:userId/upcomingMaintenance',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
+  getUpcomingMaintenance
+);
+router.get(
+  '/users/:userId/vehicles/:vehicleId/upcomingMaintenance',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
+  getUpcomingMaintenance
+);
 
 // Scheduled service type routes
 router.get(
@@ -107,6 +119,12 @@ router.delete(
 );
 
 // Vehicle attachments
+router.delete(
+  '/users/:userId/vehicles/:vehicleId/attachment/:attachmentId',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
+  deleteVehicleAttachment
+);
 router.get(
   '/users/:userId/vehicles/:vehicleId/attachments',
   authMiddleware,
@@ -118,12 +136,6 @@ router.post(
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
   postVehicleAttachment
-);
-router.delete(
-  '/users/:userId/vehicles/:vehicleId/attachment/:attachmentId',
-  authMiddleware,
-  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
-  deleteVehicleAttachment
 );
 
 // Scheduled Service Instances
@@ -153,6 +165,12 @@ router.delete(
 );
 
 // Scheduled Logs
+router.delete(
+  '/users/:userId/vehicles/:vehicleId/scheduledLogs/:scheduledLogId',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
+  deleteScheduledLog
+);
 router.post(
   '/users/:userId/vehicles/:vehicleId/scheduledLogs',
   authMiddleware,
@@ -171,14 +189,15 @@ router.get(
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
   getVehicleScheduledLogs
 );
-router.delete(
-  '/users/:userId/vehicles/:vehicleId/scheduledLogs/:scheduledLogId',
-  authMiddleware,
-  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
-  deleteScheduledLog
-);
 
 // Repair logs
+router.delete(
+  '/users/:userId/vehicles/:vehicleId/repairLogs/:repairLogId',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
+  deleteRepairLog
+);
+
 router.post(
   '/users/:userId/vehicles/:vehicleId/repairLogs',
   authMiddleware,
@@ -197,13 +216,6 @@ router.get(
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
   getVehicleRepairLogs
 );
-router.delete(
-  '/users/:userId/vehicles/:vehicleId/repairLogs/:repairLogId',
-  authMiddleware,
-  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
-  deleteRepairLog
-);
-
 // Vehicles
 router.get(
   '/users/:userId/vehicles/:vehicleId',
@@ -225,5 +237,8 @@ router.delete(
 );
 router.get('/users/:userId/vehicles', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]), getVehicles);
 router.post('/users/:userId/vehicles', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]), postVehicle);
+
+// User routes
+router.get('/users/:userId/info', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]), getUser);
 
 export default router;

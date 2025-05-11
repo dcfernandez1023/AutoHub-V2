@@ -69,8 +69,11 @@ export const findVehicleScheduledLogs = async (vehicleId: string, userId: string
     const { scheduledServiceInstance, ...scheduledLog } = scheduledLogWithInstance;
 
     const { nextServiceMileage, nextServiceDate } = calculateNextServiceMileageAndDate(
-      scheduledLog,
-      scheduledServiceInstance
+      scheduledLog.datePerformed,
+      scheduledLog.mileage,
+      scheduledServiceInstance.mileInterval,
+      scheduledServiceInstance.timeInterval,
+      scheduledServiceInstance.timeUnits
     );
 
     const dto: ScheduledLogDto = {
@@ -97,13 +100,14 @@ export const removeScheduledLog = async (id: string, vehicleId: string, userId: 
   return await scheduledLogModel.default.deleteScheduledLog(id, vehicle.id);
 };
 
-const calculateNextServiceMileageAndDate = (
-  scheduledLog: ScheduledLog,
-  scheduledServiceInstance: ScheduledServiceInstance
+export const calculateNextServiceMileageAndDate = (
+  datePerformed: Date,
+  mileagePerformed: number,
+  mileInterval: number,
+  timeInterval: number,
+  timeUnits: string
 ) => {
-  const nextServiceDate = scheduledLog.datePerformed;
-  const timeUnits = scheduledServiceInstance.timeUnits;
-  const timeInterval = scheduledServiceInstance.timeInterval;
+  const nextServiceDate = datePerformed;
 
   switch (timeUnits) {
     case 'DAY':
@@ -120,7 +124,7 @@ const calculateNextServiceMileageAndDate = (
       break;
   }
 
-  const nextServiceMileage = scheduledLog.mileage + scheduledServiceInstance.mileInterval;
+  const nextServiceMileage = mileagePerformed + mileInterval;
 
   return { nextServiceMileage, nextServiceDate };
 };
