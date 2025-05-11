@@ -118,6 +118,14 @@ export const checkIfCanAccessVehicle = async (
   userId: string,
   ownerOnly: boolean = false
 ): Promise<Vehicle> => {
+  if (!userId) {
+    throw new APIError('No userId provided', 400);
+  }
+
+  if (!vehicleId) {
+    throw new APIError('No vehicleId provided', 400);
+  }
+
   const vehicle = await vehicleModel.default.getVehicleById(vehicleId);
 
   if (!vehicle) {

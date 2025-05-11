@@ -75,7 +75,6 @@ describe('vehicleService tests', () => {
         licensePlate: 'licensePlate',
         vin: 'vin',
         notes: 'notes',
-        dateCreated: new Date().getTime(),
         base64Image: 'base64Image',
       };
 
@@ -101,14 +100,14 @@ describe('vehicleService tests', () => {
         licensePlate: 'licensePlate',
         vin: 'vin',
         notes: 'notes',
-        dateCreated: new Date().getTime(),
         base64Image: 'base64Image',
       };
-      // @ts-ignore ignoring bigint conversion
       const mockUpdatedVehicle: Vehicle = {
         ...mockRequest,
         id: mockVehicleId,
         userId: mockUserId,
+        // @ts-ignore ignoring bigint conversion
+        dateCreated: new Date().getTime(),
       };
 
       (db.vehicle.findFirst as jest.Mock).mockResolvedValue(mockVehicle);
@@ -128,16 +127,16 @@ describe('vehicleService tests', () => {
         licensePlate: 'licensePlate',
         vin: 'vin',
         notes: 'notes',
-        dateCreated: new Date().getTime(),
         base64Image: 'base64Image',
       };
       const mockUserSharedWithVehicle = '5282fc15-73f1-422d-ac21-045a7470c201-some-user-with-permission';
 
-      // @ts-ignore ignoring bigint conversion
       const mockUpdatedVehicle: Vehicle = {
         ...mockRequest,
         id: mockVehicleId,
         userId: mockUserSharedWithVehicle,
+        // @ts-ignore ignoring bigint conversion
+        dateCreated: new Date().getTime(),
       };
       const mockVehicleShare: VehicleShare = {
         id: 'a7e00100-cb28-4584-93cc-7bf5daf0f0bd',
@@ -163,7 +162,6 @@ describe('vehicleService tests', () => {
         licensePlate: 'licensePlate',
         vin: 'vin',
         notes: 'notes',
-        dateCreated: new Date().getTime(),
         base64Image: 'base64Image',
       };
       const mockUserIdWithoutPermission = '5282fc15-73f1-422d-ac21-045a7470c201-some-user-without-permission';

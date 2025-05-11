@@ -1,6 +1,7 @@
-import { Vehicle } from '@prisma/client';
+import { Prisma, Vehicle } from '@prisma/client';
 import { db } from '../database/database';
 import { CreateOrUpdateVehicleRequest, CreateOrUpdateVehicleRequestInternal } from '../types/vehicle';
+import { VehicleImport } from '../types/import';
 
 const createVehicle = async (userId: string, request: CreateOrUpdateVehicleRequestInternal) => {
   return await db.vehicle.create({
@@ -42,6 +43,10 @@ const getSharedVehicles = async (userId: string) => {
   return sharedVehicles.map((share) => share.vehicle);
 };
 
+const importVehicles = async (userId: string, recordImport: VehicleImport[]) => {
+  return db.vehicle.createMany({ data: recordImport.map((record) => ({ userId, ...record })) });
+};
+
 export default {
   createVehicle,
   updateVehicle,
@@ -50,4 +55,5 @@ export default {
   getVehicleById,
   deleteVehicle,
   getSharedVehicles,
+  importVehicles,
 };

@@ -7,7 +7,7 @@ const createScheduledLog = async (vehicleId: string, userId: string, request: Cr
 };
 
 const updateScheduledLogs = async (vehicleId: string, request: UpdateScheduledLogRequestInternal[]) => {
-  const updates: Prisma.PrismaPromise<any>[] = request.map((record) =>
+  const updates: Prisma.PrismaPromise<ScheduledLog>[] = request.map((record) =>
     db.scheduledLog.update({
       where: {
         id: record.id,
