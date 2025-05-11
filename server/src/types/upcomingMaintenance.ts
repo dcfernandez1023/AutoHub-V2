@@ -11,6 +11,7 @@ export const UpcomingMaintenanceDtoSchema = z.object({
   vehicleMileage: z.number(),
   scheduledServiceTypeId: z.string(),
   scheduledServiceTypeName: z.string(),
+  scheduledServiceInstanceId: z.string(),
   scheduledServiceInstanceTimeInterval: z.number(),
   scheduledServiceInstanceTimeUnits: z.string(),
   scheduledServiceInstanceMileInterval: z.number(),

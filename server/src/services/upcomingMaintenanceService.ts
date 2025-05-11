@@ -55,6 +55,7 @@ const transformToUpcomingMaintenanceDto = (userId: string, logData: any[]): Upco
       vehicleMileage: d.vehicleMileage,
       scheduledServiceTypeId: d.scheduledServiceTypeId,
       scheduledServiceTypeName: d.scheduledServiceTypeName,
+      scheduledServiceInstanceId: d.scheduledServiceInstanceId,
       scheduledServiceInstanceTimeInterval: d.timeInterval,
       scheduledServiceInstanceTimeUnits: d.timeUnits,
       scheduledServiceInstanceMileInterval: d.mileInterval,

@@ -1,6 +1,7 @@
 import { Prisma, ScheduledLog } from '@prisma/client';
 import { db } from '../database/database';
 import { CreateScheduledLogRequestInternal, UpdateScheduledLogRequestInternal } from '../types/log';
+import { ScheduledLogImport, ScheduledLogImportDto } from '../types/import';
 
 const createScheduledLog = async (vehicleId: string, userId: string, request: CreateScheduledLogRequestInternal) => {
   return await db.scheduledLog.create({ data: { vehicleId, userId, ...request } });
@@ -18,6 +19,10 @@ const updateScheduledLogs = async (vehicleId: string, request: UpdateScheduledLo
   );
 
   return await db.$transaction(updates);
+};
+
+export const getScheduledLogs = async (userId: string) => {
+  return await db.scheduledLog.findMany({ where: { userId } });
 };
 
 const getVehicleScheduledLogs = async (vehicleId: string) => {
@@ -40,6 +45,7 @@ const getMostRecentScheduledLogs = async (userId: string): Promise<unknown[]> =>
       v."mileage" as "vehicleMileage",
       sst."id" as "scheduledServiceTypeId",
       sst."name" as "scheduledServiceTypeName",
+      ssi."id" as "scheduledServiceInstanceId",
       ssi."timeInterval" as "timeInterval",
       ssi."timeUnits" as "timeUnits",
       ssi."mileInterval" as "mileInterval",
@@ -79,6 +85,7 @@ const getMostRecentScheduledLogsByVehicleId = async (userId: string, vehicleId: 
       v."mileage" as "vehicleMileage",
       sst."id" as "scheduledServiceTypeId",
       sst."name" as "scheduledServiceTypeName",
+      ssi."id" as "scheduledServiceInstanceId",
       ssi."timeInterval" as "timeInterval",
       ssi."timeUnits" as "timeUnits",
       ssi."mileInterval" as "mileInterval",
@@ -99,11 +106,15 @@ const getMostRecentScheduledLogsByVehicleId = async (userId: string, vehicleId: 
       ON sl."scheduledServiceInstanceId" = ssi."id"
     INNER JOIN "ScheduledServiceType" sst
       ON ssi."scheduledServiceTypeId" = sst."id"
-    WHERE sl."userId" = ${userId};
+    WHERE sl."userId" = ${userId} AND sl."vehicleId" = ${vehicleId};
   `;
 
   // TODO: Better typing for this
   return latestLogs as unknown[];
+};
+
+const importScheduledLogs = async (userId: string, recordImport: ScheduledLogImportDto[]) => {
+  return await db.scheduledLog.createMany({ data: recordImport.map((record) => ({ userId, ...record })) });
 };
 
 export default {
@@ -113,4 +124,6 @@ export default {
   deleteScheduledLog,
   getMostRecentScheduledLogs,
   getMostRecentScheduledLogsByVehicleId,
+  importScheduledLogs,
+  getScheduledLogs,
 };

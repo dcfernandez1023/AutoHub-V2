@@ -42,7 +42,11 @@ export const ScheduledLogImportSchema = z.object({
   totalCost: z.number(),
   notes: z.string(),
 });
+export const ScheduledLogImportDtoSchema = ScheduledLogImportSchema.extend({
+  datePerformed: z.date(),
+});
 export type ScheduledLogImport = z.infer<typeof ScheduledLogImportSchema>;
+export type ScheduledLogImportDto = z.infer<typeof ScheduledLogImportDtoSchema>;
 
 export const RepairLogImportSchema = z.object({
   id: z.string(),
@@ -54,7 +58,11 @@ export const RepairLogImportSchema = z.object({
   totalCost: z.number(),
   notes: z.string(),
 });
+export const RepairLogImportDtoSchema = ScheduledLogImportSchema.extend({
+  datePerformed: z.date(),
+});
 export type RepairLogImport = z.infer<typeof RepairLogImportSchema>;
+export type RepairLogImportDto = z.infer<typeof RepairLogImportDtoSchema>;
 
 export const ImportSchema = z.object({
   vehicles: z.array(VehicleImportSchema),
