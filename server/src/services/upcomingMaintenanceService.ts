@@ -6,19 +6,26 @@ import {
   UpcomingMaintenanceDtoSchema,
 } from '../types/upcomingMaintenance';
 import { calculateNextServiceMileageAndDate } from './scheduledLogService';
+import { checkIfCanAccessVehicle } from './vehicleService';
 
 export const findUpcomingMaintenance = async (userId: string, vehicleId?: string) => {
   if (!userId) {
     throw new APIError('No userId provided', 400);
   }
 
-  const logData = vehicleId
-    ? await scheduledLogModel.default.getMostRecentScheduledLogsByVehicleId(userId, vehicleId)
-    : await scheduledLogModel.default.getMostRecentScheduledLogs(userId);
+  let logData;
+
+  if (vehicleId) {
+    const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
+    logData = await scheduledLogModel.default.getMostRecentScheduledLogsByVehicleId(userId, vehicle.id);
+  } else {
+    logData = await scheduledLogModel.default.getMostRecentScheduledLogs(userId);
+  }
 
   return transformToUpcomingMaintenanceDto(userId, logData);
 };
 
+// TODO: Better typing
 const transformToUpcomingMaintenanceDto = (userId: string, logData: any[]): UpcomingMaintenanceDto[] => {
   return logData.map((d) => {
     const nextScheduledServiceMetadata = NextScheduledServiceMetadataDtoSchema.parse({
