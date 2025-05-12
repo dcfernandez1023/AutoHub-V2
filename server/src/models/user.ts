@@ -1,6 +1,13 @@
 import { User } from '@prisma/client';
 import { db } from '../database/database';
 import { hash } from 'bcryptjs';
+import {
+  RepairLogImportDto,
+  ScheduledLogImportDto,
+  ScheduledServiceInstanceImport,
+  ScheduledServiceTypeImport,
+  VehicleImport,
+} from '../types/import';
 
 const createUser = async (username: string, email: string, password: string, role: 'USER' | 'ADMIN'): Promise<User> => {
   const hashedPassword = await hash(password, 10);
@@ -28,4 +35,23 @@ const registerUser = async (userId: string, email: string) => {
   });
 };
 
-export default { createUser, getUserByEmail, getUserById, getUserByEmailAndId, registerUser };
+const importData = async (
+  userId: string,
+  vehicleImport: VehicleImport[],
+  scheduledServiceTypeImport: ScheduledServiceTypeImport[],
+  scheduledServiceInstanceImport: ScheduledServiceInstanceImport[],
+  scheduledLogImport: ScheduledLogImportDto[],
+  repairLogImport: RepairLogImportDto[]
+) => {
+  await db.$transaction([
+    db.vehicle.createMany({ data: vehicleImport.map((record) => ({ userId, ...record })) }),
+    db.scheduledServiceType.createMany({ data: scheduledServiceTypeImport.map((record) => ({ userId, ...record })) }),
+    db.scheduledServiceInstance.createMany({
+      data: scheduledServiceInstanceImport.map((record) => ({ userId, ...record })),
+    }),
+    db.scheduledLog.createMany({ data: scheduledLogImport.map((record) => ({ userId, ...record })) }),
+    db.repairLog.createMany({ data: repairLogImport.map((record) => ({ userId, ...record })) }),
+  ]);
+};
+
+export default { createUser, getUserByEmail, getUserById, getUserByEmailAndId, registerUser, importData };

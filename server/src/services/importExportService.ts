@@ -1,14 +1,22 @@
 import APIError from '../errors/APIError';
-import { ImportSchema, RepairLogImportDtoSchema } from '../types/import';
+import { ImportSchema, RepairLogImportDtoSchema, ScheduledLogImportDtoSchema } from '../types/import';
 
 import * as vehicleModel from '../models/vehicle';
 import * as scheduledServiceTypeModel from '../models/scheduledServiceType';
 import * as scheduledServiceInstanceModel from '../models/scheduledServiceInstance';
-import * as scheduledLogModel from '../models/scheduledLog';
+import scheduledLog, * as scheduledLogModel from '../models/scheduledLog';
 import * as repairLogModel from '../models/repairLog';
-import { ScheduledLogDtoSchema } from '../types/log';
+import * as userModel from '../models/user';
+import { formatVehicleResponse } from './vehicleService';
 
 export const doImport = async (userId: string, buffer: Buffer) => {
+  if (!userId) {
+    throw new APIError('No userId provided', 400);
+  }
+  if (!buffer) {
+    throw new APIError('No import json file provided', 400);
+  }
+
   let jsonData;
 
   try {
@@ -26,39 +34,51 @@ export const doImport = async (userId: string, buffer: Buffer) => {
 
   const { vehicles, scheduledServiceTypes, scheduledServiceInstances, scheduledLogs, repairLogs } = parsedData;
 
-  await vehicleModel.default.importVehicles(userId, vehicles);
-  await scheduledServiceTypeModel.default.importScheduledServiceTypes(userId, scheduledServiceTypes);
-  await scheduledServiceInstanceModel.default.importScheduledServiceInstances(userId, scheduledServiceInstances);
-  await scheduledLogModel.default.importScheduledLogs(
+  const vehicleImport = vehicles;
+  const scheduledServiceTypeImport = scheduledServiceTypes;
+  const scheduledServiceInstanceImport = scheduledServiceInstances;
+  const scheduledLogImport = scheduledLogs.map((log) => {
+    const logDto = { ...log, datePerformed: new Date(log.datePerformed) };
+    const logDtoParsed = ScheduledLogImportDtoSchema.parse(logDto);
+    return logDtoParsed;
+  });
+  const repairLogImport = repairLogs.map((log) => {
+    const logDto = { ...log, datePerformed: new Date(log.datePerformed) };
+    const logDtoParsed = RepairLogImportDtoSchema.parse(logDto);
+    return logDtoParsed;
+  });
+
+  // All or none succeed
+  await userModel.default.importData(
     userId,
-    scheduledLogs.map((log) => {
-      const logDto = { ...log, datePerformed: new Date(log.datePerformed) };
-      const logDtoParsed = ScheduledLogDtoSchema.parse(logDto);
-      return logDtoParsed;
-    })
-  );
-  await repairLogModel.default.importRepairLogs(
-    userId,
-    repairLogs.map((log) => {
-      const logDto = { ...log, datePerformed: new Date(log.datePerformed) };
-      const logDtoParsed = RepairLogImportDtoSchema.parse(logDto);
-      return logDtoParsed;
-    })
+    vehicleImport,
+    scheduledServiceTypeImport,
+    scheduledServiceInstanceImport,
+    scheduledLogImport,
+    repairLogImport
   );
 };
 
 export const doExport = async (userId: string): Promise<string> => {
-  const vehicles = await vehicleModel.default.getVehicles(userId);
+  if (!userId) {
+    throw new APIError('No userId provided', 400);
+  }
+
+  const vehicles = (await vehicleModel.default.getVehicles(userId)).map((vehicle) => formatVehicleResponse(vehicle));
   const scheduledServiceTypes = await scheduledServiceTypeModel.default.getScheduledServiceTypes(userId);
   const scheduledServiceInstances = await scheduledServiceInstanceModel.default.getScheduledServiceInstances(userId);
   const scheduledLogs = await scheduledLogModel.default.getScheduledLogs(userId);
   const repairLogs = await repairLogModel.default.getRepairLogs(userId);
 
-  return JSON.stringify({
-    vehicles,
-    scheduledServiceTypes,
-    scheduledServiceInstances,
-    scheduledLogs,
-    repairLogs,
-  });
+  return JSON.stringify(
+    {
+      vehicles,
+      scheduledServiceTypes,
+      scheduledServiceInstances,
+      scheduledLogs,
+      repairLogs,
+    },
+    null,
+    2
+  );
 };

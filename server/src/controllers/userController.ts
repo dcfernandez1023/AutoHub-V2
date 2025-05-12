@@ -46,7 +46,7 @@ export const login = async (req: Request, res: Response) => {
     const jwtToken = generateJwtToken(user.id, email, user.role as ROLES);
     console.log(`JWT Token: ${jwtToken}`);
     res.cookie(CONSTANTS.AUTOHUB_ACCESS_TOKEN, jwtToken);
-    res.status(200).json({ message: 'Logged in successfully' });
+    res.status(200).json({ userId: user.id, email: user.email });
   } catch (error) {
     handleError(res, error as Error);
   }

@@ -58,7 +58,7 @@ export const RepairLogImportSchema = z.object({
   totalCost: z.number(),
   notes: z.string(),
 });
-export const RepairLogImportDtoSchema = ScheduledLogImportSchema.extend({
+export const RepairLogImportDtoSchema = RepairLogImportSchema.extend({
   datePerformed: z.date(),
 });
 export type RepairLogImport = z.infer<typeof RepairLogImportSchema>;

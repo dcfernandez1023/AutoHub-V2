@@ -40,6 +40,7 @@ import {
   putScheduledLogs,
 } from '../controllers/vehicleLogController';
 import { getUpcomingMaintenance } from '../controllers/upcomingMaintenanceController';
+import { postExport, postImport } from '../controllers/importExportController';
 
 const router = Router();
 
@@ -49,6 +50,10 @@ router.get('/users/register/complete', completeRegistration);
 
 // Login routes
 router.post('/users/login', login);
+
+// Import/Export
+router.post('/users/:userId/import', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]), postImport);
+router.post('/users/:userId/export', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]), postExport);
 
 // Upcoming maintenance
 router.get(
