@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { register, completeRegistration, login, getUser } from '../controllers/userController';
+import { register, completeRegistration, login, getUser, logout } from '../controllers/userController';
 import { authMiddleware } from '../middleware/authMiddleware';
 import {
   deleteVehicle,
@@ -41,8 +41,12 @@ import {
 } from '../controllers/vehicleLogController';
 import { getUpcomingMaintenance } from '../controllers/upcomingMaintenanceController';
 import { postExport, postImport } from '../controllers/importExportController';
+import { getToken } from '../controllers/authController';
 
 const router = Router();
+
+// Token route
+router.post('/auth/token', getToken);
 
 // Register routes
 router.post('/users/register', register);
@@ -50,6 +54,7 @@ router.get('/users/register/complete', completeRegistration);
 
 // Login routes
 router.post('/users/login', login);
+router.post('/users/logout', logout);
 
 // Import/Export
 router.post('/users/:userId/import', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]), postImport);

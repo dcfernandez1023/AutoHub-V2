@@ -52,6 +52,15 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
+export const logout = async (req: Request, res: Response) => {
+  try {
+    res.clearCookie(CONSTANTS.AUTOHUB_ACCESS_TOKEN);
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    handleError(res, error as Error);
+  }
+};
+
 export const getUser = async (req: Request, res: Response) => {
   try {
     const userDecodedTokenPayload = getUserDecodedTokenPayload(req);
