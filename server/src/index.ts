@@ -1,44 +1,98 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
-import express from 'express';
+import express, { Express } from 'express';
 import cookieParser from 'cookie-parser';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './swagger';
 
-import apiRoutes from './routes/apiRoutes';
+import authRoutes from './routes/auth';
+import userRoutes from './routes/user';
+import exportRoutes from './routes/export';
+import importRoutes from './routes/import';
+import repairLogRoutes from './routes/repairLog';
+import scheduledLogRoutes from './routes/scheduledLog';
+import scheduledServiceInstanceRoutes from './routes/scheduledServiceInstance';
+import scheduledServiceTypeRoues from './routes/scheduledServiceType';
+import upcomingMaintenanceRoutes from './routes/upcomingMaintenance';
+import vehicleRoutes from './routes/vehicle';
+
 import logger from './middleware/logger';
+import { Server } from 'http';
 
-// Load environment variables
-const environment = process.argv[2] || 'dev';
-console.log(`Environment: ${environment}`);
-const envFile = environment === 'dev' ? '.env.dev' : '.env.prod';
-dotenv.config({ path: envFile });
+class AutoHubServer {
+  private _environment: string;
+  private _port: string | number;
+  private _app: Express;
+  private _server: Server;
 
-// Create app
-const app = express();
-const PORT = process.env.PORT || 5000;
+  private static _instance: AutoHubServer;
 
-// Middleware
-if (environment === 'dev') {
-  app.use(
-    cors({
-      origin: 'http://localhost:3000',
-      credentials: true,
-    })
-  );
-} else {
-  app.use(cors());
+  static API_ROUTE_PREFIX = '/api';
+
+  private constructor() {
+    this._environment = process.argv[2] || 'dev';
+    this._port = process.env.PORT || 5000;
+
+    const envFile = this._environment === 'prod' ? '.env.prod' : '.env.dev';
+    dotenv.config({ path: envFile });
+
+    this._app = express();
+
+    // Swagger
+    this._app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+    // Middleware
+    if (this._environment === 'dev') {
+      this._app.use(
+        cors({
+          origin: 'http://localhost:3000',
+          credentials: true,
+        })
+      );
+    } else {
+      this._app.use(cors());
+    }
+    this._app.use(express.json());
+    this._app.use(cookieParser());
+    this._app.use(logger);
+
+    // Routes
+    this._app.use(AutoHubServer.API_ROUTE_PREFIX, authRoutes);
+    this._app.use(AutoHubServer.API_ROUTE_PREFIX, userRoutes);
+    this._app.use(AutoHubServer.API_ROUTE_PREFIX, importRoutes);
+    this._app.use(AutoHubServer.API_ROUTE_PREFIX, exportRoutes);
+    this._app.use(AutoHubServer.API_ROUTE_PREFIX, upcomingMaintenanceRoutes);
+    this._app.use(AutoHubServer.API_ROUTE_PREFIX, scheduledServiceTypeRoues);
+    this._app.use(AutoHubServer.API_ROUTE_PREFIX, scheduledLogRoutes);
+    this._app.use(AutoHubServer.API_ROUTE_PREFIX, repairLogRoutes);
+    this._app.use(AutoHubServer.API_ROUTE_PREFIX, scheduledServiceInstanceRoutes);
+    this._app.use(AutoHubServer.API_ROUTE_PREFIX, vehicleRoutes);
+
+    this._app.get('/', (req, res) => {
+      res.send('Autohub');
+    });
+
+    // Start server
+    this._server = this._app.listen(this._port, () => {
+      console.log(`🚀 Server is running on http://localhost:${this._port}`);
+    });
+  }
+
+  getApp(): Express {
+    return this._app;
+  }
+
+  getServer(): Server {
+    return this._server;
+  }
+
+  static get instance() {
+    if (!this._instance) {
+      this._instance = new AutoHubServer();
+    }
+
+    return this._instance;
+  }
 }
-app.use(express.json());
-app.use(cookieParser());
-app.use(logger);
 
-// Routes
-app.use('/api', apiRoutes);
-
-app.get('/', (req, res) => {
-  res.send('Autohub');
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
-});
+export default AutoHubServer.instance;

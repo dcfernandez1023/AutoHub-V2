@@ -51,8 +51,18 @@ export const register = async (request: RegisterRequest): Promise<string> => {
   const registrationToken = generateRegistrationToken(user.id, email);
   const completeLink = `${baseUrl}/api/users/register/complete?token=${registrationToken}`;
 
-  await sendRegistrationEmail(email, completeLink);
+  if (!request.doNotSendEmail) {
+    await sendRegistrationEmail(email, completeLink);
+  }
   return completeLink;
+};
+
+export const removeUser = async (userId: string) => {
+  if (!userId) {
+    throw new APIError('No userId provided', 400);
+  }
+
+  return await userModel.default.deleteUser(userId);
 };
 
 export const completeRegistration = async (request: CompleteRegistrationRequest) => {

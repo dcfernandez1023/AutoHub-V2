@@ -28,7 +28,7 @@ export const createVehicleAttachment = async (
   return await vehicleAttachmentModel.default.createAttachment(id, vehicle.id, vehicle.userId, url, filePath);
 };
 
-export const findVehicleAttachments = async (vehicleId: string, userId: string) => {
+export const findVehicleAttachments = async (vehicleId: string, userId: string, checkAccess: boolean = true) => {
   if (!vehicleId) {
     throw new APIError('No vehicle id provided', 400);
   }
@@ -37,9 +37,12 @@ export const findVehicleAttachments = async (vehicleId: string, userId: string) 
   }
 
   // Check that requesting user has access to the vehicle
-  const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
+  if (checkAccess) {
+    const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
+    return await vehicleAttachmentModel.default.getAttachments(vehicle.id);
+  }
 
-  return await vehicleAttachmentModel.default.getAttachments(vehicle.id);
+  return await vehicleAttachmentModel.default.getAttachments(vehicleId);
 };
 
 export const findVehicleAttachment = async (attachmentId: string, vehicleId: string, userId: string) => {

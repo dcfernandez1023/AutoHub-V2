@@ -65,7 +65,6 @@ export const getUser = async (req: Request, res: Response) => {
   try {
     const userDecodedTokenPayload = getUserDecodedTokenPayload(req);
     const { userId, email } = userDecodedTokenPayload;
-    console.log(userId, email);
     const user = await getRegisteredUser({ id: userId, email });
     const { password, ...profile } = user;
     console.log(profile);

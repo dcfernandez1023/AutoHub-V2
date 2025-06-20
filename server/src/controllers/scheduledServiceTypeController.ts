@@ -46,6 +46,7 @@ export const deleteScheduledServiceType = async (req: Request, res: Response) =>
 
     res.status(200).json(scheduledServiceType);
   } catch (error) {
+    console.error(error);
     handleError(res, error as Error);
   }
 };

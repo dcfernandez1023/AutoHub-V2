@@ -110,7 +110,7 @@ export const findSharedVehicles = async (userId: string) => {
     throw new APIError('No shared vehicles found', 404);
   }
 
-  return sharedVehicles;
+  return sharedVehicles.map((vehicle) => formatVehicleResponse(vehicle));
 };
 
 export const checkIfCanAccessVehicle = async (

@@ -3,6 +3,7 @@ export type RegisterRequest = {
   email: string;
   password: string;
   baseUrl: string;
+  doNotSendEmail?: boolean;
 };
 
 export type CompleteRegistrationRequest = {

@@ -152,15 +152,16 @@ export const deleteVehicleAttachments = async (vehicle: Vehicle, userId: string,
     throw new APIError('No bucket name provided', 400);
   }
 
-  const attachments = await findVehicleAttachments(vehicle.id, userId);
+  const attachments = await findVehicleAttachments(vehicle.id, userId, false);
   const filePaths = attachments.map((attachment) => attachment.filePath);
 
   const supabaseClient = getSupabaseClient();
 
-  const { error } = await supabaseClient.storage.from(bucketName).remove(filePaths);
-
-  if (error) {
-    throw new APIError('Failed to delete attachment', 500);
+  if (filePaths.length) {
+    const { error } = await supabaseClient.storage.from(bucketName).remove(filePaths);
+    if (error) {
+      throw new APIError('Failed to delete attachment', 500);
+    }
   }
 
   return attachments;

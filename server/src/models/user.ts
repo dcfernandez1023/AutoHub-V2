@@ -35,6 +35,10 @@ const registerUser = async (userId: string, email: string) => {
   });
 };
 
+const deleteUser = async (userId: string) => {
+  return await db.user.delete({ where: { id: userId } });
+};
+
 const importData = async (
   userId: string,
   vehicleImport: VehicleImport[],
@@ -54,4 +58,4 @@ const importData = async (
   ]);
 };
 
-export default { createUser, getUserByEmail, getUserById, getUserByEmailAndId, registerUser, importData };
+export default { createUser, getUserByEmail, getUserById, getUserByEmailAndId, registerUser, deleteUser, importData };
