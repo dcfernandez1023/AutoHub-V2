@@ -8,7 +8,7 @@ import {
 import { getUserDecodedTokenPayload, handleError } from './utils';
 import { authenticateToken, generateJwtToken } from '../services/authService';
 import APIError from '../errors/APIError';
-import { CONSTANTS, ROLES } from '../constants';
+import { ALLOWED_SCOPES, CONSTANTS, ROLES } from '../constants';
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -44,9 +44,14 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const user = await handleLogin({ email, password });
     const jwtToken = generateJwtToken(user.id, email, user.role as ROLES);
-    console.log(`JWT Token: ${jwtToken}`);
-    res.cookie(CONSTANTS.AUTOHUB_ACCESS_TOKEN, jwtToken);
-    res.status(200).json({ userId: user.id, email: user.email });
+    const scopes = ALLOWED_SCOPES[user.role as ROLES];
+    res.cookie(CONSTANTS.AUTOHUB_ACCESS_TOKEN, jwtToken, {
+      httpOnly: true,
+      secure: false, // TODO: Set this based on environment
+      sameSite: 'lax', // TODO: Set this based on environment
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+    res.status(200).json({ userId: user.id, email: user.email, scopes });
   } catch (error) {
     handleError(res, error as Error);
   }

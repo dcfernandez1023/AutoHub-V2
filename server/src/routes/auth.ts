@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { getToken } from '../controllers/authController';
+import { getToken, me } from '../controllers/authController';
+import { AUTH_SCOPES } from '../constants';
+import { authMiddleware } from '../middleware/authMiddleware';
+import { scopesMiddleware } from '../middleware/scopesMiddleware';
 
 const router = Router();
 
@@ -44,5 +47,6 @@ const router = Router();
  *               $ref: '#/components/schemas/GetTokenResponse'
  */
 router.post('/auth/token', getToken);
+router.get('/auth/me', me);
 
 export default router;

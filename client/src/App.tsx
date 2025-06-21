@@ -1,26 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useAuthContext } from './context/AuthContext';
+import { Spinner } from 'react-bootstrap';
+import Login from './components/Login';
+import Home from './components/Home';
+import AppNavbar from './components/AppNavbar';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const { authContext, loading } = useAuthContext();
+
+  if (loading) {
+    return <Spinner animation="border" />;
+  }
+
+  const AppContent = () => {
+    return (
+      <>
+        <AppNavbar />
+        {authContext ? <Home /> : <Login />}
+      </>
+    );
+  };
+
+  return <AppContent />;
 }
 
 export default App;

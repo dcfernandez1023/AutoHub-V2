@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { CONSTANTS } from '../constants';
 import { authenticateToken } from '../services/authService';
-import { handleError } from '../controllers/utils';
+import { getUserDecodedPayloadFromToken, handleError } from '../controllers/utils';
 import APIError from '../errors/APIError';
 import { UserDecodedTokenPayload } from '../types/user';
 
@@ -24,17 +24,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
       throw new APIError('No token provided', 401);
     }
 
-    const decoded = authenticateToken(token);
-    let userDecodedTokenPayload: UserDecodedTokenPayload;
-    if (typeof decoded === 'string') {
-      userDecodedTokenPayload = JSON.parse(decoded) as UserDecodedTokenPayload;
-    } else {
-      userDecodedTokenPayload = {
-        userId: decoded.userId,
-        email: decoded.email,
-        scopes: decoded.scopes,
-      };
-    }
+    const userDecodedTokenPayload = getUserDecodedPayloadFromToken(token);
 
     const userIdParam = req.params.userId;
     if (userIdParam !== userDecodedTokenPayload.userId) {
