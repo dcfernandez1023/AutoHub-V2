@@ -98,3 +98,21 @@ export const removeVehicleShare = async (vehicleId: string, userId: string, shar
   // Delete the vehicle share
   await vehicleShareModel.default.deleteVehicleShare(vehicleShare.vehicleId, vehicleShare.userId);
 };
+
+export const getUsersSharedWithVehicle = async (vehicleId: string, userId: string) => {
+  if (!vehicleId) {
+    throw new APIError('No vehicleId provided', 400);
+  }
+  if (!userId) {
+    throw new APIError('No userId provided', 400);
+  }
+
+  const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
+  const usersAndVehicleShares = await vehicleShareModel.default.getUsersSharedWithVehicle(vehicle.id);
+
+  return usersAndVehicleShares.map((d) => {
+    delete (d as Record<string, any>).user.password;
+    delete (d as Record<string, any>).user.email;
+    return d;
+  });
+};

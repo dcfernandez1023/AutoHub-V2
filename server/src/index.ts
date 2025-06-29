@@ -52,6 +52,7 @@ class AutoHubServer {
     } else {
       this._app.use(cors());
     }
+    this._app.options('*', cors());
     this._app.use(express.json());
     this._app.use(cookieParser());
     this._app.use(logger);

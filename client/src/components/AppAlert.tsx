@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { JSX } from 'react';
 
 interface AppAlertProps {
-  message: string;
+  message: string | JSX.Element;
   type?: 'danger' | 'warning' | 'info' | 'success';
 }
 

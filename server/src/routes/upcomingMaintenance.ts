@@ -7,7 +7,7 @@ import { scopesMiddleware } from '../middleware/scopesMiddleware';
 const router = Router();
 
 router.get(
-  '/users/:userId/upcomingMaintenance',
+  '/users/:userId/vehicles/upcomingMaintenance',
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
   getUpcomingMaintenance

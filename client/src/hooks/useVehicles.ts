@@ -25,13 +25,10 @@ const useVehicles = (props?: UseVehiclesProps) => {
       }
 
       if (shared && sharedVehicles) {
-        console.log(shared);
-        console.log(sharedVehicles);
         return;
       }
 
       if (!shared && vehicles) {
-        console.log(vehicles);
         return;
       }
 
@@ -101,6 +98,8 @@ const useVehicles = (props?: UseVehiclesProps) => {
     vehicle,
     vehicles,
     sharedVehicles,
+    setVehicles,
+    setVehicle,
   };
 };
 

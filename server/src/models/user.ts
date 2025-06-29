@@ -58,4 +58,32 @@ const importData = async (
   ]);
 };
 
-export default { createUser, getUserByEmail, getUserById, getUserByEmailAndId, registerUser, deleteUser, importData };
+const searchForUsersToShareVehicle = async (searchText: string, vehicleId: string) => {
+  return await db.user.findMany({
+    where: {
+      username: {
+        startsWith: searchText,
+        mode: 'insensitive',
+      },
+      registered: {
+        equals: 1,
+      },
+      VehicleShare: {
+        none: {
+          vehicleId: vehicleId,
+        },
+      },
+    },
+  });
+};
+
+export default {
+  createUser,
+  getUserByEmail,
+  getUserById,
+  getUserByEmailAndId,
+  registerUser,
+  deleteUser,
+  importData,
+  searchForUsersToShareVehicle,
+};

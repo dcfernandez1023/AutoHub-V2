@@ -1,4 +1,5 @@
 import { AuthContextType } from '../types/auth';
+import { User } from '../types/user';
 import { getApiBaseUrl } from '../utils/url';
 import BaseClient from './BaseClient';
 
@@ -18,10 +19,10 @@ class UserClient extends BaseClient {
   ): Promise<AuthContextType | null> {
     try {
       const res = await fetch(`${this._baseUrl}/api/users/login`, {
+        ...this._defaultOptions,
         method: 'POST',
         headers: this._defaultHeaders,
         body: JSON.stringify({ email, password }),
-        ...this._defaultOptions,
       });
       if (!res.ok) {
         throw new Error(`Failed to login with status code ${res.status}`);
@@ -37,10 +38,10 @@ class UserClient extends BaseClient {
   async logout(): Promise<void> {
     try {
       const res = await fetch(`${this._baseUrl}/api/users/logout`, {
+        ...this._defaultOptions,
         method: 'POST',
         headers: this._defaultHeaders,
         body: JSON.stringify({}),
-        ...this._defaultOptions,
       });
       if (!res.ok) {
         throw new Error(`Failed to logout with status code ${res.status}`);
@@ -57,10 +58,10 @@ class UserClient extends BaseClient {
   ): Promise<string> {
     try {
       const res = await fetch(`${this._baseUrl}/api/users/register`, {
+        ...this._defaultOptions,
         method: 'POST',
         headers: this._defaultHeaders,
         body: JSON.stringify({ email, username, password }),
-        ...this._defaultOptions,
       });
       if (!res.ok) {
         throw new Error(`Failed to login with status code ${res.status}`);
@@ -69,6 +70,29 @@ class UserClient extends BaseClient {
     } catch (error) {
       console.error('Failed to fetch /api/users/register', error);
       return '';
+    }
+  }
+
+  async searchUsers(
+    userId: string,
+    vehicleId: string,
+    searchText: string
+  ): Promise<User[] | null> {
+    try {
+      const requestUrl = `${this._baseUrl}/api/users/${userId}/searchToShare?q=${searchText}&vehicleId=${vehicleId}`;
+      const res = await fetch(requestUrl, {
+        ...this._defaultOptions,
+        headers: this._defaultHeaders,
+        method: 'GET',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return data as User[];
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to search users', error);
+      return null;
     }
   }
 

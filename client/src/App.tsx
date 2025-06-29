@@ -9,7 +9,11 @@ function App() {
   const { authContext, loading } = useAuthContext();
 
   if (loading) {
-    return <Spinner animation="border" />;
+    return (
+      <div className="centered-div">
+        <Spinner animation="border" />
+      </div>
+    );
   }
 
   const AppContent = () => {

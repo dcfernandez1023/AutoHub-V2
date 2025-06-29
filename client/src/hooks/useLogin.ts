@@ -31,8 +31,6 @@ const useLogin = () => {
 
   const handleLogin = async () => {
     try {
-      console.log(email);
-      console.log(password);
       if (!email || !password) {
         setValidationError('Please provide an email and password');
         return;

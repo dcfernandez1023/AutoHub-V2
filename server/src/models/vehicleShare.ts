@@ -24,4 +24,13 @@ const deleteVehicleShares = async (vehicleId: string) => {
   });
 };
 
-export default { shareVehicle, getVehicleShare, deleteVehicleShare, deleteVehicleShares };
+const getUsersSharedWithVehicle = async (vehicleId: string) => {
+  return await db.vehicleShare.findMany({
+    where: { vehicleId },
+    include: {
+      user: true,
+    },
+  });
+};
+
+export default { shareVehicle, getVehicleShare, deleteVehicleShare, deleteVehicleShares, getUsersSharedWithVehicle };

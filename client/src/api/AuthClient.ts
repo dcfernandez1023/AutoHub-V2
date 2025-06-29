@@ -15,8 +15,9 @@ class AuthClient extends BaseClient {
   async me(): Promise<AuthContextType | null> {
     try {
       const res = await fetch(`${this._baseUrl}/api/auth/me`, {
-        method: 'GET',
         ...this._defaultOptions,
+        headers: this._defaultHeaders,
+        method: 'GET',
       });
       if (res.ok) {
         const data = await res.json();

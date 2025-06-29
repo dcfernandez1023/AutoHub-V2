@@ -8,7 +8,10 @@ export const getUpcomingMaintenance = async (req: Request, res: Response) => {
     const userId = params.userId;
     const vehicleId = params.vehicleId;
 
-    const upcomingMaintenance = await findUpcomingMaintenance(userId, vehicleId);
+    const queryParams = req.query;
+    const shared = queryParams.shared;
+
+    const upcomingMaintenance = await findUpcomingMaintenance(userId, vehicleId, shared === 'true');
     res.status(200).json(upcomingMaintenance);
   } catch (error) {
     handleError(res, error as Error);

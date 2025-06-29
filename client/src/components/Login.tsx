@@ -114,7 +114,7 @@ const Login: React.FC = () => {
             setPassword(e.target.value);
           }}
         />
-        <div className="login-link">
+        <div className="button-link">
           <ModeLink />
         </div>
       </div>

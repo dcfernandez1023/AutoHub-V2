@@ -8,18 +8,23 @@ import {
 import { calculateNextServiceMileageAndDate } from './scheduledLogService';
 import { checkIfCanAccessVehicle } from './vehicleService';
 
-export const findUpcomingMaintenance = async (userId: string, vehicleId?: string) => {
+export const findUpcomingMaintenance = async (userId: string, vehicleId?: string, shared?: boolean) => {
   if (!userId) {
     throw new APIError('No userId provided', 400);
   }
 
   let logData;
 
+  // TODO: Support for getting upcoming maintenance for shared vehicles
   if (vehicleId) {
     const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
     logData = await scheduledLogModel.default.getMostRecentScheduledLogsByVehicleId(userId, vehicle.id);
   } else {
-    logData = await scheduledLogModel.default.getMostRecentScheduledLogs(userId);
+    if (shared) {
+      logData = await scheduledLogModel.default.getMostRecentScheduledLogsShared(userId);
+    } else {
+      logData = await scheduledLogModel.default.getMostRecentScheduledLogs(userId);
+    }
   }
 
   return transformToUpcomingMaintenanceDto(userId, logData);

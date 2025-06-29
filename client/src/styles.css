@@ -7,7 +7,17 @@
 }
 
 .div-spacing {
-  margin-top: 50px;
+  margin-top: 25px;
+}
+
+.div-spacing-small {
+  margin-top: 5px;
+}
+
+.remove-share-button {
+  padding-top: 1px;
+  padding-bottom: 1px;
+  margin-right: 5px;
 }
 
 .div-spacing-bottom {
@@ -20,6 +30,10 @@
 
 .align-right {
   text-align: right;
+}
+
+.float-right {
+  float: right;
 }
 
 .input-margin {
@@ -37,11 +51,15 @@
   width: 250px;
 }
 
-.login-link {
+.button-link {
   text-align: right !important;
   button {
     text-decoration: none;
   }
+}
+
+.typeahead-spinner-margin {
+  margin-left: 12px;
 }
 
 .app-alert {

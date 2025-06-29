@@ -21,11 +21,17 @@ import {
   findVehicleAttachments,
   removeVehicleAttachment,
 } from '../services/attachmentService';
-import { createVehicleShare, findVehicleShare, removeVehicleShare } from '../services/vehicleShare';
+import {
+  createVehicleShare,
+  findVehicleShare,
+  getUsersSharedWithVehicle,
+  removeVehicleShare,
+} from '../services/vehicleShare';
 import { findVehicleChangelog } from '../services/vehicleChangelogService';
 
 export const postVehicle = async (req: Request, res: Response) => {
   try {
+    console.log(req);
     const params = req.params;
     const userId = params.userId;
 
@@ -147,6 +153,20 @@ export const getVehicleShare = async (req: Request, res: Response) => {
     const vehicleShare = await findVehicleShare(vehicleId, userId, requestBody.userId);
 
     res.status(200).json(vehicleShare);
+  } catch (error) {
+    handleError(res, error as Error);
+  }
+};
+
+export const getVehicleShares = async (req: Request, res: Response) => {
+  try {
+    const params = req.params;
+    const vehicleId = params.vehicleId;
+    const userId = params.userId;
+
+    const vehicleShares = await getUsersSharedWithVehicle(vehicleId, userId);
+
+    res.status(200).json(vehicleShares);
   } catch (error) {
     handleError(res, error as Error);
   }

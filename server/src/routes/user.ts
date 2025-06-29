@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { register, completeRegistration, login, getUser, logout } from '../controllers/userController';
+import { register, completeRegistration, login, getUser, logout, getUsersToShare } from '../controllers/userController';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { scopesMiddleware } from '../middleware/scopesMiddleware';
 import { AUTH_SCOPES } from '../constants';
@@ -17,5 +17,11 @@ router.post('/users/logout', logout);
 
 // User routes
 router.get('/users/:userId/info', authMiddleware, scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]), getUser);
+router.get(
+  '/users/:userId/searchToShare',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
+  getUsersToShare
+);
 
 export default router;

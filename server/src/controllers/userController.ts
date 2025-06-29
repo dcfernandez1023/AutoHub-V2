@@ -4,6 +4,7 @@ import {
   completeRegistration as handleCompleteRegistration,
   login as handleLogin,
   getRegisteredUser,
+  searchUsersToShareWithVehicle,
 } from '../services/userService';
 import { getUserDecodedTokenPayload, handleError } from './utils';
 import { authenticateToken, generateJwtToken } from '../services/authService';
@@ -72,8 +73,23 @@ export const getUser = async (req: Request, res: Response) => {
     const { userId, email } = userDecodedTokenPayload;
     const user = await getRegisteredUser({ id: userId, email });
     const { password, ...profile } = user;
-    console.log(profile);
     res.status(200).json(profile);
+  } catch (error) {
+    handleError(res, error as Error);
+  }
+};
+
+export const getUsersToShare = async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.userId;
+    const searchText = req.query.q;
+    const vehicleId = req.query.vehicleId;
+    const users = await searchUsersToShareWithVehicle(
+      vehicleId as string,
+      userId,
+      typeof searchText === 'string' ? searchText : ''
+    );
+    res.status(200).json(users);
   } catch (error) {
     handleError(res, error as Error);
   }

@@ -100,3 +100,20 @@ export const login = async (request: LoginRequest) => {
 
   return user;
 };
+
+export const searchUsersToShareWithVehicle = async (vehicleId: string, userId: string, searchText: string) => {
+  if (!searchText) {
+    return [];
+  }
+
+  const users = await userModel.default.searchForUsersToShareVehicle(searchText, vehicleId);
+
+  return users
+    .map((user) => {
+      const { password, ...profile } = user;
+      return profile;
+    })
+    .filter((user) => {
+      return user.registered && user.id !== userId;
+    });
+};
