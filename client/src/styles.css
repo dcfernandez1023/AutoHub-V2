@@ -89,3 +89,18 @@
   color: #0c5460;
   border-color: #bee5eb;
 }
+
+.tiptap {
+  outline: 1px solid lightgray;
+}
+
+.editor [contenteditable="true"] {
+  height: 75vh; /* set to your desired height */
+  overflow-y: auto; /* allows scrolling if content exceeds height */
+  padding: 10px;
+  /* border: 1px solid #ccc; */
+  border-radius: 4px;
+  background-color: #fff;
+  font-family: sans-serif;
+}
+

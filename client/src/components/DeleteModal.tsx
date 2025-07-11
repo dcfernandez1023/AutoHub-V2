@@ -1,23 +1,22 @@
 import { Button, Col, Modal, Row } from 'react-bootstrap';
 import { ModalBaseProps } from '../types/modal';
 import AppAlert from './AppAlert';
+import { JSX } from 'react';
 
-interface DeleteVehicleModalProps extends ModalBaseProps {
+interface DeleteModalProps extends ModalBaseProps {
   loading?: boolean;
-  vehicleId: string;
-  onDelete: (vehicleId: string) => void;
+  modalBody: string | JSX.Element;
+  onDelete: () => void;
 }
 
-const DeleteVehicleModal: React.FC<DeleteVehicleModalProps> = (
-  props: DeleteVehicleModalProps
-) => {
+const DeleteModal: React.FC<DeleteModalProps> = (props: DeleteModalProps) => {
   const {
-    vehicleId,
     show,
     title,
     onClose,
     validationError,
     loading,
+    modalBody,
     onDelete,
   } = props;
 
@@ -31,22 +30,16 @@ const DeleteVehicleModal: React.FC<DeleteVehicleModalProps> = (
       <Modal.Header closeButton>{title}</Modal.Header>
       <Modal.Body>
         {validationError ? <AppAlert message={validationError} /> : <></>}
-        {!vehicleId ? (
-          <p>No vehicle chosen</p>
-        ) : (
-          <Row>
-            <Col>Are you sure you want to delete this vehicle?</Col>
-          </Row>
-        )}
+        <Row>
+          <Col>{modalBody}</Col>
+        </Row>
       </Modal.Body>
       <Modal.Footer>
         <Button
           variant="danger"
           disabled={loading}
           onClick={() => {
-            if (vehicleId) {
-              void onDelete(vehicleId);
-            }
+            onDelete();
           }}
         >
           Delete
@@ -56,4 +49,4 @@ const DeleteVehicleModal: React.FC<DeleteVehicleModalProps> = (
   );
 };
 
-export default DeleteVehicleModal;
+export default DeleteModal;

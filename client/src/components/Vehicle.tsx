@@ -22,8 +22,9 @@ import {
 } from '../types/vehicle';
 import React from 'react';
 import VehicleModal from './VehicleModal';
-import DeleteVehicleModal from './DeleteVehicleModal';
+import DeleteModal from './DeleteModal';
 import ShareVehicleModal from './ShareVehicleModal';
+import NotesModal from './NotesModal';
 
 const Vehicle: React.FC = () => {
   const { vehicleId } = useParams();
@@ -171,13 +172,37 @@ const Vehicle: React.FC = () => {
           setVehicleModalState(VehicleModalState.Hidden);
         }}
       />
-      <DeleteVehicleModal
-        show={vehicleModalState === VehicleModalState.Delete}
-        vehicleId={vehicle.id}
+      <DeleteModal
+        show={
+          vehicleModalState === VehicleModalState.Delete ||
+          vehicleModalState === VehicleModalState.DeleteImage
+        }
         title="Delete Vehicle"
+        modalBody={
+          vehicleModalState === VehicleModalState.Delete
+            ? 'Are you sure you want to delete this vehicle?'
+            : vehicleModalState === VehicleModalState.DeleteImage
+              ? 'Are you sure you want to delete this image?'
+              : ''
+        }
         validationError={validationError}
         loading={modalActionLoading}
-        onDelete={(vehicleId: string) => void handleDeleteVehice(vehicleId)}
+        onDelete={() => {
+          if (vehicleModalState === VehicleModalState.Delete) {
+            void handleDeleteVehice(vehicle.id);
+          } else if (vehicleModalState === VehicleModalState.DeleteImage) {
+            const vehicleWithDeletedImage = Object.assign({}, vehicle);
+            vehicleWithDeletedImage.base64Image = '';
+            void handleEditVehicle(
+              vehicleId,
+              vehicleWithDeletedImage,
+              (updatedVehicle: VehicleType) => {
+                setVehicle(updatedVehicle);
+                setVehicleModalState(VehicleModalState.Hidden);
+              }
+            );
+          }
+        }}
         onClose={() => {
           setValidationError(undefined);
           setVehicleModalState(VehicleModalState.Hidden);
@@ -190,6 +215,11 @@ const Vehicle: React.FC = () => {
         onClose={() => {
           setVehicleModalState(VehicleModalState.Hidden);
         }}
+      />
+      <NotesModal
+        show={vehicleModalState === VehicleModalState.Notes}
+        title="Vehicle Notes"
+        onClose={() => setVehicleModalState(VehicleModalState.Hidden)}
       />
     </div>
   );

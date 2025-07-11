@@ -1,8 +1,10 @@
 import { UpcomingMaintenance } from '../types/upcomingManitenance';
 import {
+  CreateAttachmentResponse,
   CreateOrUpdateVehicle,
   UserSharedWithVehicle,
   Vehicle,
+  VehicleAttachment,
   VehicleShare,
 } from '../types/vehicle';
 import { getApiBaseUrl } from '../utils/url';
@@ -228,6 +230,53 @@ class VehicleClient extends BaseClient {
       return null;
     } catch (error) {
       console.error('Failed to unshare vehicle', error);
+      return null;
+    }
+  }
+
+  async uploadAttachment(
+    userId: string,
+    vehicleId: string,
+    file: File
+  ): Promise<CreateAttachmentResponse | null> {
+    try {
+      const requestUrl = `${this._baseUrl}/api/users/${userId}/vehicles/${vehicleId}/attachments`;
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch(requestUrl, {
+        ...this._defaultOptions,
+        method: 'POST',
+        body: formData,
+      });
+      if (res.ok) {
+        const data = (await res.json()) as CreateAttachmentResponse;
+        return data;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to create vehicle attachment', error);
+      return null;
+    }
+  }
+
+  async deleteImage(
+    userId: string,
+    vehicleId: string,
+    attachmentId: string
+  ): Promise<VehicleAttachment | null> {
+    try {
+      const requestUrl = `${this._baseUrl}/api/users/${userId}/vehicles/${vehicleId}/attachments/${attachmentId}`;
+      const res = await fetch(requestUrl, {
+        ...this._defaultOptions,
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        const data = (await res.json()) as VehicleAttachment;
+        return data;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to delete vehicle image', error);
       return null;
     }
   }

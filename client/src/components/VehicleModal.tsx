@@ -10,6 +10,7 @@ import { ModalBaseProps } from '../types/modal';
 import { CreateOrUpdateVehicle, Vehicle } from '../types/vehicle';
 import useVehicleModal from '../hooks/useVehicleModal';
 import AppAlert from './AppAlert';
+import ImageUpload from './FileUpload';
 
 interface VehicleModalProps extends ModalBaseProps {
   existingVehicle?: Vehicle;
@@ -30,9 +31,10 @@ const VehicleModal: React.FC<VehicleModalProps> = (
     onSave,
   } = props;
 
-  const { vehicle, setVehicle, handleChange } = useVehicleModal({
-    existingVehicle,
-  });
+  const { vehicle, setVehicle, handleChange, handleImageUpload } =
+    useVehicleModal({
+      existingVehicle,
+    });
 
   return (
     <Modal
@@ -109,6 +111,18 @@ const VehicleModal: React.FC<VehicleModalProps> = (
                 onChange={(e) => handleChange(e, 'string', 'vin')}
               />
             </Col>
+            <Col xs={12}>
+              <ImageUpload
+                accept="image/*"
+                base64Preview={vehicle.base64Image}
+                label="Image"
+                handleChooseFile={(file: File) => {
+                  handleImageUpload(file).catch(() => {
+                    // TODO: Log and display error
+                  });
+                }}
+              />
+            </Col>
           </Row>
         )}
       </Modal.Body>
@@ -116,7 +130,7 @@ const VehicleModal: React.FC<VehicleModalProps> = (
         <Button
           variant="success"
           disabled={loading}
-          onClick={() => {
+          onClick={async () => {
             if (vehicle) {
               void onSave(vehicle);
             }

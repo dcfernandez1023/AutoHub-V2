@@ -15,9 +15,7 @@ export type Vehicle = {
   base64Image: string | null;
 };
 
-export type CreateOrUpdateVehicle =
-  | Omit<Vehicle, 'id'>
-  | Omit<Vehicle, 'userId'>;
+export type CreateOrUpdateVehicle = Omit<Vehicle, 'id' | 'userId'>;
 
 export type VehicleShare = {
   userId: string;
@@ -27,4 +25,17 @@ export type VehicleShare = {
 
 export type UserSharedWithVehicle = VehicleShare & {
   user: User;
+};
+
+export type CreateAttachmentResponse = {
+  attachmentId: string;
+  attachmentUrl: string;
+};
+
+export type VehicleAttachment = {
+  userId: string;
+  vehicleId: string;
+  id: string;
+  url: string;
+  filePath: string;
 };

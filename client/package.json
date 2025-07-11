@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@tiptap/extension-text-align": "^2.25.1",
+    "@tiptap/extension-underline": "^2.25.1",
+    "@tiptap/react": "^2.25.1",
+    "@tiptap/starter-kit": "^2.25.1",
     "bootstrap": "^5.3.7",
     "cra-template-typescript": "1.2.0",
     "react": "^18.3.1",

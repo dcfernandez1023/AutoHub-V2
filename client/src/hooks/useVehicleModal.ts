@@ -32,6 +32,26 @@ const useVehicleModal = (props: UseVehicleModalProps) => {
     setVehicle(vehicleSnapshot);
   };
 
+  const handleImageUpload = (file: File) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64Result = reader.result as string;
+        if (base64Result) {
+          const vehicleSnapshot = Object.assign({}, vehicle);
+          vehicleSnapshot.base64Image = base64Result;
+          setVehicle(vehicleSnapshot);
+          resolve(base64Result);
+        } else {
+          reject(new Error('Failed to read image'));
+        }
+      };
+      reader.onerror = (error) => reject(error);
+      // Start reading
+      reader.readAsDataURL(file);
+    });
+  };
+
   useEffect(() => {
     if (props.existingVehicle) {
       setVehicle(props.existingVehicle);
@@ -56,6 +76,7 @@ const useVehicleModal = (props: UseVehicleModalProps) => {
     vehicle,
     setVehicle,
     handleChange,
+    handleImageUpload,
   };
 };
 

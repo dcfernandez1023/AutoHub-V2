@@ -110,7 +110,7 @@ export const searchUsersToShareWithVehicle = async (vehicleId: string, userId: s
 
   return users
     .map((user) => {
-      const { password, ...profile } = user;
+      const { password, email, ...profile } = user;
       return profile;
     })
     .filter((user) => {

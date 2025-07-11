@@ -89,14 +89,17 @@ const VehicleTable: React.FC<VehiceTableProps> = (props: VehiceTableProps) => {
             <div>
               <Image
                 src={vehicle.base64Image ?? ''}
-                roundedCircle
-                width={125}
-                height={125}
-                className="me-3"
+                width={400}
+                height={400}
+                fluid
                 alt={`${vehicle.name} image`}
               />
               <div className="button-link">
-                <Button variant="link" onClick={() => onRemoveImage()}>
+                <Button
+                  variant="link"
+                  disabled={!vehicle.base64Image}
+                  onClick={() => onRemoveImage()}
+                >
                   Remove
                 </Button>
               </div>
