@@ -14,10 +14,26 @@
   margin-top: 5px;
 }
 
+.div-spacing-large {
+  margin-top: 70px;
+}
+
 .remove-share-button {
   padding-top: 1px;
   padding-bottom: 1px;
   margin-right: 5px;
+}
+
+.button-group-spacing {
+  margin: 2px;
+}
+
+.scheduled-service-type-table-name {
+  width: 70%;
+}
+
+.scheduled-service-type-table-actions {
+  width: 30%;
 }
 
 .div-spacing-bottom {
@@ -34,6 +50,10 @@
 
 .float-right {
   float: right;
+}
+
+.vertical-align {
+  vertical-align: middle;
 }
 
 .input-margin {
@@ -102,5 +122,6 @@
   border-radius: 4px;
   background-color: #fff;
   font-family: sans-serif;
+  line-height: 1.4
 }
 

@@ -220,6 +220,20 @@ const Vehicle: React.FC = () => {
         show={vehicleModalState === VehicleModalState.Notes}
         title="Vehicle Notes"
         onClose={() => setVehicleModalState(VehicleModalState.Hidden)}
+        initialContent={vehicle.notes}
+        loading={modalActionLoading}
+        onSave={async (content: string) => {
+          const vehicleUpdate = Object.assign({}, vehicle);
+          vehicleUpdate.notes = content;
+          await handleEditVehicle(
+            vehicleId,
+            vehicleUpdate,
+            (updatedVehicle: VehicleType) => {
+              setVehicle(updatedVehicle);
+              setVehicleModalState(VehicleModalState.Hidden);
+            }
+          );
+        }}
       />
     </div>
   );

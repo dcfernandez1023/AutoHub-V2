@@ -1,5 +1,6 @@
 import { Button, Table, Image } from 'react-bootstrap';
 import { Vehicle } from '../types/vehicle';
+import RichTextEditor from './RichTextEditor';
 
 interface VehiceTableProps {
   vehicle: Vehicle;
@@ -9,17 +10,6 @@ interface VehiceTableProps {
 
 const VehicleTable: React.FC<VehiceTableProps> = (props: VehiceTableProps) => {
   const { vehicle, onEditNotes, onRemoveImage } = props;
-
-  const NotesPreview = ({ notes }: { notes: string }) => {
-    const previewLength = 50;
-    let preview = '';
-    if (notes) {
-      const ellipsis = notes.length > previewLength;
-      preview = ellipsis ? `${notes.slice(0, previewLength)}...` : notes;
-    }
-
-    return <span>{preview}</span>;
-  };
 
   return (
     <Table>
@@ -72,7 +62,14 @@ const VehicleTable: React.FC<VehiceTableProps> = (props: VehiceTableProps) => {
           </td>
           <td>
             <div>
-              <NotesPreview notes={vehicle.notes} />
+              <RichTextEditor
+                existingContent={vehicle.notes}
+                disabled={true}
+                onSave={() => {}}
+                previewConfig={{
+                  maxLength: 100,
+                }}
+              />
               <div className="button-link">
                 <Button variant="link" onClick={() => onEditNotes()}>
                   Edit

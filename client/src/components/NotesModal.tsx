@@ -1,13 +1,25 @@
 import { Button, Col, Modal, Row } from 'react-bootstrap';
 import { ModalBaseProps } from '../types/modal';
 import AppAlert from './AppAlert';
-import { JSX } from 'react';
+import { JSX, useState } from 'react';
 import RichTextEditor from './RichTextEditor';
 
-interface NotesModalProps extends ModalBaseProps {}
+interface NotesModalProps extends ModalBaseProps {
+  initialContent: string;
+  loading: boolean;
+  onSave: (content: string) => Promise<void>;
+}
 
 const NotesModal: React.FC<NotesModalProps> = (props: NotesModalProps) => {
-  const { show, title, onClose, validationError } = props;
+  const {
+    show,
+    title,
+    onClose,
+    onSave,
+    initialContent,
+    loading,
+    validationError,
+  } = props;
 
   return (
     <Modal
@@ -22,7 +34,11 @@ const NotesModal: React.FC<NotesModalProps> = (props: NotesModalProps) => {
       <Modal.Header closeButton>{title}</Modal.Header>
       <Modal.Body>
         {validationError ? <AppAlert message={validationError} /> : <></>}
-        <RichTextEditor existingContent={''} onSave={() => {}} />
+        <RichTextEditor
+          existingContent={initialContent}
+          onSave={onSave}
+          disabled={loading}
+        />
       </Modal.Body>
     </Modal>
   );

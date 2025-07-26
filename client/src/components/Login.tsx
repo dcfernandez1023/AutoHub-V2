@@ -84,7 +84,6 @@ const Login: React.FC = () => {
           id="login-email"
           value={email}
           onChange={(e) => {
-            console.log(e.target.value);
             setEmail(e.target.value);
           }}
         />
@@ -110,7 +109,6 @@ const Login: React.FC = () => {
           type="password"
           value={password}
           onChange={(e) => {
-            console.log(e.target.value);
             setPassword(e.target.value);
           }}
         />
