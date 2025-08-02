@@ -29,8 +29,10 @@ const ScheduledServiceTypeModal: React.FC<ScheduledServiceTypeModalProps> = (
   useEffect(() => {
     if (existingScheduledServiceType?.name) {
       setName(existingScheduledServiceType.name);
+    } else {
+      setName('');
     }
-  }, [existingScheduledServiceType]);
+  }, [show, existingScheduledServiceType]);
 
   return (
     <Modal

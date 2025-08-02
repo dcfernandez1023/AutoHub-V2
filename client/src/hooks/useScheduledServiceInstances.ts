@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import { ScheduledServiceInstance } from '../types/scheduledService';
+import {
+  CreateScheduledServiceInstanceRequest,
+  ScheduledServiceInstance,
+} from '../types/scheduledService';
 import ScheduledServiceClient from '../api/ScheduledServiceClient';
 import { useAuthContext } from '../context/AuthContext';
 
@@ -16,6 +19,7 @@ export const useScheduledServiceInstances = (
     useState<ScheduledServiceInstance[]>();
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [actionLoading, setActionLoading] = useState<boolean>(false);
 
   const { authContext } = useAuthContext();
 
@@ -32,23 +36,86 @@ export const useScheduledServiceInstances = (
           vehicleId
         );
 
-      setScheduledServiceInstances([
-        {
-          id: 'ssi0',
-          userId: 'user',
-          vehicleId: 'vehicle',
-          scheduledServiceTypeId: '0',
-          mileInterval: 5000,
-          timeInterval: 6,
-          timeUnits: 'MONTH',
-        },
-      ]);
-      //   setScheduledServiceInstances(data);
+      setScheduledServiceInstances(data);
     } catch (error) {
       console.error('Failed to fetch scheduled service types', error);
       setError('Failed to fetch scheduled service types');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const createScheduledServiceInstances = async (
+    vehicleId: string,
+    records: CreateScheduledServiceInstanceRequest[],
+    callback: () => void
+  ) => {
+    try {
+      if (!authContext) {
+        throw new Error('No auth context');
+      }
+
+      setActionLoading(true);
+      const createdScheduledServiceInstances =
+        await ScheduledServiceClient.createScheduledServiceInstances(
+          authContext.userId,
+          vehicleId,
+          records
+        );
+
+      const mutableScheduledServiceInstances =
+        scheduledServiceInstances?.slice();
+      if (mutableScheduledServiceInstances) {
+        mutableScheduledServiceInstances.push(
+          ...createdScheduledServiceInstances
+        );
+        setScheduledServiceInstances(mutableScheduledServiceInstances);
+      }
+
+      callback();
+    } catch (error) {
+      console.error('Failed to create scheduled service instances', error);
+      setError('Failed to create scheduled service instances');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const updateScheduledServiceInstance = async (
+    vehicleId: string,
+    scheduledServiceInstance: ScheduledServiceInstance,
+    callback: () => void
+  ) => {
+    try {
+      if (!authContext) {
+        throw new Error('No auth context');
+      }
+
+      setActionLoading(true);
+      const updatedScheduledServiceInstance =
+        await ScheduledServiceClient.updateScheduledServiceInstance(
+          authContext.userId,
+          vehicleId,
+          scheduledServiceInstance
+        );
+
+      const mutableScheduledServiceInstances =
+        scheduledServiceInstances?.slice();
+      if (mutableScheduledServiceInstances) {
+        const index = mutableScheduledServiceInstances.findIndex(
+          (ssi) => ssi.id === updatedScheduledServiceInstance.id
+        );
+        mutableScheduledServiceInstances[index] =
+          updatedScheduledServiceInstance;
+        setScheduledServiceInstances(mutableScheduledServiceInstances);
+      }
+
+      callback();
+    } catch (error) {
+      console.error('Failed to update scheduled service instance', error);
+      setError('Failed to update scheduled service instance');
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -60,8 +127,12 @@ export const useScheduledServiceInstances = (
     error,
     setError,
     loading,
+    actionLoading,
     setLoading,
+    setActionLoading,
     scheduledServiceInstances,
     setScheduledServiceInstances,
+    createScheduledServiceInstances,
+    updateScheduledServiceInstance,
   };
 };

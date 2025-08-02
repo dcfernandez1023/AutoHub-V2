@@ -37,6 +37,22 @@ const importScheduledServiceInstances = async (userId: string, recordImport: Sch
   return await db.scheduledServiceInstance.createMany({ data: recordImport.map((record) => ({ userId, ...record })) });
 };
 
+const findByVehicleAndScheduledServiceTypes = async (
+  userId: string,
+  vehicleId: string,
+  scheduledServiceTypeIds: string[]
+) => {
+  return await db.scheduledServiceInstance.findMany({
+    where: {
+      AND: [
+        { userId: { equals: userId } },
+        { vehicleId: { equals: vehicleId } },
+        { scheduledServiceTypeId: { in: scheduledServiceTypeIds } },
+      ],
+    },
+  });
+};
+
 export default {
   createScheduledServiceInstances,
   updateScheduledServiceInstance,
@@ -44,4 +60,5 @@ export default {
   getVehicleScheduledServiceInstances,
   deleteScheduledServiceInstance,
   importScheduledServiceInstances,
+  findByVehicleAndScheduledServiceTypes,
 };

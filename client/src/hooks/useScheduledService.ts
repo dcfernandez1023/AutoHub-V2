@@ -23,18 +23,6 @@ export const useScheduledServiceTypes = () => {
         await ScheduledServiceClient.getScheduledServiceTypes(
           authContext.userId
         );
-      // setScheduledServiceTypes([
-      //   {
-      //     id: '0',
-      //     userId: 'user0',
-      //     name: 'Oil Change',
-      //   },
-      //   {
-      //     id: '1',
-      //     userId: 'user0',
-      //     name: 'Tire Rotation',
-      //   },
-      // ]);
       setScheduledServiceTypes(data);
     } catch (error) {
       console.error('Failed to fetch scheduled service types', error);

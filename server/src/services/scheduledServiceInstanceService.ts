@@ -63,7 +63,7 @@ export const createScheduledServiceInstances = async (
     scheduledServiceTypeNames.push(scheduledServiceType.name);
   }
 
-  const test = await scheduledServiceInstanceModel.default.createScheduledServiceInstances(internalRequestArray);
+  await scheduledServiceInstanceModel.default.createScheduledServiceInstances(internalRequestArray);
 
   const changelogSubjectName = scheduledServiceTypeNames.join(',');
   await createVehicleChangelog(vehicle, userId, {
@@ -73,7 +73,11 @@ export const createScheduledServiceInstances = async (
     targetName: `${SUBJECT.VEHICLE} ${vehicle.name}`,
   });
 
-  return internalRequestArray;
+  return await scheduledServiceInstanceModel.default.findByVehicleAndScheduledServiceTypes(
+    userId,
+    vehicleId,
+    internalRequestArray.map((d) => d.scheduledServiceTypeId)
+  );
 };
 
 export const findVehicleScheduledServiceInstances = async (vehicleId: string, userId: string) => {

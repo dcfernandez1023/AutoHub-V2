@@ -17,6 +17,7 @@ export const postScheduledServiceInstances = async (req: Request, res: Response)
     const scheduledServiceInstances = await createScheduledServiceInstances(vehicleId, userId, requestBody);
     res.status(200).json(scheduledServiceInstances);
   } catch (error) {
+    console.error(error);
     handleError(res, error as Error);
   }
 };

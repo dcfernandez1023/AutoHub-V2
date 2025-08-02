@@ -4,16 +4,26 @@ import useVehicles from '../hooks/useVehicles';
 import ScheduledServiceInstanceTable from './ScheduledServiceInstanceTable';
 import ScheduledServiceTypeModal from './ScheduledServiceTypeModal';
 import { useState } from 'react';
-import { ScheduledServiceType } from '../types/scheduledService';
+import {
+  ScheduledServiceInstance,
+  ScheduledServiceType,
+} from '../types/scheduledService';
 import DeleteModal from './DeleteModal';
+import ScheduledServiceInstanceModal from './ScheduledServiceInstanceModal';
+import { Vehicle } from '../types/vehicle';
 
 enum ScheduledServiceTypeModalState {
   CreateOrEditScheduledServiceType = 'CreateOrEditScheduledServiceType',
   DeleteScheduledServiceType = 'DeleteScheduledServiceType',
-  Apply = 'Apply',
+  ApplyScheduledServiceType = 'ApplyScheduledServiceType',
   EditScheduledServiceInstance = 'EditScheduledServiceInstance',
   DeleteScheduledServiceInstance = 'DeleteScheduledServiceInstance',
 }
+
+type VehiclesWithScheduledServiceInstances = {
+  vehicle: Vehicle;
+  scheduledServiceInstances: ScheduledServiceInstance[];
+};
 
 //
 // Create
@@ -36,6 +46,10 @@ const ScheduledServiceTypes: React.FC = () => {
     useState<ScheduledServiceTypeModalState>();
   const [selectedScheduledServiceType, setSelectedScheduledServiceType] =
     useState<ScheduledServiceType>();
+  const [
+    vehicleWithScheduledServiceInstances,
+    setVehicleWithScheduledServiceInstances,
+  ] = useState<VehiclesWithScheduledServiceInstances>();
 
   if (loadingScheduledServiceTypes || loadingVehicles) {
     return (
@@ -125,21 +139,8 @@ const ScheduledServiceTypes: React.FC = () => {
                       <Accordion.Item key={vehicle.id} eventKey={vehicle.id}>
                         <Accordion.Header>{vehicle.name}</Accordion.Header>
                         <Accordion.Body>
-                          <Row>
-                            <Col xs={6}>
-                              <span>ℹ️</span>
-                              <i>
-                                Click 'Apply' to assign a Scheduled Service Type
-                                to this vehicle
-                              </i>
-                            </Col>
-                            <Col xs={6} className="align-right">
-                              <Button size="sm">Apply</Button>
-                            </Col>
-                          </Row>
-                          <br />
                           <ScheduledServiceInstanceTable
-                            vehicleId={vehicle.id}
+                            vehicle={vehicle}
                             scheduledServiceTypes={scheduledServiceTypes}
                             onEdit={() => {}}
                             onDelete={() => {}}

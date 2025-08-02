@@ -13,3 +13,10 @@ export type ScheduledServiceInstance = {
   timeInterval: number;
   timeUnits: string;
 };
+
+export type CreateScheduledServiceInstanceRequest = {
+  scheduledServiceTypeId: string;
+  mileInterval: number;
+  timeInterval: number;
+  timeUnits: string;
+};

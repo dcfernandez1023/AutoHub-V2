@@ -1,4 +1,5 @@
 import {
+  CreateScheduledServiceInstanceRequest,
   ScheduledServiceInstance,
   ScheduledServiceType,
 } from '../types/scheduledService';
@@ -105,6 +106,54 @@ class ScheduledServiceClient extends BaseClient {
     }
 
     const data = (await res.json()) as ScheduledServiceType;
+    return data;
+  }
+
+  async createScheduledServiceInstances(
+    userId: string,
+    vehicleId: string,
+    records: CreateScheduledServiceInstanceRequest[]
+  ) {
+    const requestUrl = `${this._baseUrl}/api/users/${userId}/vehicles/${vehicleId}/scheduledServiceInstances`;
+    const res = await fetch(requestUrl, {
+      ...this._defaultOptions,
+      headers: this._defaultHeaders,
+      method: 'POST',
+      body: JSON.stringify(records),
+    });
+
+    if (!res.ok) {
+      throw new Error(
+        `Failed to create scheduled service instances. Status code ${res.status}`
+      );
+    }
+
+    const data = (await res.json()) as ScheduledServiceInstance[];
+    console.log(data);
+    return data;
+  }
+
+  async updateScheduledServiceInstance(
+    userId: string,
+    vehicleId: string,
+    scheduledServiceInstance: ScheduledServiceInstance
+  ) {
+    const requestUrl = `${this._baseUrl}/api/users/${userId}/vehicles/${vehicleId}/scheduledServiceInstances/${scheduledServiceInstance.id}`;
+    const res = await fetch(requestUrl, {
+      ...this._defaultOptions,
+      headers: this._defaultHeaders,
+      method: 'PUT',
+      body: JSON.stringify(scheduledServiceInstance),
+    });
+
+    if (!res.ok) {
+      throw new Error(
+        `Failed to update scheduled service instance. Status code ${res.status}`
+      );
+    }
+
+    const data = (await res.json()) as ScheduledServiceInstance;
+    console.log(data);
     return data;
   }
 
