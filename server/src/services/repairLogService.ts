@@ -28,7 +28,11 @@ export const createRepairLog = async (vehicleId: string, userId: string, request
   // If requesting user can access the vehicle, then they can create a repair log for the vehicle
   const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
 
-  return await repairLogModel.default.createRepairLog(vehicle.id, vehicle.userId, internalRequest);
+  const repairLog = await repairLogModel.default.createRepairLog(vehicle.id, vehicle.userId, internalRequest);
+  return {
+    repairLog,
+    vehicle,
+  };
 };
 
 export const updateRepairLogs = async (vehicleId: string, userId: string, request: UpdateRepairLogRequest) => {
@@ -48,7 +52,12 @@ export const updateRepairLogs = async (vehicleId: string, userId: string, reques
   // If requesting user can access the vehicle, then they can update repair logs for the vehicle
   const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
 
-  return await repairLogModel.default.updateRepairLogs(vehicle.id, internalRequest);
+  const repairLogs = await repairLogModel.default.updateRepairLogs(vehicle.id, internalRequest);
+
+  return {
+    repairLogs,
+    vehicle,
+  };
 };
 
 export const findVehicleRepairLogs = async (vehicleId: string, userId: string) => {
@@ -66,7 +75,7 @@ export const findVehicleRepairLogs = async (vehicleId: string, userId: string) =
   return repairLogs;
 };
 
-export const removeRepairLog = async (id: string, vehicleId: string, userId: string) => {
+export const removeRepairLogs = async (ids: string[], vehicleId: string, userId: string) => {
   if (!vehicleId) {
     throw new APIError('No vehicleId provided', 400);
   }
@@ -77,5 +86,10 @@ export const removeRepairLog = async (id: string, vehicleId: string, userId: str
   // If requesting user can access the vehicle, then they can delete a repair log for the vehicle
   const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
 
-  return await repairLogModel.default.deleteRepairLog(id, vehicle.id);
+  await repairLogModel.default.deleteRepairLogs(ids, vehicle.id);
+
+  return {
+    ids,
+    vehicle,
+  };
 };

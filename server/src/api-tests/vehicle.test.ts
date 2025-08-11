@@ -25,8 +25,8 @@ describe('Vehicle routes', () => {
     server = AutoHubServer.getServer();
     user = await createTestUser('autohub-tester', 'autohub-tester@email.com');
     sharedUser = await createTestUser('vehicle-share-user', 'vehicle-share-user@email.com');
-    accessToken = await getAccessToken(user.id, user.email);
-    sharedUserAccessToken = await getAccessToken(sharedUser.id, sharedUser.email);
+    accessToken = await getAccessToken(user.id, user.email, user.username);
+    sharedUserAccessToken = await getAccessToken(sharedUser.id, sharedUser.email, user.username);
   });
 
   afterAll(async () => {

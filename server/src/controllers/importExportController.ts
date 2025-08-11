@@ -9,9 +9,9 @@ export const postImport = async (req: Request, res: Response) => {
     const userId = params.userId;
 
     const { buffer } = await getFileBuffer(req);
-    await doImport(userId, buffer);
+    const counts = await doImport(userId, buffer);
 
-    res.status(200).json({ message: 'Import succeeded' });
+    res.status(200).json(counts);
   } catch (error) {
     handleError(res, error as Error);
   }
@@ -26,7 +26,7 @@ export const postExport = async (req: Request, res: Response) => {
 
     res
       .status(200)
-      .setHeader('Content-Disposition', 'attachment; filename="autohub.json"')
+      .setHeader('Content-Disposition', `attachment; filename="autohub_${userId}.json"`)
       .setHeader('Content-Type', 'application/json')
       .send(jsonExport);
   } catch (error) {

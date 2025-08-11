@@ -47,6 +47,8 @@ model User {
   ScheduledLog ScheduledLog[]
 
   RepairLog RepairLog[]
+
+  Changelog Changelog[]
 }
 
 model Vehicle {
@@ -117,6 +119,17 @@ model VehicleChangelog {
   @@index([vehicleId])
 }
 
+model Changelog {
+  id          String   @id @default(uuid())
+  userId      String
+  description String
+  dateCreated DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
 model ScheduledServiceType {
   id     String @id @default(uuid())
   userId String
@@ -176,6 +189,7 @@ model RepairLog {
   userId                     String
   vehicleId                  String
   datePerformed              DateTime @default(now())
+  name                       String
   mileage                    Int
   partsCost                  Int
   laborCost                  Int

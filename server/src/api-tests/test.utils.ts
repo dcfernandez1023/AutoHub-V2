@@ -96,9 +96,9 @@ export const createTestScheduledServiceType = async (userId: string, payload: st
   });
 };
 
-export const getAccessToken = async (userId: string, email: string) => {
+export const getAccessToken = async (userId: string, email: string, username: string) => {
   const accessToken = await execute<string>(async () => {
-    return generateJwtToken(userId, email, ROLES.USER_ROLE);
+    return generateJwtToken(userId, email, username, ROLES.USER_ROLE);
   });
   return accessToken;
 };

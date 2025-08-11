@@ -1,5 +1,10 @@
 import APIError from '../errors/APIError';
-import { ImportSchema, RepairLogImportDtoSchema, ScheduledLogImportDtoSchema } from '../types/import';
+import {
+  ImportSchema,
+  RepairLogImportDtoSchema,
+  ScheduledLogImportDtoSchema,
+  VehicleImportSchema,
+} from '../types/import';
 
 import * as vehicleModel from '../models/vehicle';
 import * as scheduledServiceTypeModel from '../models/scheduledServiceType';
@@ -34,7 +39,11 @@ export const doImport = async (userId: string, buffer: Buffer) => {
 
   const { vehicles, scheduledServiceTypes, scheduledServiceInstances, scheduledLogs, repairLogs } = parsedData;
 
-  const vehicleImport = vehicles;
+  const vehicleImport = vehicles.map((vehicle) => {
+    const vehicleDto = { ...vehicle, dateCreated: new Date(vehicle.dateCreated).getTime() };
+    const vehicleDtoParsed = VehicleImportSchema.parse(vehicleDto);
+    return vehicleDtoParsed;
+  });
   const scheduledServiceTypeImport = scheduledServiceTypes;
   const scheduledServiceInstanceImport = scheduledServiceInstances;
   const scheduledLogImport = scheduledLogs.map((log) => {
@@ -44,6 +53,7 @@ export const doImport = async (userId: string, buffer: Buffer) => {
   });
   const repairLogImport = repairLogs.map((log) => {
     const logDto = { ...log, datePerformed: new Date(log.datePerformed) };
+    console.log(logDto);
     const logDtoParsed = RepairLogImportDtoSchema.parse(logDto);
     return logDtoParsed;
   });
@@ -57,6 +67,14 @@ export const doImport = async (userId: string, buffer: Buffer) => {
     scheduledLogImport,
     repairLogImport
   );
+
+  return {
+    vehicleCount: vehicles.length,
+    scheduledServiceTypeCount: scheduledServiceTypes.length,
+    scheduledServiceInstanceCount: scheduledServiceInstances.length,
+    scheduledLogCount: scheduledLogs.length,
+    repairLogCount: repairLogs.length,
+  };
 };
 
 export const doExport = async (userId: string): Promise<string> => {

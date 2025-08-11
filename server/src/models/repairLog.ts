@@ -29,8 +29,8 @@ const getVehicleRepairLogs = async (vehicleId: string) => {
   return await db.repairLog.findMany({ where: { vehicleId } });
 };
 
-const deleteRepairLog = async (id: string, vehicleId: string) => {
-  return await db.repairLog.delete({ where: { id, vehicleId } });
+const deleteRepairLogs = async (ids: string[], vehicleId: string) => {
+  return await db.repairLog.deleteMany({ where: { id: { in: ids }, vehicleId } });
 };
 
 const importRepairLogs = async (userId: string, recordImport: RepairLogImportDto[]) => {
@@ -41,7 +41,7 @@ export default {
   createRepairLog,
   updateRepairLogs,
   getVehicleRepairLogs,
-  deleteRepairLog,
+  deleteRepairLogs,
   importRepairLogs,
   getRepairLogs,
 };

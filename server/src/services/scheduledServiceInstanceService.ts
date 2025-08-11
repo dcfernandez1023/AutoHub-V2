@@ -9,8 +9,6 @@ import {
 import * as scheduledServiceTypeModel from '../models/scheduledServiceType';
 import * as scheduledServiceInstanceModel from '../models/scheduledServiceInstance';
 import { checkIfCanAccessVehicle } from './vehicleService';
-import { createVehicleChangelog } from './vehicleChangelogService';
-import { ACTION, SUBJECT } from '../types/changelog';
 
 export const createScheduledServiceInstances = async (
   vehicleId: string,
@@ -65,19 +63,17 @@ export const createScheduledServiceInstances = async (
 
   await scheduledServiceInstanceModel.default.createScheduledServiceInstances(internalRequestArray);
 
-  const changelogSubjectName = scheduledServiceTypeNames.join(',');
-  await createVehicleChangelog(vehicle, userId, {
-    action: ACTION.APPLIED,
-    subject: SUBJECT.SCHEDULED_SERVICE_TYPE,
-    subjectName: changelogSubjectName,
-    targetName: `${SUBJECT.VEHICLE} ${vehicle.name}`,
-  });
-
-  return await scheduledServiceInstanceModel.default.findByVehicleAndScheduledServiceTypes(
+  const scheduledServiceInstances = await scheduledServiceInstanceModel.default.findByVehicleAndScheduledServiceTypes(
     userId,
     vehicleId,
     internalRequestArray.map((d) => d.scheduledServiceTypeId)
   );
+
+  return {
+    scheduledServiceInstances,
+    scheduledServiceTypeNames,
+    vehicle,
+  };
 };
 
 export const findVehicleScheduledServiceInstances = async (vehicleId: string, userId: string) => {

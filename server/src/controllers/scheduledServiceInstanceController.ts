@@ -6,6 +6,7 @@ import {
   removeScheduledServiceInstance,
   updateScheduledServiceInstance,
 } from '../services/scheduledServiceInstanceService';
+import VehicleChangeLogPublisher from '../eventbus/publishers/VehicleChangeLogPublisher';
 
 export const postScheduledServiceInstances = async (req: Request, res: Response) => {
   try {
@@ -14,7 +15,20 @@ export const postScheduledServiceInstances = async (req: Request, res: Response)
     const userId = params.userId;
     const requestBody = req.body;
 
-    const scheduledServiceInstances = await createScheduledServiceInstances(vehicleId, userId, requestBody);
+    const { scheduledServiceInstances, scheduledServiceTypeNames, vehicle } = await createScheduledServiceInstances(
+      vehicleId,
+      userId,
+      requestBody
+    );
+
+    VehicleChangeLogPublisher.appliedScheduledServiceTypes(
+      req.user.userId,
+      req.user.username,
+      vehicle.id,
+      vehicle.name,
+      scheduledServiceTypeNames
+    );
+
     res.status(200).json(scheduledServiceInstances);
   } catch (error) {
     console.error(error);

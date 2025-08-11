@@ -6,5 +6,6 @@ export type GetUserRequest = {
 export type UserDecodedTokenPayload = {
   userId: string;
   email: string;
+  username: string;
   scopes: string;
 };

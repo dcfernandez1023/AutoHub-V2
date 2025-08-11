@@ -29,6 +29,10 @@ const getVehicleScheduledServiceInstances = async (vehicleId: string) => {
   return await db.scheduledServiceInstance.findMany({ where: { vehicleId } });
 };
 
+const getVehicleScheduledServiceInstancesWithScheduledServiceTypes = async (vehicleId: string) => {
+  return await db.scheduledServiceInstance.findMany({ where: { vehicleId }, include: { scheduledServiceType: true } });
+};
+
 const deleteScheduledServiceInstance = async (id: string, vehicleId: string, userId: string) => {
   return await db.scheduledServiceInstance.delete({ where: { id, vehicleId, userId } });
 };
@@ -61,4 +65,5 @@ export default {
   deleteScheduledServiceInstance,
   importScheduledServiceInstances,
   findByVehicleAndScheduledServiceTypes,
+  getVehicleScheduledServiceInstancesWithScheduledServiceTypes,
 };

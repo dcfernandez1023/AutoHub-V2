@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { AUTH_SCOPES } from '../constants';
 import {
-  deleteScheduledLog,
+  deleteScheduledLogs,
   postScheduledLog,
   putScheduledLogs,
   getVehicleScheduledLogs,
@@ -12,10 +12,10 @@ import { scopesMiddleware } from '../middleware/scopesMiddleware';
 const router = Router();
 
 router.delete(
-  '/users/:userId/vehicles/:vehicleId/scheduledLogs/:scheduledLogId',
+  '/users/:userId/vehicles/:vehicleId/scheduledLogs',
   authMiddleware,
-  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
-  deleteScheduledLog
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
+  deleteScheduledLogs
 );
 router.post(
   '/users/:userId/vehicles/:vehicleId/scheduledLogs',

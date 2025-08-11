@@ -29,8 +29,22 @@ const getVehicleScheduledLogs = async (vehicleId: string) => {
   return await db.scheduledLog.findMany({ where: { vehicleId }, include: { scheduledServiceInstance: true } });
 };
 
-const deleteScheduledLog = async (id: string, vehicleId: string) => {
-  return await db.scheduledLog.delete({ where: { id, vehicleId } });
+const getVehicleScheduledLog = async (logId: string, vehicleId: string) => {
+  return await db.scheduledLog.findFirstOrThrow({
+    where: { id: logId, vehicleId },
+    include: { scheduledServiceInstance: true },
+  });
+};
+
+const getSpecifiedVehicleScheduledLogs = async (logIds: string[], vehicleId: string) => {
+  return await db.scheduledLog.findMany({
+    where: { id: { in: logIds }, vehicleId },
+    include: { scheduledServiceInstance: true },
+  });
+};
+
+const deleteScheduledLogs = async (ids: string[], vehicleId: string) => {
+  return await db.scheduledLog.deleteMany({ where: { id: { in: ids }, vehicleId } });
 };
 
 const getMostRecentScheduledLogs = async (userId: string): Promise<unknown[]> => {
@@ -161,8 +175,10 @@ const importScheduledLogs = async (userId: string, recordImport: ScheduledLogImp
 export default {
   createScheduledLog,
   updateScheduledLogs,
+  getVehicleScheduledLog,
+  getSpecifiedVehicleScheduledLogs,
   getVehicleScheduledLogs,
-  deleteScheduledLog,
+  deleteScheduledLogs,
   getMostRecentScheduledLogs,
   getMostRecentScheduledLogsShared,
   getMostRecentScheduledLogsByVehicleId,

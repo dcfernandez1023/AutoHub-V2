@@ -17,9 +17,10 @@ class ScheduledServiceClient extends BaseClient {
   }
 
   async getScheduledServiceTypes(
-    userId: string
+    userId: string,
+    sharedVehicleId?: string
   ): Promise<ScheduledServiceType[]> {
-    const requestUrl = `${this._baseUrl}/api/users/${userId}/scheduledServiceTypes`;
+    const requestUrl = `${this._baseUrl}/api/users/${userId}/scheduledServiceTypes${sharedVehicleId ? `?sharedVehicle=${sharedVehicleId}` : ''}`;
     const res = await fetch(requestUrl, {
       ...this._defaultOptions,
       headers: this._defaultHeaders,
@@ -154,6 +155,28 @@ class ScheduledServiceClient extends BaseClient {
 
     const data = (await res.json()) as ScheduledServiceInstance;
     console.log(data);
+    return data;
+  }
+
+  async deleteScheduledServiceInstance(
+    userId: string,
+    vehicleId: string,
+    scheduledServiceInstanceId: string
+  ) {
+    const requestUrl = `${this._baseUrl}/api/users/${userId}/vehicles/${vehicleId}/scheduledServiceInstances/${scheduledServiceInstanceId}`;
+    const res = await fetch(requestUrl, {
+      ...this._defaultOptions,
+      headers: this._defaultHeaders,
+      method: 'DELETE',
+    });
+
+    if (!res.ok) {
+      throw new Error(
+        `Failed to delete scheduled service instance. Status code ${res.status}`
+      );
+    }
+
+    const data = (await res.json()) as ScheduledServiceInstance;
     return data;
   }
 

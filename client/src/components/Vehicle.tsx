@@ -4,6 +4,7 @@ import NotFound from './NotFound';
 import {
   Button,
   Col,
+  Container,
   Dropdown,
   DropdownButton,
   Row,
@@ -25,6 +26,10 @@ import VehicleModal from './VehicleModal';
 import DeleteModal from './DeleteModal';
 import ShareVehicleModal from './ShareVehicleModal';
 import NotesModal from './NotesModal';
+import ScheduledLogTab from './ScheduledLog';
+import RepairLogTab from './RepairLog';
+import Changelog from './Changelog';
+import useVehicleOwner from '../hooks/useVehicleOwner';
 
 const Vehicle: React.FC = () => {
   const { vehicleId } = useParams();
@@ -40,29 +45,7 @@ const Vehicle: React.FC = () => {
     setValidationError,
   } = useVehiclesActions();
 
-  const VehicleChangelog = () => {
-    return (
-      <Row>
-        <Col>Vehicle Changelog</Col>
-      </Row>
-    );
-  };
-
-  const VehicleScheduledLog = () => {
-    return (
-      <Row>
-        <Col>Scheduled Log</Col>
-      </Row>
-    );
-  };
-
-  const VehicleRepairLog = () => {
-    return (
-      <Row>
-        <Col>Repair Log</Col>
-      </Row>
-    );
-  };
+  const { isOwner } = useVehicleOwner({ vehicle });
 
   if (loading) {
     return (
@@ -77,7 +60,7 @@ const Vehicle: React.FC = () => {
   }
 
   return (
-    <div>
+    <Container fluid>
       <Tabs
         defaultActiveKey="info"
         mountOnEnter={true}
@@ -99,6 +82,7 @@ const Vehicle: React.FC = () => {
                       Edit
                     </Dropdown.Item>
                     <Dropdown.Item
+                      disabled={!isOwner}
                       onClick={() =>
                         setVehicleModalState(VehicleModalState.Share)
                       }
@@ -106,6 +90,7 @@ const Vehicle: React.FC = () => {
                       Share
                     </Dropdown.Item>
                     <Dropdown.Item
+                      disabled={!isOwner}
                       onClick={() =>
                         setVehicleModalState(VehicleModalState.Delete)
                       }
@@ -138,16 +123,13 @@ const Vehicle: React.FC = () => {
           title="Scheduled Log"
           className="div-spacing"
         >
-          <VehicleScheduledLog />
+          <ScheduledLogTab vehicle={vehicle} />
         </Tab>
         <Tab eventKey="repair-log" title="Repair Log" className="div-spacing">
-          <VehicleRepairLog />
+          <RepairLogTab vehicle={vehicle} />
         </Tab>
         <Tab eventKey="changelog" title="Changelog" className="div-spacing">
-          <VehicleChangelog />
-        </Tab>
-        <Tab eventKey="attachments" title="Attachments" className="div-spacing">
-          <VehicleChangelog />
+          <Changelog vehicleId={vehicleId} />
         </Tab>
       </Tabs>
 
@@ -222,10 +204,10 @@ const Vehicle: React.FC = () => {
         onClose={() => setVehicleModalState(VehicleModalState.Hidden)}
         initialContent={vehicle.notes}
         loading={modalActionLoading}
-        onSave={async (content: string) => {
+        onSave={(content: string) => {
           const vehicleUpdate = Object.assign({}, vehicle);
           vehicleUpdate.notes = content;
-          await handleEditVehicle(
+          void handleEditVehicle(
             vehicleId,
             vehicleUpdate,
             (updatedVehicle: VehicleType) => {
@@ -235,7 +217,7 @@ const Vehicle: React.FC = () => {
           );
         }}
       />
-    </div>
+    </Container>
   );
 };
 

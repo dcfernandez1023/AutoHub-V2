@@ -1,5 +1,7 @@
 import APIError from '../errors/APIError';
 import * as scheduledServiceTypeModel from '../models/scheduledServiceType';
+import * as scheduledServiceInstanceModel from '../models/scheduledServiceInstance';
+import { checkIfCanAccessVehicle } from './vehicleService';
 
 export const createScheduledServiceType = async (userId: string, name: string) => {
   if (!userId) {
@@ -40,9 +42,19 @@ export const removeScheduledServiceType = async (id: string, userId: string) => 
   return scheduledServiceType;
 };
 
-export const findScheduledServiceTypes = async (userId: string) => {
+// optional param vehicleId for getting scheduled service types related to shared vehicle
+export const findScheduledServiceTypes = async (userId: string, vehicleId?: string) => {
   if (!userId) {
     throw new APIError('No userId provided', 400);
+  }
+
+  if (vehicleId) {
+    const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
+    const result =
+      await scheduledServiceInstanceModel.default.getVehicleScheduledServiceInstancesWithScheduledServiceTypes(
+        vehicle.id
+      );
+    return result.map((d) => d.scheduledServiceType);
   }
 
   const scheduledServiceTypes = await scheduledServiceTypeModel.default.getScheduledServiceTypes(userId);

@@ -115,7 +115,7 @@
 }
 
 .editor [contenteditable="true"] {
-  height: 75vh; /* set to your desired height */
+  height: var(--editor-height, 75vh);
   overflow-y: auto; /* allows scrolling if content exceeds height */
   padding: 10px;
   /* border: 1px solid #ccc; */
@@ -125,3 +125,11 @@
   line-height: 1.4
 }
 
+.react-datepicker-popper {
+  z-index: 1060 !important; /* Bootstrap modals use 1050, so 1060 is safe */
+}
+
+.fixed-table {
+  table-layout: fixed;
+  width: 100%;
+}

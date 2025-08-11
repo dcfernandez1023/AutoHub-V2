@@ -28,15 +28,18 @@ import {
   removeVehicleShare,
 } from '../services/vehicleShare';
 import { findVehicleChangelog } from '../services/vehicleChangelogService';
+import VehicleChangeLogPublisher from '../eventbus/publishers/VehicleChangeLogPublisher';
+import ChangelogPublisher from '../eventbus/publishers/ChangelogPublisher';
 
 export const postVehicle = async (req: Request, res: Response) => {
   try {
-    console.log(req);
     const params = req.params;
     const userId = params.userId;
 
     const requestBody: CreateOrUpdateVehicleRequest = CreateOrUpdateVehicleRequestSchema.parse(req.body);
     const vehicle = await createVehicle(userId, requestBody);
+
+    VehicleChangeLogPublisher.vehicleCreated(req.user.userId, req.user.username, vehicle.id, vehicle.name);
 
     res.status(200).json(vehicle);
   } catch (error) {
@@ -52,6 +55,8 @@ export const putVehicle = async (req: Request, res: Response) => {
 
     const requestBody: CreateOrUpdateVehicleRequest = CreateOrUpdateVehicleRequestSchema.parse(req.body);
     const vehicle = await updateVehicle(vehicleId, userId, requestBody);
+
+    VehicleChangeLogPublisher.vehicleUpdated(req.user.userId, req.user.username, vehicle.id, requestBody);
 
     res.status(200).json(vehicle);
   } catch (error) {
@@ -94,6 +99,9 @@ export const deleteVehicle = async (req: Request, res: Response) => {
     const userId = params.userId;
 
     const vehicle = await removeVehicle(vehicleId, userId);
+
+    ChangelogPublisher.vehicleDeleted(req.user.userId, req.user.username, vehicle.name);
+
     res.status(200).json(vehicle);
   } catch (error) {
     handleError(res, error as Error);
@@ -135,8 +143,17 @@ export const postVehicleShare = async (req: Request, res: Response) => {
     const requestBody: ShareVehicleRequest = ShareVehicleRequestSchema.parse(req.body);
 
     const vehicleShare = await createVehicleShare(vehicleId, userId, requestBody.userId);
+    const { usernameOfShared, vehicleName, ...rest } = vehicleShare;
 
-    res.status(200).json(vehicleShare);
+    VehicleChangeLogPublisher.shareVehicle(
+      req.user.userId,
+      req.user.username,
+      usernameOfShared,
+      vehicleShare.vehicleId,
+      vehicleName
+    );
+
+    res.status(200).json(rest);
   } catch (error) {
     handleError(res, error as Error);
   }

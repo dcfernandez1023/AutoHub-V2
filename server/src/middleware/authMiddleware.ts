@@ -25,6 +25,14 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     }
 
     const userDecodedTokenPayload = getUserDecodedPayloadFromToken(token);
+    if (
+      !userDecodedTokenPayload.email ||
+      !userDecodedTokenPayload.userId ||
+      !userDecodedTokenPayload.username ||
+      !userDecodedTokenPayload.scopes
+    ) {
+      throw new APIError('Missing required encoded data from token', 403);
+    }
 
     const userIdParam = req.params.userId;
     if (userIdParam !== userDecodedTokenPayload.userId) {

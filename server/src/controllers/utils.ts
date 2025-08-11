@@ -16,7 +16,7 @@ export const handleError = (res: Response, error: Error) => {
 export const getUserDecodedTokenPayload = (req: Request): UserDecodedTokenPayload => {
   const payload = req.user;
   console.log(payload);
-  if (!payload || !payload.email || !payload.userId || !payload.scopes) {
+  if (!payload || !payload.email || !payload.userId || !payload.username || !payload.scopes) {
     throw new APIError('Failed to read details from request', 400);
   }
   return payload;
@@ -31,6 +31,7 @@ export const getUserDecodedPayloadFromToken = (token: string): UserDecodedTokenP
     userDecodedTokenPayload = {
       userId: decoded.userId,
       email: decoded.email,
+      username: decoded.username,
       scopes: decoded.scopes,
     };
   }

@@ -36,6 +36,7 @@ const ScheduledServiceInstanceTable: React.FC<
     setError,
     createScheduledServiceInstances,
     updateScheduledServiceInstance,
+    deleteScheduledServiceInstance,
   } = useScheduledServiceInstances({ vehicleId });
 
   const [modalState, setModalState] = useState<ModalState>();
@@ -168,7 +169,11 @@ const ScheduledServiceInstanceTable: React.FC<
         }}
         onDelete={(scheduledServiceInstance: ScheduledServiceInstance) => {
           if (modalState === 'Delete') {
-            console.log('Deleting', scheduledServiceInstance);
+            void deleteScheduledServiceInstance(
+              vehicleId,
+              scheduledServiceInstance.id,
+              () => setModalState(undefined)
+            );
           }
         }}
         show={

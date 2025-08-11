@@ -1,4 +1,3 @@
-// AuthContext.js
 import {
   createContext,
   ReactNode,

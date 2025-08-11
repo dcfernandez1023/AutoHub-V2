@@ -15,7 +15,7 @@ describe('User routes', () => {
   beforeAll(async () => {
     server = AutoHubServer.getServer();
     user = await createTestUser('autohub-tester', 'autohub-tester@email.com');
-    accessToken = await getAccessToken(user.id, user.email);
+    accessToken = await getAccessToken(user.id, user.email, user.username);
   });
 
   afterAll(async () => {

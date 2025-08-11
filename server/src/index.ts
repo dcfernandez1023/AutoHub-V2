@@ -7,6 +7,7 @@ import swaggerSpec from './swagger';
 
 import authRoutes from './routes/auth';
 import userRoutes from './routes/user';
+import changelogRoutes from './routes/changelog';
 import exportRoutes from './routes/export';
 import importRoutes from './routes/import';
 import repairLogRoutes from './routes/repairLog';
@@ -18,6 +19,8 @@ import vehicleRoutes from './routes/vehicle';
 
 import logger from './middleware/logger';
 import { Server } from 'http';
+import { subscribers } from './eventbus/subscribers/subscribers';
+import Subscriber from './eventbus/subscribers/Subscriber';
 
 class AutoHubServer {
   private _environment: string;
@@ -60,6 +63,7 @@ class AutoHubServer {
     // Routes
     this._app.use(AutoHubServer.API_ROUTE_PREFIX, authRoutes);
     this._app.use(AutoHubServer.API_ROUTE_PREFIX, userRoutes);
+    this._app.use(AutoHubServer.API_ROUTE_PREFIX, changelogRoutes);
     this._app.use(AutoHubServer.API_ROUTE_PREFIX, importRoutes);
     this._app.use(AutoHubServer.API_ROUTE_PREFIX, exportRoutes);
     this._app.use(AutoHubServer.API_ROUTE_PREFIX, upcomingMaintenanceRoutes);
@@ -71,6 +75,11 @@ class AutoHubServer {
 
     this._app.get('/', (req, res) => {
       res.send('Autohub');
+    });
+
+    // Setup EventHub subscribers
+    subscribers.forEach((subscriber: Subscriber) => {
+      subscriber.subscribe();
     });
 
     // Start server

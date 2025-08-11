@@ -11,7 +11,7 @@ export const generateRegistrationToken = (userId: string, email: string): string
   return jwt.sign({ userId, email, scopes }, JWT_SECRET, { expiresIn: '10m' });
 };
 
-export const generateJwtToken = (userId: string, email: string, role: ROLES): string => {
+export const generateJwtToken = (userId: string, email: string, username: string, role: ROLES): string => {
   const scopes = ALLOWED_SCOPES[role];
   if (!scopes) {
     throw new APIError('Invalid role', 400);
@@ -20,7 +20,7 @@ export const generateJwtToken = (userId: string, email: string, role: ROLES): st
     throw new APIError('Failed to generate access token. Invalid userId or email provided', 400);
   }
 
-  const payload = { userId, email, scopes };
+  const payload = { userId, email, username, scopes };
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
 };
 

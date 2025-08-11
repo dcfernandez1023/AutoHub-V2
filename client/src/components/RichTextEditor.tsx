@@ -14,6 +14,8 @@ type RichTextEditorProps = {
   existingContent: string;
   disabled: boolean;
   onSave: (content: string) => void;
+  height?: string;
+  saveDebounce?: number;
   previewConfig?: PreviewConfig;
 };
 
@@ -21,8 +23,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   existingContent,
   disabled,
   onSave,
+  height,
+  saveDebounce,
   previewConfig,
 }) => {
+  const [isSaved, setIsSaved] = useState<boolean>(true);
+
   const parseExistingContent = (content: string) => {
     if (existingContent) {
       try {
@@ -64,16 +70,47 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       }),
       Underline,
     ],
-    content:
-      parseExistingContent(existingContent) ??
-      '<p>Enter your notes here...</p>',
+    content: parseExistingContent(existingContent) ?? '<p></p>',
   });
+
+  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const handleSave = () => {
     if (!editor) return;
     const content = editor.getJSON();
     onSave(JSON.stringify(content));
   };
+
+  useEffect(() => {
+    if (!editor || !saveDebounce) return;
+
+    const updateHandler = () => {
+      // Clear existing timeout before setting a new one
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      // Set new debounce timeout
+      setIsSaved(false);
+      timeoutRef.current = setTimeout(() => {
+        const content = editor.getJSON();
+        onSave(JSON.stringify(content));
+        setIsSaved(true);
+      }, saveDebounce);
+    };
+
+    // Register event listener
+    editor.on('update', updateHandler);
+
+    // Cleanup on unmount or editor change
+    return () => {
+      editor.off('update', updateHandler);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      setIsSaved(true);
+    };
+  }, [editor, onSave, saveDebounce]);
 
   const markActive = (mark: string) =>
     editor?.isActive(mark) ? 'light' : 'outline-light';
@@ -160,15 +197,28 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             </Button>
           </ButtonGroup>
 
-          <EditorContent editor={editor} className="editor" />
+          <EditorContent
+            editor={editor}
+            className="editor"
+            // @ts-ignore
+            style={{ '--editor-height': height ?? '75vh' }}
+          />
 
-          <Button
-            onClick={handleSave}
-            style={{ marginTop: 10 }}
-            disabled={disabled}
-          >
-            Save
-          </Button>
+          {!saveDebounce ? (
+            <Button
+              onClick={handleSave}
+              style={{ marginTop: 10 }}
+              disabled={disabled}
+            >
+              Save
+            </Button>
+          ) : (
+            <span
+              style={{ float: 'right', fontSize: '14px', marginRight: '2px' }}
+            >
+              <i>{isSaved ? 'Saved' : 'Saving...'}</i>
+            </span>
+          )}
         </>
       )}
     </div>

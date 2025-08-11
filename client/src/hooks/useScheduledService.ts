@@ -1,18 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ScheduledServiceType } from '../types/scheduledService';
 import ScheduledServiceClient from '../api/ScheduledServiceClient';
 import { useAuthContext } from '../context/AuthContext';
 
-export const useScheduledServiceTypes = () => {
-  const [scheduledServiceTypes, setScheduledServiceTypes] =
-    useState<ScheduledServiceType[]>();
+type UseScheduledServiceTypeProps = {
+  sharedVehicleId?: string;
+};
+
+export const useScheduledServiceTypes = (
+  props?: UseScheduledServiceTypeProps
+) => {
+  const { sharedVehicleId } = props ?? {};
+
+  const [scheduledServiceTypes, setScheduledServiceTypes] = useState<
+    ScheduledServiceType[]
+  >([]);
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingAction, setLoadingAction] = useState<boolean>(false);
 
   const { authContext } = useAuthContext();
 
-  const getScheduledServiceTypes = async () => {
+  const getScheduledServiceTypes = useCallback(async () => {
     try {
       if (!authContext) {
         throw new Error('No auth context');
@@ -21,7 +30,8 @@ export const useScheduledServiceTypes = () => {
       setLoading(true);
       const data: ScheduledServiceType[] =
         await ScheduledServiceClient.getScheduledServiceTypes(
-          authContext.userId
+          authContext.userId,
+          sharedVehicleId
         );
       setScheduledServiceTypes(data);
     } catch (error) {
@@ -30,7 +40,7 @@ export const useScheduledServiceTypes = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [sharedVehicleId]);
 
   const createOrUpdateScheduledServiceType = async (
     name: string,
@@ -122,7 +132,7 @@ export const useScheduledServiceTypes = () => {
 
   useEffect(() => {
     void getScheduledServiceTypes();
-  }, []);
+  }, [getScheduledServiceTypes]);
 
   return {
     scheduledServiceTypes,

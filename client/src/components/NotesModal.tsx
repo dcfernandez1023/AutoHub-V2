@@ -7,7 +7,7 @@ import RichTextEditor from './RichTextEditor';
 interface NotesModalProps extends ModalBaseProps {
   initialContent: string;
   loading: boolean;
-  onSave: (content: string) => Promise<void>;
+  onSave: (content: string) => void;
 }
 
 const NotesModal: React.FC<NotesModalProps> = (props: NotesModalProps) => {

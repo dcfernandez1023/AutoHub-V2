@@ -12,20 +12,24 @@ const LogBase = z.object({
 // Repair log schemas
 export const CreateRepairLogRequestSchema = LogBase.extend({
   datePerformed: z.number(),
+  name: z.string(),
 });
 
 export const CreateRepairLogRequestSchemaInternal = LogBase.extend({
   datePerformed: z.date(),
+  name: z.string(),
 });
 
 export const UpdateRepairLogRequestSchema = LogBase.extend({
   id: z.string(),
   datePerformed: z.number(),
+  name: z.string(),
 });
 
 export const UpdateRepairLogRequestSchemaInternal = LogBase.extend({
   id: z.string(),
   datePerformed: z.date(),
+  name: z.string(),
 });
 
 export const UpdateRepairLogRequestSchemaArray = z.array(UpdateRepairLogRequestSchema);

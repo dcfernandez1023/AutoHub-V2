@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { AUTH_SCOPES } from '../constants';
 import {
-  deleteRepairLog,
+  deleteRepairLogs,
   postRepairLog,
   putRepairLogs,
   getVehicleRepairLogs,
@@ -13,10 +13,10 @@ const router = Router();
 
 // Repair logs
 router.delete(
-  '/users/:userId/vehicles/:vehicleId/repairLogs/:repairLogId',
+  '/users/:userId/vehicles/:vehicleId/repairLogs',
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
-  deleteRepairLog
+  deleteRepairLogs
 );
 router.post(
   '/users/:userId/vehicles/:vehicleId/repairLogs',
