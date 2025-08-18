@@ -32,10 +32,24 @@ export type CreateAttachmentResponse = {
   attachmentUrl: string;
 };
 
-export type VehicleAttachment = {
-  userId: string;
-  vehicleId: string;
+export type VehicleAttachmentRaw = {
+  path: string;
+  size: number;
   id: string;
-  url: string;
-  filePath: string;
+  vehicleId: string;
+  userId: string;
+  filename: string;
+  contentType: string;
+  dateCreated: string;
+};
+
+export type VehicleAttachment = {
+  path: string;
+  size: number;
+  id: string;
+  vehicleId: string;
+  userId: string;
+  filename: string;
+  contentType: string;
+  dateCreated: Date;
 };

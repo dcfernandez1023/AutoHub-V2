@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "VehicleAttachment" ALTER COLUMN "size" SET DATA TYPE DOUBLE PRECISION;

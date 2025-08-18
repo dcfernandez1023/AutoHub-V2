@@ -53,7 +53,6 @@ export const doImport = async (userId: string, buffer: Buffer) => {
   });
   const repairLogImport = repairLogs.map((log) => {
     const logDto = { ...log, datePerformed: new Date(log.datePerformed) };
-    console.log(logDto);
     const logDtoParsed = RepairLogImportDtoSchema.parse(logDto);
     return logDtoParsed;
   });

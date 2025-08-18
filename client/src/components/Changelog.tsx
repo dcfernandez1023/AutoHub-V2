@@ -8,7 +8,7 @@ type ChangelogProps = {
 const Changelog: React.FC<ChangelogProps> = (props: ChangelogProps) => {
   const { vehicleId } = props;
 
-  const { loading, error, changelog } = useChangelog({ vehicleId });
+  const { loading, changelog } = useChangelog({ vehicleId });
 
   if (loading) {
     return (
@@ -16,11 +16,6 @@ const Changelog: React.FC<ChangelogProps> = (props: ChangelogProps) => {
         <Spinner animation="border" />
       </div>
     );
-  }
-
-  // TODO: Handle this more elegantly
-  if (error) {
-    return <p>{error}</p>;
   }
 
   return (

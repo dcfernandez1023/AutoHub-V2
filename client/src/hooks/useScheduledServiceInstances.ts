@@ -5,6 +5,7 @@ import {
 } from '../types/scheduledService';
 import ScheduledServiceClient from '../api/ScheduledServiceClient';
 import { useAuthContext } from '../context/AuthContext';
+import { useCommunicationContext } from '../context/CommunicationContext';
 
 type UseScheduledServiceInstancesProps = {
   vehicleId: string;
@@ -23,6 +24,7 @@ export const useScheduledServiceInstances = (
   const [actionLoading, setActionLoading] = useState<boolean>(false);
 
   const { authContext } = useAuthContext();
+  const { setCommunicationContext } = useCommunicationContext();
 
   const getScheduledServiceInstances = async (vehicleId: string) => {
     try {
@@ -40,7 +42,10 @@ export const useScheduledServiceInstances = (
       setScheduledServiceInstances(data);
     } catch (error) {
       console.error('Failed to fetch scheduled service types', error);
-      setError('Failed to fetch scheduled service types');
+      setCommunicationContext({
+        kind: 'error',
+        message: 'Failed to fetch scheduled service instances',
+      });
     } finally {
       setLoading(false);
     }

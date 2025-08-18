@@ -22,7 +22,6 @@ export const me = async (req: Request, res: Response) => {
       throw new APIError('No token', 400);
     }
     const userDecodedTokenPayload = getUserDecodedPayloadFromToken(token);
-    console.log('decoded', userDecodedTokenPayload);
     res.status(200).json(userDecodedTokenPayload);
   } catch (error) {
     handleError(res, error as Error);

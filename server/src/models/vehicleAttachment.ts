@@ -1,13 +1,24 @@
 import { db } from '../database/database';
 
-const createAttachment = async (id: string, vehicleId: string, userId: string, url: string, filePath: string) => {
+const createAttachment = async (
+  vehicleId: string,
+  userId: string,
+  filename: string,
+  path: string,
+  contentType: string,
+  size: number
+) => {
   return await db.vehicleAttachment.create({
-    data: { id, vehicleId, userId, url, filePath },
+    data: { vehicleId, userId, filename, path, contentType, size },
   });
 };
 
-const getAttachments = async (vehicleId: string) => {
-  return await db.vehicleAttachment.findMany({ where: { vehicleId } });
+const getAttachments = async (vehicleId: string, orderByDate: 'asc' | 'desc' = 'desc') => {
+  return await db.vehicleAttachment.findMany({ where: { vehicleId }, orderBy: { dateCreated: orderByDate } });
+};
+
+const getAttachmentsByUser = async (userId: string, orderByDate: 'asc' | 'desc' = 'desc') => {
+  return await db.vehicleAttachment.findMany({ where: { userId }, orderBy: { dateCreated: orderByDate } });
 };
 
 const getAttachment = async (attachmentId: string, vehicleId: string) => {
@@ -18,4 +29,4 @@ const deleteAttachment = async (attachmentId: string, vehicleId: string) => {
   return await db.vehicleAttachment.delete({ where: { id: attachmentId, vehicleId } });
 };
 
-export default { createAttachment, getAttachments, getAttachment, deleteAttachment };
+export default { createAttachment, getAttachments, getAttachment, deleteAttachment, getAttachmentsByUser };

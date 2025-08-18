@@ -14,9 +14,9 @@ type GenericFileProps = {
   handleChooseFile: (file: File) => void;
 };
 
-type ImageUploadProps = BaseImageProps | GenericFileProps;
+type FileUploadProps = BaseImageProps | GenericFileProps;
 
-const ImageUpload: React.FC<ImageUploadProps> = (props) => {
+const FileUpload: React.FC<FileUploadProps> = (props) => {
   const [imagePreview, setImagePreview] = useState<string>();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,4 +56,4 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
   );
 };
 
-export default ImageUpload;
+export default FileUpload;

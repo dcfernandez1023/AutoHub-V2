@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ScheduledServiceType } from '../types/scheduledService';
 import ScheduledServiceClient from '../api/ScheduledServiceClient';
 import { useAuthContext } from '../context/AuthContext';
+import { useCommunicationContext } from '../context/CommunicationContext';
 
 type UseScheduledServiceTypeProps = {
   sharedVehicleId?: string;
@@ -20,6 +21,7 @@ export const useScheduledServiceTypes = (
   const [loadingAction, setLoadingAction] = useState<boolean>(false);
 
   const { authContext } = useAuthContext();
+  const { setCommunicationContext } = useCommunicationContext();
 
   const getScheduledServiceTypes = useCallback(async () => {
     try {
@@ -36,7 +38,10 @@ export const useScheduledServiceTypes = (
       setScheduledServiceTypes(data);
     } catch (error) {
       console.error('Failed to fetch scheduled service types', error);
-      setError('Failed to fetch scheduled service types');
+      setCommunicationContext({
+        kind: 'error',
+        message: 'Failed to fetch scheduled service types',
+      });
     } finally {
       setLoading(false);
     }

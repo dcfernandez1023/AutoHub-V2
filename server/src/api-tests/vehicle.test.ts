@@ -116,8 +116,6 @@ describe('Vehicle routes', () => {
       .get(`/api/users/${sharedUser.id}/vehicles`)
       .query({ shared: 'true' })
       .set('Authorization', `Bearer ${sharedUserAccessToken}`);
-    console.log(getSharedVehiclesRes.status);
-    console.log(getSharedVehiclesRes.body);
     expect(getSharedVehiclesRes.ok).toEqual(true);
     expect(getSharedVehiclesRes.body.length).toBeGreaterThan(0);
 
@@ -149,8 +147,6 @@ describe('Vehicle routes', () => {
     const deleteVehicleRes = await request(AutoHubServer.getApp())
       .delete(`/api/users/${user.id}/vehicles/${vehicle.id}`)
       .set('Authorization', `Bearer ${accessToken}`);
-    console.log(deleteVehicleRes.status);
-    console.log(deleteVehicleRes.body);
     expect(deleteVehicleRes.ok).toEqual(true);
 
     const getVehicleRes = await request(AutoHubServer.getApp())

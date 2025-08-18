@@ -130,7 +130,6 @@ class ScheduledServiceClient extends BaseClient {
     }
 
     const data = (await res.json()) as ScheduledServiceInstance[];
-    console.log(data);
     return data;
   }
 
@@ -154,7 +153,6 @@ class ScheduledServiceClient extends BaseClient {
     }
 
     const data = (await res.json()) as ScheduledServiceInstance;
-    console.log(data);
     return data;
   }
 

@@ -8,6 +8,7 @@ import {
 import { useAuthContext } from '../context/AuthContext';
 import RepairLogClient from '../api/VehicleLogClient';
 import { FilterOptions } from '../components/FilterWidgets';
+import { useCommunicationContext } from '../context/CommunicationContext';
 
 interface UseRepairLogProps {
   vehicleId: string;
@@ -19,10 +20,10 @@ const useRepairLog = ({ vehicleId }: UseRepairLogProps) => {
   const [filterOptions, setFilterOptions] = useState<FilterOptions>();
   const [loading, setLoading] = useState<boolean>(false);
   const [actionLoading, setActionLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>();
   const [actionError, setActionError] = useState<string>();
 
   const { authContext } = useAuthContext();
+  const { setCommunicationContext } = useCommunicationContext();
 
   const applyFilter = useCallback(() => {
     if (!filterOptions) {
@@ -31,7 +32,6 @@ const useRepairLog = ({ vehicleId }: UseRepairLogProps) => {
     }
 
     if (repairLogs) {
-      console.log('repair logs', repairLogs);
       const filtered = [];
       const mutableRepairLogs = repairLogs.slice();
       for (const repairLog of mutableRepairLogs) {
@@ -83,8 +83,6 @@ const useRepairLog = ({ vehicleId }: UseRepairLogProps) => {
         }
       }
 
-      console.log('filtered', filtered);
-
       setFilteredLogs(filtered);
     }
   }, [filterOptions, repairLogs]);
@@ -117,7 +115,10 @@ const useRepairLog = ({ vehicleId }: UseRepairLogProps) => {
       setRepairLogs(sorted);
     } catch (error) {
       console.error(error);
-      setError('Failed to fetch repair logs');
+      setCommunicationContext({
+        kind: 'error',
+        message: 'Failed to fetch repair logs',
+      });
     } finally {
       setLoading(false);
     }
@@ -181,7 +182,6 @@ const useRepairLog = ({ vehicleId }: UseRepairLogProps) => {
 
         setActionLoading(true);
         const mutableRepairLogs = repairLogs.slice();
-        console.log('mutable scheduled logs', mutableRepairLogs);
 
         // Remove logs marked for deletion from the edited logs. We don't want to edit if it's marked for deletion
         deletedLogIds.forEach((logId) => {
@@ -239,7 +239,10 @@ const useRepairLog = ({ vehicleId }: UseRepairLogProps) => {
           )
         );
       } catch (error) {
-        // TODO: Show toast message
+        setCommunicationContext({
+          kind: 'error',
+          message: 'Failed to save repair logs. Please try again.',
+        });
         console.error(error);
         setActionError('Failed to save repair logs');
       } finally {
@@ -262,10 +265,8 @@ const useRepairLog = ({ vehicleId }: UseRepairLogProps) => {
     repairLogs: filteredLogs ?? repairLogs,
     loading,
     actionLoading,
-    error,
     actionError,
     setRepairLogs: filteredLogs ? setFilteredLogs : setRepairLogs,
-    setError,
     setActionError,
     createRepairLog,
     saveRepairLogs,

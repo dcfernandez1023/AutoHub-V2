@@ -6,6 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './styles.css';
 import { BrowserRouter } from 'react-router-dom';
+import { CommunicationProvider } from './context/CommunicationContext';
+import CommunicationToast from './components/CommunicationToast';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -13,7 +15,10 @@ const root = ReactDOM.createRoot(
 root.render(
   <BrowserRouter>
     <AuthProvider>
-      <App />
+      <CommunicationProvider>
+        <App />
+        <CommunicationToast />
+      </CommunicationProvider>
     </AuthProvider>
   </BrowserRouter>
 );

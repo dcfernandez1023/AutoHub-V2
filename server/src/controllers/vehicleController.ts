@@ -14,10 +14,11 @@ import {
   ShareVehicleRequest,
   ShareVehicleRequestSchema,
 } from '../types/vehicle';
-import { getFileBuffer, uploadVehicleAttachment } from '../services/storageService';
+import { getFileBuffer } from '../services/storageService';
 import { STORAGE_BUCKET_NAME } from '../constants';
 import {
   createVehicleAttachment,
+  exportAttachment,
   findVehicleAttachments,
   removeVehicleAttachment,
 } from '../services/attachmentService';
@@ -108,7 +109,6 @@ export const deleteVehicle = async (req: Request, res: Response) => {
   }
 };
 
-// TODO: Optimize this. uploadVehicleAttachment() and createVehicleAttachment() both call checkIfCanAccessVehicle()
 export const postVehicleAttachment = async (req: Request, res: Response) => {
   try {
     const params = req.params;
@@ -116,19 +116,12 @@ export const postVehicleAttachment = async (req: Request, res: Response) => {
     const userId = params.userId;
 
     const { buffer, filename, mimeType } = await getFileBuffer(req);
+    const uint8 = new Uint8Array(buffer);
+    const file = new File([uint8], filename, { type: mimeType, lastModified: Date.now() });
 
-    const { attachmentId, attachmentUrl, filePath } = await uploadVehicleAttachment(
-      vehicleId,
-      userId,
-      STORAGE_BUCKET_NAME.VEHICLE,
-      buffer,
-      filename,
-      mimeType
-    );
+    const attachment = await createVehicleAttachment(vehicleId, userId, file);
 
-    const attachment = await createVehicleAttachment(attachmentId, vehicleId, userId, attachmentUrl, filePath);
-
-    res.status(200).json({ attachmentId, attachmentUrl });
+    res.status(200).json(attachment);
   } catch (error) {
     handleError(res, error as Error);
   }
@@ -256,6 +249,21 @@ export const getVehicleChangelog = async (req: Request, res: Response) => {
     const changelog = await findVehicleChangelog(vehicleId, userId);
 
     res.status(200).json(changelog);
+  } catch (error) {
+    handleError(res, error as Error);
+  }
+};
+
+export const downloadAttachment = async (req: Request, res: Response) => {
+  try {
+    const params = req.params;
+    const userId = params.userId;
+    const vehicleId = params.vehicleId;
+    const attachmentId = params.attachmentId;
+
+    const signedUrl = await exportAttachment(userId, vehicleId, attachmentId);
+
+    res.status(200).json({ url: signedUrl });
   } catch (error) {
     handleError(res, error as Error);
   }

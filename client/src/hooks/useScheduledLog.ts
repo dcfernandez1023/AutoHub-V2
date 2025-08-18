@@ -13,6 +13,7 @@ import {
   ScheduledServiceType,
 } from '../types/scheduledService';
 import useScheduledServiceInstanceSelector from './useScheduledServiceInstanceSelector';
+import { useCommunicationContext } from '../context/CommunicationContext';
 
 interface UseScheduledLogProps {
   vehicleId: string;
@@ -30,7 +31,6 @@ const useScheduledLog = ({
   const [filterOptions, setFilterOptions] = useState<FilterOptions>();
   const [loading, setLoading] = useState<boolean>(false);
   const [actionLoading, setActionLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>();
   const [actionError, setActionError] = useState<string>();
 
   const { selectorRecords } = useScheduledServiceInstanceSelector({
@@ -39,6 +39,7 @@ const useScheduledLog = ({
   });
 
   const { authContext } = useAuthContext();
+  const { setCommunicationContext } = useCommunicationContext();
 
   const applyFilter = useCallback(() => {
     if (!filterOptions) {
@@ -47,7 +48,6 @@ const useScheduledLog = ({
     }
 
     if (scheduledLogs) {
-      console.log('scheduled logs', scheduledLogs);
       const filtered = [];
       const mutableScheduledLogs = scheduledLogs.slice();
       for (const scheduledLog of mutableScheduledLogs) {
@@ -109,8 +109,6 @@ const useScheduledLog = ({
         }
       }
 
-      console.log('filtered', filtered);
-
       setFilteredLogs(filtered);
     }
   }, [filterOptions, scheduledLogs, selectorRecords]);
@@ -145,8 +143,11 @@ const useScheduledLog = ({
 
       setScheduledLogs(sorted);
     } catch (error) {
+      setCommunicationContext({
+        kind: 'error',
+        message: 'Failed to fetch scheduled logs',
+      });
       console.error(error);
-      setError('Failed to fetch scheduled logs');
     } finally {
       setLoading(false);
     }
@@ -212,7 +213,6 @@ const useScheduledLog = ({
 
         setActionLoading(true);
         const mutableScheduledLogs = scheduledLogs.slice();
-        console.log('mutable scheduled logs', mutableScheduledLogs);
 
         // Remove logs marked for deletion from the edited logs. We don't want to edit if it's marked for deletion
         deletedLogIds.forEach((logId) => {
@@ -272,7 +272,10 @@ const useScheduledLog = ({
           )
         );
       } catch (error) {
-        // TODO: Show toast message
+        setCommunicationContext({
+          kind: 'error',
+          message: 'Failed to save scheduled logs. Please try again.',
+        });
         console.error(error);
         setActionError('Failed to save scheduled logs');
       } finally {
@@ -295,10 +298,8 @@ const useScheduledLog = ({
     scheduledLogs: filteredLogs ?? scheduledLogs,
     loading,
     actionLoading,
-    error,
     actionError,
     setScheduledLogs: filteredLogs ? setFilteredLogs : setScheduledLogs,
-    setError,
     setActionError,
     createScheduledLog,
     saveScheduledLogs,

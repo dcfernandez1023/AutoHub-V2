@@ -10,7 +10,7 @@ import { ModalBaseProps } from '../types/modal';
 import { CreateOrUpdateVehicle, Vehicle } from '../types/vehicle';
 import useVehicleModal from '../hooks/useVehicleModal';
 import AppAlert from './AppAlert';
-import ImageUpload from './FileUpload';
+import FileUpload from './FileUpload';
 
 interface VehicleModalProps extends ModalBaseProps {
   existingVehicle?: Vehicle;
@@ -112,7 +112,7 @@ const VehicleModal: React.FC<VehicleModalProps> = (
               />
             </Col>
             <Col xs={12}>
-              <ImageUpload
+              <FileUpload
                 accept="image/*"
                 base64Preview={vehicle.base64Image}
                 label="Image"

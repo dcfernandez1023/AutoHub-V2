@@ -14,6 +14,7 @@ import NotesModal from './NotesModal';
 import ScheduledLogFilterModal from './ScheduledLogFilterModal';
 import { type FilterOptions } from './FilterWidgets';
 import useVehicleOwner from '../hooks/useVehicleOwner';
+import { useCommunicationContext } from '../context/CommunicationContext';
 
 interface ScheduledLogProps {
   vehicle: Vehicle;
@@ -33,29 +34,25 @@ const ScheduledLogTab: React.FC<ScheduledLogProps> = (
   const [showFilterModal, setShowFilterModal] = useState<boolean>(false);
 
   const { isOwner } = useVehicleOwner({ vehicle });
-  const {
-    scheduledServiceTypes,
-    loading: loadingScheduledServiceTypes,
-    error: scheduledServiceTypeError,
-  } = useScheduledServiceTypes(
-    isOwner ? { sharedVehicleId: vehicle.id } : undefined
-  );
+  const { scheduledServiceTypes, loading: loadingScheduledServiceTypes } =
+    useScheduledServiceTypes(
+      isOwner ? { sharedVehicleId: vehicle.id } : undefined
+    );
   const {
     scheduledServiceInstances,
     loading: loadingScheduledServiceInstances,
-    error: scheduledServiceInstanceError,
   } = useScheduledServiceInstances({
     vehicleId,
   });
+
+  const { setCommunicationContext } = useCommunicationContext();
 
   const {
     scheduledLogs,
     loading,
     actionLoading,
-    error,
     actionError,
     setScheduledLogs,
-    setError,
     setActionError,
     createScheduledLog,
     saveScheduledLogs,
@@ -92,8 +89,11 @@ const ScheduledLogTab: React.FC<ScheduledLogProps> = (
     value: string,
     type: 'string' | 'number' | 'date'
   ) => {
-    // TODO: Handle this better
     if (!scheduledLogs) {
+      setCommunicationContext({
+        kind: 'warning',
+        message: 'You have no scheduled logs to edit',
+      });
       return;
     }
 
@@ -141,11 +141,6 @@ const ScheduledLogTab: React.FC<ScheduledLogProps> = (
         <Spinner animation="border" />
       </div>
     );
-  }
-
-  // TODO: Fancier error handling
-  if (error || scheduledServiceTypeError || scheduledServiceInstanceError) {
-    return <p>{error}</p>;
   }
 
   if (!scheduledLogs || !scheduledServiceTypes || !scheduledServiceInstances) {
@@ -402,7 +397,6 @@ const ScheduledLogTab: React.FC<ScheduledLogProps> = (
         show={showFilterModal}
         title="Filter"
         onApply={(filterOptions: FilterOptions) => {
-          console.log('filter options', filterOptions);
           setFilterOptions(filterOptions);
           setShowFilterModal(false);
         }}

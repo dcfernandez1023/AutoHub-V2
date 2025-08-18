@@ -43,7 +43,7 @@ class EventBus {
           // @ts-expect-error — args is [] for void, [payload] otherwise
           fn(...args);
         } catch (err) {
-          console.error(`EventBus handler for "${String(type)}" threw`, err);
+          // TODO: Log this
         }
       });
     }

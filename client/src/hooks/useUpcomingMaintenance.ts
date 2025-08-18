@@ -85,33 +85,6 @@ const useUpcomingMaintenance = (props: UseUpcoingMaintenanceProps) => {
     getUpcomingMaintenance();
   }, [vehicleId, shared]);
 
-  const prevDepsRef = useRef<{
-    vehicleId?: string;
-    shared?: boolean;
-    userId?: string;
-  }>({});
-
-  useEffect(() => {
-    const userId = authContextData?.authContext?.userId;
-
-    const depsChanged =
-      prevDepsRef.current.vehicleId !== vehicleId ||
-      prevDepsRef.current.shared !== shared ||
-      prevDepsRef.current.userId !== userId;
-
-    if (depsChanged) {
-      console.log('Effect triggered because something changed:');
-      console.log('Prev:', prevDepsRef.current);
-      console.log('Curr:', { vehicleId, shared, userId });
-    } else {
-      console.log('Effect triggered even though deps DID NOT change');
-    }
-
-    prevDepsRef.current = { vehicleId, shared, userId };
-
-    // Run actual effect logic...
-  }, [vehicleId, shared, authContextData?.authContext?.userId]);
-
   return {
     loading,
     upcomingMaintenance,

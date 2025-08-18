@@ -133,3 +133,5 @@
   table-layout: fixed;
   width: 100%;
 }
+
+.toast-header svg { overflow: visible; display: inline-block; }

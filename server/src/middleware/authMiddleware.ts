@@ -40,7 +40,6 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     }
 
     req.user = userDecodedTokenPayload;
-    console.log('Token valid');
     next();
   } catch (error) {
     handleError(res, error as Error);

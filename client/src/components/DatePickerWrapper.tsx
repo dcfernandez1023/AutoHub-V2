@@ -20,7 +20,6 @@ const DatePickerWrapper: React.FC<DatePickerWrapperProps> = (
 
   useEffect(() => {
     setStartDate(initialDate ?? new Date());
-    console.log('running');
   }, [initialDate]);
 
   return (

@@ -28,7 +28,7 @@ export const ALLOWED_SCOPES = {
 
 export enum STORAGE_BUCKET_NAME {
   USER = 'user',
-  VEHICLE = 'vehicle',
+  VEHICLES = 'vehicles',
 }
 
 export const VEHICLE_ATTACHMENT_LIMIT = 200;
@@ -38,3 +38,5 @@ export const SCHEDULED_SERVICE_INSTANCE_CREATE_LIMIT = 25;
 export const VEHICLE_ATTACHMENT_FPATH = 'vehicles';
 
 export const CHANGELOG_LIMIT_PER_USER = 500;
+
+export const MAX_VEHICLE_BASE64_BYTES = 150 * 1024;

@@ -5,7 +5,6 @@ import { UserDecodedTokenPayload } from '../types/user';
 import { authenticateToken } from '../services/authService';
 
 export const handleError = (res: Response, error: Error) => {
-  console.log('ERROR!', error);
   if (error instanceof APIError) {
     res.status(error.statusCode).json({ error: error.message });
   } else {
@@ -15,7 +14,6 @@ export const handleError = (res: Response, error: Error) => {
 
 export const getUserDecodedTokenPayload = (req: Request): UserDecodedTokenPayload => {
   const payload = req.user;
-  console.log(payload);
   if (!payload || !payload.email || !payload.userId || !payload.username || !payload.scopes) {
     throw new APIError('Failed to read details from request', 400);
   }

@@ -30,6 +30,7 @@ import ScheduledLogTab from './ScheduledLog';
 import RepairLogTab from './RepairLog';
 import Changelog from './Changelog';
 import useVehicleOwner from '../hooks/useVehicleOwner';
+import Attachments from './Attachments';
 
 const Vehicle: React.FC = () => {
   const { vehicleId } = useParams();
@@ -130,6 +131,9 @@ const Vehicle: React.FC = () => {
         </Tab>
         <Tab eventKey="changelog" title="Changelog" className="div-spacing">
           <Changelog vehicleId={vehicleId} />
+        </Tab>
+        <Tab eventKey="attachments" title="Attachments" className="div-spacing">
+          <Attachments vehicleId={vehicleId} />
         </Tab>
       </Tabs>
 

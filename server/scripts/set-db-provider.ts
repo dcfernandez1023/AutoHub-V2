@@ -79,11 +79,14 @@ model Vehicle {
 }
 
 model VehicleAttachment {
-  id        String   @id @default(uuid())
-  vehicleId String
-  userId    String
-  url       String
-  filePath  String
+  id           String   @id @default(uuid())
+  vehicleId    String
+  userId       String
+  filename     String
+  path         String
+  contentType  String
+  size         Float
+  dateCreated  DateTime @default(now())
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)

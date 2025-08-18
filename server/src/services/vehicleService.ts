@@ -3,8 +3,9 @@ import { CreateOrUpdateVehicleRequest, CreateOrUpdateVehicleRequestInternalSchem
 import * as vehicleModel from '../models/vehicle';
 import { Vehicle } from '@prisma/client';
 import * as vehicleShareModel from '../models/vehicleShare';
-import { deleteVehicleAttachments } from './storageService';
-import { STORAGE_BUCKET_NAME } from '../constants';
+import { removeVehicleAttachmentsFromStorage } from './attachmentService';
+import { decodedSizeFromBase64 } from './storageService';
+import { MAX_VEHICLE_BASE64_BYTES } from '../constants';
 
 export type FormattedVehicle = ReturnType<typeof formatVehicleResponse>;
 
@@ -18,6 +19,11 @@ export const createVehicle = async (userId: string, request: CreateOrUpdateVehic
     dateCreated: new Date().getTime(),
     ...request,
   });
+
+  if (decodedSizeFromBase64(requestInternal.base64Image) > MAX_VEHICLE_BASE64_BYTES) {
+    throw new APIError('Vehicle base64 image exceeds size limit', 413);
+  }
+
   const vehicle = await vehicleModel.default.createVehicle(userId, requestInternal);
 
   return formatVehicleResponse(vehicle);
@@ -29,6 +35,10 @@ export const updateVehicle = async (id: string, userId: string, request: CreateO
   }
   if (!userId) {
     throw new APIError('No userId provided', 400);
+  }
+
+  if (decodedSizeFromBase64(request.base64Image) > MAX_VEHICLE_BASE64_BYTES) {
+    throw new APIError('Vehicle base64 image exceeds size limit', 413);
   }
 
   const vehicle = await checkIfCanAccessVehicle(id, userId);
@@ -69,8 +79,10 @@ export const removeVehicle = async (id: string, userId: string) => {
 
   // Only the owner of the vehicle can delete it
   const vehicle = await checkIfCanAccessVehicle(id, userId, true);
+
+  // Remove attachments from storage
+  await removeVehicleAttachmentsFromStorage(vehicle.id, userId);
   const deletedVehicle = await vehicleModel.default.deleteVehicle(vehicle.id, userId);
-  await deleteVehicleAttachments(vehicle, userId, STORAGE_BUCKET_NAME.VEHICLE);
 
   return formatVehicleResponse(deletedVehicle);
 };

@@ -25,7 +25,7 @@ const useImportExport = () => {
 
       ImportExportClient.doExport(authContext.userId);
     } catch (error) {
-      // TODO: Log this and set toast message
+      // TODO: Log this
       console.error(error);
       setExportError('Failed to export data. Please try again');
     }

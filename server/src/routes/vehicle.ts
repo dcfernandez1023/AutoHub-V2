@@ -4,6 +4,7 @@ import {
   deleteVehicle,
   deleteVehicleAttachment,
   deleteVehicleShare,
+  downloadAttachment,
   getVehicle,
   getVehicleAttachments,
   getVehicleChangelog,
@@ -72,6 +73,12 @@ router.delete(
   authMiddleware,
   scopesMiddleware([AUTH_SCOPES.AUTOHUB_WRITE]),
   deleteVehicleAttachment
+);
+router.get(
+  '/users/:userId/vehicles/:vehicleId/attachments/:attachmentId/download',
+  authMiddleware,
+  scopesMiddleware([AUTH_SCOPES.AUTOHUB_READ]),
+  downloadAttachment
 );
 
 // Vehicles

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Changelog, VehicleChangelog } from '../types/changelog';
 import ChangelogClient from '../api/ChangelogClient';
 import { useAuthContext } from '../context/AuthContext';
+import { useCommunicationContext } from '../context/CommunicationContext';
 
 type UseChangelogProps = {
   vehicleId?: string;
@@ -14,9 +15,9 @@ const useChangelog = (props: UseChangelogProps) => {
     []
   );
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>();
 
   const { authContext } = useAuthContext();
+  const { setCommunicationContext } = useCommunicationContext();
 
   const getChangelog = useCallback(async () => {
     try {
@@ -72,7 +73,10 @@ const useChangelog = (props: UseChangelogProps) => {
       }
     } catch (error) {
       // TODO: Log this
-      setError('Failed to fetch changelog');
+      setCommunicationContext({
+        kind: 'error',
+        message: 'Failed to fetch changelog',
+      });
     } finally {
       setLoading(false);
     }
@@ -85,8 +89,6 @@ const useChangelog = (props: UseChangelogProps) => {
   return {
     changelog,
     loading,
-    error,
-    setError,
   };
 };
 

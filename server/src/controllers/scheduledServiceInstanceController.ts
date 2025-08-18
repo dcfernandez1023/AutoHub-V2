@@ -31,7 +31,6 @@ export const postScheduledServiceInstances = async (req: Request, res: Response)
 
     res.status(200).json(scheduledServiceInstances);
   } catch (error) {
-    console.error(error);
     handleError(res, error as Error);
   }
 };

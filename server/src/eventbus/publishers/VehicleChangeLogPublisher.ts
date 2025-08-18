@@ -43,7 +43,6 @@ class VehicleChangeLogPublisher {
       VehicleChangeLogPublisher.publish(payload);
     } catch (error) {
       // TODO: Log this somewhere
-      console.error(error);
     }
   }
 
@@ -178,7 +177,6 @@ class VehicleChangeLogPublisher {
   }
 
   static publish(payload: VehicleChangeLogRequest) {
-    console.log('emitting to eventbus', payload);
     EventBus.emit('vehicle:changelog:create', payload);
   }
 }

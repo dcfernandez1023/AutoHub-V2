@@ -57,7 +57,6 @@ class ChangelogPublisher {
   }
 
   static publish(payload: ChangelogRequest) {
-    console.log('emitting to eventbus', payload);
     EventBus.emit('user:changelog:create', payload);
   }
 }

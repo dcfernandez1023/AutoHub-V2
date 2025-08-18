@@ -10,6 +10,7 @@ import DatePickerWrapper from './DatePickerWrapper';
 import NotesModal from './NotesModal';
 import RepairLogFilterModal from './RepairLogFilterModal';
 import { type FilterOptions } from './FilterWidgets';
+import { useCommunicationContext } from '../context/CommunicationContext';
 
 interface RepairLogProps {
   vehicle: Vehicle;
@@ -25,14 +26,14 @@ const RepairLogTab: React.FC<RepairLogProps> = (props: RepairLogProps) => {
   const [selectedRepairLog, setSelectedRepairLog] = useState<RepairLog>();
   const [showFilterModal, setShowFilterModal] = useState<boolean>(false);
 
+  const { setCommunicationContext } = useCommunicationContext();
+
   const {
     repairLogs,
     loading,
     actionLoading,
-    error,
     actionError,
     setRepairLogs,
-    setError,
     setActionError,
     createRepairLog,
     saveRepairLogs,
@@ -67,8 +68,11 @@ const RepairLogTab: React.FC<RepairLogProps> = (props: RepairLogProps) => {
     value: string,
     type: 'string' | 'number' | 'date'
   ) => {
-    // TODO: Handle this better
     if (!repairLogs) {
+      setCommunicationContext({
+        kind: 'warning',
+        message: 'You have no repair logs to edit',
+      });
       return;
     }
 
@@ -112,11 +116,6 @@ const RepairLogTab: React.FC<RepairLogProps> = (props: RepairLogProps) => {
         <Spinner animation="border" />
       </div>
     );
-  }
-
-  // TODO: Fancier error handling
-  if (error) {
-    return <p>{error}</p>;
   }
 
   if (!repairLogs) {
@@ -340,7 +339,6 @@ const RepairLogTab: React.FC<RepairLogProps> = (props: RepairLogProps) => {
         show={showFilterModal}
         title="Filter"
         onApply={(filterOptions: FilterOptions) => {
-          console.log('filter options', filterOptions);
           setFilterOptions(filterOptions);
           setShowFilterModal(false);
         }}
