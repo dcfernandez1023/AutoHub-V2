@@ -7,9 +7,10 @@
     "set-db-provider:dev": "node scripts/set-db-provider.ts dev && npx prisma migrate dev --name init && npx prisma generate",
     "set-db-provider:prod": "node scripts/set-db-provider.ts && npx prisma migrate deploy",
     "start:dev": "node dist/index.js dev",
-    "start:prod": "node dist/index.js",
+    "start:prod": "node dist/index.js prod",
     "dev": "nodemon",
-    "build": "tsc",
+    "prisma:generate": "prisma generate",
+    "build": "npm run prisma:generate && tsc -p tsconfig.json",
     "test": "jest"
   },
   "keywords": [],

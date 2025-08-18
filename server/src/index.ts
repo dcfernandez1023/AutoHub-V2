@@ -21,6 +21,7 @@ import logger from './middleware/logger';
 import { Server } from 'http';
 import { subscribers } from './eventbus/subscribers/subscribers';
 import Subscriber from './eventbus/subscribers/Subscriber';
+import path from 'path';
 
 class AutoHubServer {
   private _environment: string;
@@ -73,9 +74,20 @@ class AutoHubServer {
     this._app.use(AutoHubServer.API_ROUTE_PREFIX, scheduledServiceInstanceRoutes);
     this._app.use(AutoHubServer.API_ROUTE_PREFIX, vehicleRoutes);
 
-    this._app.get('/', (req, res) => {
-      res.send('Autohub');
-    });
+    if (this._environment === 'dev') {
+      this._app.get('/', (req, res) => {
+        res.send('Autohub');
+      });
+    } else {
+      const client_build_dir = path.resolve(__dirname, '../../client/build');
+      // Serve static files (JS/CSS/images)
+      this._app.use(express.static(client_build_dir));
+
+      // SPA fallback for any other GET (after /api and static)
+      this._app.get('*', (req, res) => {
+        res.sendFile(path.join(client_build_dir, 'index.html'));
+      });
+    }
 
     // Setup EventHub subscribers
     subscribers.forEach((subscriber: Subscriber) => {
@@ -84,7 +96,7 @@ class AutoHubServer {
 
     // Start server
     this._server = this._app.listen(this._port, () => {
-      console.log(`🚀 Server is running on http://localhost:${this._port}`);
+      console.log(`🚀 Server is running - Environment: ${this._environment}`);
     });
   }
 

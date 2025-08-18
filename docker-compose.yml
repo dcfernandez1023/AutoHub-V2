@@ -1,0 +1,24 @@
+# --- Build and start in the background ---
+# docker compose up --build -d
+
+# --- View logs ---
+# docker compose logs -f
+
+# --- Stop and remove ---
+# docker compose down
+
+version: "3.9"
+
+services:
+  autohub-server:
+    image: autohub-server:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    ports:
+      - "5000:5000"
+    env_file:
+      - server/.env.prod
+    environment:
+      NODE_ENV: "production"
