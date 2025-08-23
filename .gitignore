@@ -21,3 +21,7 @@
 /server/.env.dev
 /server/.env.prod
 /server/prisma/schema.prisma
+
+# Ignore Firebase service account key for v1 --> v2 migration
+autohub-v1-migration/**/*.json
+autohub-v1-migration/**/*.txt

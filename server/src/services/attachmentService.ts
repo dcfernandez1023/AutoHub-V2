@@ -128,6 +128,10 @@ export const removeVehicleAttachmentsFromStorage = async (vehicleId: string, use
   const attachments = await vehicleAttachmentModel.default.getAttachments(vehicle.id);
   const paths = attachments.map((attachment) => attachment.path);
 
+  if (!paths.length) {
+    return;
+  }
+
   const supabaseClient = getSupabaseClient();
   const { error } = await supabaseClient.storage.from(STORAGE_BUCKET_NAME.VEHICLES).remove(paths);
   if (error) {
@@ -142,6 +146,10 @@ export const removeUserVehicleAttachmentsFromStorage = async (userId: string) =>
 
   const attachments = await vehicleAttachmentModel.default.getAttachmentsByUser(userId);
   const paths = attachments.map((attachment) => attachment.path);
+
+  if (!paths.length) {
+    return;
+  }
 
   const supabaseClient = getSupabaseClient();
   const { error } = await supabaseClient.storage.from(STORAGE_BUCKET_NAME.VEHICLES).remove(paths);
