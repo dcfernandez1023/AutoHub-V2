@@ -43,6 +43,10 @@ export const register = async (request: RegisterRequest): Promise<string> => {
     throw new APIError('Email, password, and username not provided', 400);
   }
 
+  if (!isAllowedEmailForRegistration(email)) {
+    throw new APIError('Email is not in allow list', 403);
+  }
+
   const existingUser = await getUser({ email });
   if (existingUser?.registered === 1) {
     throw new APIError('An account under this email is already registered', 400);
@@ -75,6 +79,10 @@ export const completeRegistration = async (request: CompleteRegistrationRequest)
     throw new APIError('UserId or email not supplied', 400);
   }
 
+  if (!isAllowedEmailForRegistration(email)) {
+    throw new APIError('Email is not in allow list', 403);
+  }
+
   const user = await getUser({ id: userId, email });
 
   if (!user) {
@@ -92,6 +100,10 @@ export const login = async (request: LoginRequest) => {
 
   if (!email || !password) {
     throw new APIError('Email or password not supplied', 400);
+  }
+
+  if (!isAllowedEmailForRegistration(email)) {
+    throw new APIError('Email is not in allow list', 403);
   }
 
   const user = await getRegisteredUser({ email });
@@ -119,4 +131,10 @@ export const searchUsersToShareWithVehicle = async (vehicleId: string, userId: s
     .filter((user) => {
       return user.registered && user.id !== userId;
     });
+};
+
+const isAllowedEmailForRegistration = (email: string): boolean => {
+  const emailAllowList = (process.env.ALLOWED_EMAILS_FOR_REGISTRATION || '').split(',');
+
+  return emailAllowList.includes(email);
 };

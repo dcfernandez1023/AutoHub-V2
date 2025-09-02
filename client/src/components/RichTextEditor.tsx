@@ -30,12 +30,11 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const [isSaved, setIsSaved] = useState<boolean>(true);
 
   const parseExistingContent = (content: string) => {
-    if (existingContent) {
+    if (content) {
       try {
         return JSON.parse(content);
       } catch (error) {
-        console.error('Invalid existing content:', error);
-        return '';
+        return `<p>${content}</p>`;
       }
     }
   };
