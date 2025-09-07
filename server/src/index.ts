@@ -37,8 +37,9 @@ class AutoHubServer {
     this._environment = process.argv[2] || 'dev';
     this._port = process.env.PORT || 5000;
 
-    const envFile = this._environment === 'prod' ? '.env.prod' : '.env.dev';
-    dotenv.config({ path: envFile });
+    if (this._environment !== 'prod') {
+      dotenv.config({ path: '.env.dev' });
+    }
 
     this._app = express();
 

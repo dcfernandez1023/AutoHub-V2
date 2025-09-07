@@ -1,0 +1,8 @@
+# /etc/rancher/k3s/config.yaml
+node-name: <NODE NAME>
+node-ip: 192.168.56.11
+flannel-iface: eth1 # change if your host-only NIC has a different name
+tls-san:
+  - <SERVER IP> # ex: 192.168.56.11
+  - <NODE NAME>
+write-kubeconfig-mode: "0644"

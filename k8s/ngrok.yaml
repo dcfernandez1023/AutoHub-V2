@@ -1,0 +1,17 @@
+# To install ngrok operator:
+# kubectl apply -n ngrok-operator -f https://raw.githubusercontent.com/ngrok/ngrok-operator/main/manifest-bundle.yaml
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ngrok-operator
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ngrok-operator-credentials
+  namespace: ngrok-operator
+type: Opaque
+stringData:
+  API_KEY: "<YOUR_NGROK_API_KEY>"
+  AUTHTOKEN: "<YOUR_NGROK_AUTHTOKEN>"

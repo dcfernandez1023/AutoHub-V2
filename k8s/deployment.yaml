@@ -1,0 +1,25 @@
+# kubectl create configmap autohubv2-config --from-env-file=.env.secrets
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autohub-server-deployment
+  labels:
+    app: autohub-server
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: autohub-server
+  template:
+    metadata:
+      labels:
+        app: autohub-server
+    spec:
+      containers:
+        - name: autohub-server-container
+          image: dominicfernandez1023/autohub-server:1.0.1
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: autohubv2-config

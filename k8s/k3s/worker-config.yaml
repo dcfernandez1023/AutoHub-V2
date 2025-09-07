@@ -1,0 +1,6 @@
+# /etc/rancher/k3s/config.yaml
+node-name: <NODE NAME>
+server: <SERVER IP> # ex: https://192.168.56.11:6443
+token: <SERVER TOKEN>
+node-ip: <NODE IP> # ex: 192.168.56.21
+flannel-iface: eth1 # change if your host-only NIC has a different name
