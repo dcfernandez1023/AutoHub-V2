@@ -40,3 +40,6 @@ export const VEHICLE_ATTACHMENT_FPATH = 'vehicles';
 export const CHANGELOG_LIMIT_PER_USER = 500;
 
 export const MAX_VEHICLE_BASE64_BYTES = 150 * 1024;
+
+export const MAX_ATTACHMENT_FILE_MB = 15;
+export const MAX_ATTACHMENT_FILE_BYTES = MAX_ATTACHMENT_FILE_MB * 1024 * 1024; // 15 MiB = 15,728,640 bytes

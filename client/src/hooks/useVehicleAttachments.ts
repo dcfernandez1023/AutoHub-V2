@@ -167,13 +167,11 @@ const useVehicleAttachments = (props: UseVehicleAttachmentsProps) => {
 
         setActionLoading(true);
 
-        const url = await VehicleAttachmentClient.getTemporaryAttachmentLink(
+        await VehicleAttachmentClient.download(
           authContext.userId,
           vehicleId,
           attachmentId
         );
-
-        window.open(url, '_blank');
       } catch (error) {
         setCommunicationContext({
           kind: 'error',

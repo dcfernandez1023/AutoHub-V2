@@ -31,6 +31,7 @@ import {
 import { findVehicleChangelog } from '../services/vehicleChangelogService';
 import VehicleChangeLogPublisher from '../eventbus/publishers/VehicleChangeLogPublisher';
 import ChangelogPublisher from '../eventbus/publishers/ChangelogPublisher';
+import APIError from '../errors/APIError';
 
 export const postVehicle = async (req: Request, res: Response) => {
   try {
@@ -261,9 +262,36 @@ export const downloadAttachment = async (req: Request, res: Response) => {
     const vehicleId = params.vehicleId;
     const attachmentId = params.attachmentId;
 
-    const signedUrl = await exportAttachment(userId, vehicleId, attachmentId);
+    const attachmentWithBytes = await exportAttachment(userId, vehicleId, attachmentId);
+    const { file } = attachmentWithBytes;
 
-    res.status(200).json({ url: signedUrl });
+    if (!file) {
+      throw new APIError('No file associated with attachment', 500);
+    }
+
+    const contentType =
+      attachmentWithBytes.contentType && attachmentWithBytes.contentType.trim()
+        ? attachmentWithBytes.contentType
+        : 'application/octet-stream';
+    const filename =
+      attachmentWithBytes.filename && attachmentWithBytes.filename ? attachmentWithBytes.filename : 'download.bin';
+
+    // Minimal sanitizing
+    const fallback = filename.replace(/["\\]/g, '_');
+    const encoded = encodeURIComponent(filename);
+    const contentDisposition = `attachment; filename="${fallback}"; filename*=UTF-8''${encoded}`;
+
+    const bytes = file.contents as Uint8Array;
+    const buf: Buffer = Buffer.isBuffer(bytes) ? (bytes as Buffer) : Buffer.from(bytes);
+
+    res.set({
+      'Content-Type': contentType,
+      'Content-Length': buf.length.toString(),
+      'Content-Disposition': contentDisposition,
+      'Cache-Control': 'private, max-age=0, must-revalidate',
+    });
+
+    res.send(buf);
   } catch (error) {
     handleError(res, error as Error);
   }

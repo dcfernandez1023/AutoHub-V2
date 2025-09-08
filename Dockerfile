@@ -57,5 +57,5 @@ COPY --from=build /app/client/build ./client/build
 EXPOSE 5000
 
 # Start the server
-CMD ["node", "dist/index.js", "prod"]
+CMD ["sh","-c","./node_modules/.bin/prisma migrate deploy && node dist/index.js prod"]
 WORKDIR /app/server

@@ -1,12 +1,11 @@
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -15,12 +14,12 @@ model User {
   email      String @unique
   password   String
   role       Role   @default(USER)
-  registered Int @default(0)
+  registered Int    @default(0)
 
-  Vehicle      Vehicle[]
-  attachments  VehicleAttachment[]
-  VehicleShare VehicleShare[]
-  VehicleChangelog VehicleChangelog[]
+  Vehicle              Vehicle[]
+  attachments          VehicleAttachment[]
+  VehicleShare         VehicleShare[]
+  VehicleChangelog     VehicleChangelog[]
   ScheduledServiceType ScheduledServiceType[]
 
   ScheduledServiceInstance ScheduledServiceInstance[]
@@ -33,56 +32,64 @@ model User {
 }
 
 model Vehicle {
-  id            String   @id @default(uuid())
-  userId        String
-  name          String
-  mileage       Int
-  year          Int
-  make          String
-  model         String
-  licensePlate  String
-  vin           String
-  notes         String
-  dateCreated   BigInt
-  base64Image   String?
+  id           String  @id @default(uuid())
+  userId       String
+  name         String
+  mileage      Int
+  year         Int
+  make         String
+  model        String
+  licensePlate String
+  vin          String
+  notes        String
+  dateCreated  BigInt
+  base64Image  String?
 
   // Relation with User
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  attachments   VehicleAttachment[]
+  attachments              VehicleAttachment[]
+  VehicleShare             VehicleShare[]
+  VehicleChangelog         VehicleChangelog[]
+  ScheduledServiceInstance ScheduledServiceInstance[]
+  ScheduledLog             ScheduledLog[]
+  RepairLog                RepairLog[]
 
   @@index([userId])
-  VehicleShare VehicleShare[]
-  VehicleChangelog VehicleChangelog[]
-  ScheduledServiceInstance ScheduledServiceInstance[]
-  ScheduledLog ScheduledLog[]
-  RepairLog RepairLog[]
 }
 
 model VehicleAttachment {
-  id           String   @id @default(uuid())
-  vehicleId    String
-  userId       String
-  filename     String
-  path         String
-  contentType  String
-  size         Float
-  dateCreated  DateTime @default(now())
+  id          String   @id @default(uuid())
+  vehicleId   String
+  userId      String
+  filename    String
+  path        String
+  contentType String
+  size        Float
+  dateCreated DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  user    User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle Vehicle                @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  file    VehicleAttachmentFile?
 
   @@index([vehicleId])
   @@index([userId])
 }
 
+model VehicleAttachmentFile {
+  attachmentId String @id
+  contents     Bytes
+
+  vehicleAttachment VehicleAttachment @relation(fields: [attachmentId], references: [id], onDelete: Cascade)
+}
+
 model VehicleShare {
-  id        String   @id @default(uuid())
+  id        String @id @default(uuid())
   vehicleId String
   userId    String
 
-  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([vehicleId, userId]) // Prevent duplicate shares
   @@index([userId])
@@ -96,8 +103,8 @@ model VehicleChangelog {
   description String
   dateCreated DateTime @default(now())
 
-  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([vehicleId])
@@ -109,7 +116,7 @@ model Changelog {
   description String
   dateCreated DateTime @default(now())
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
@@ -119,7 +126,7 @@ model ScheduledServiceType {
   userId String
   name   String
 
-  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   ScheduledServiceInstance ScheduledServiceInstance[]
 
@@ -128,7 +135,7 @@ model ScheduledServiceType {
 }
 
 model ScheduledServiceInstance {
-  id                     String @id @default(uuid())
+  id                     String    @id @default(uuid())
   userId                 String
   vehicleId              String
   scheduledServiceTypeId String
@@ -136,19 +143,19 @@ model ScheduledServiceInstance {
   timeInterval           Int
   timeUnits              TimeUnits
 
-  user                   User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vehicle                Vehicle                  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  scheduledServiceType   ScheduledServiceType     @relation(fields: [scheduledServiceTypeId], references: [id], onDelete: Cascade)
+  user                 User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle              Vehicle              @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  scheduledServiceType ScheduledServiceType @relation(fields: [scheduledServiceTypeId], references: [id], onDelete: Cascade)
+  ScheduledLog         ScheduledLog[]
 
   @@unique([vehicleId, scheduledServiceTypeId]) // Only one ScheduledServiceInstance can be created for a single Vehicle and ScheduledServiceType
   @@index([userId])
   @@index([vehicleId])
   @@index([scheduledServiceTypeId])
-  ScheduledLog ScheduledLog[]
 }
 
 model ScheduledLog {
-  id                         String @id @default(uuid())
+  id                         String   @id @default(uuid())
   userId                     String
   vehicleId                  String
   scheduledServiceInstanceId String
@@ -159,9 +166,9 @@ model ScheduledLog {
   totalCost                  Int
   notes                      String
 
-  user                       User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vehicle                    Vehicle                  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  scheduledServiceInstance   ScheduledServiceInstance @relation(fields: [scheduledServiceInstanceId], references: [id], onDelete: Cascade)
+  user                     User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle                  Vehicle                  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  scheduledServiceInstance ScheduledServiceInstance @relation(fields: [scheduledServiceInstanceId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([vehicleId])
@@ -169,19 +176,19 @@ model ScheduledLog {
 }
 
 model RepairLog {
-  id                         String @id @default(uuid())
-  userId                     String
-  vehicleId                  String
-  datePerformed              DateTime @default(now())
-  name                       String
-  mileage                    Int
-  partsCost                  Int
-  laborCost                  Int
-  totalCost                  Int
-  notes                      String
+  id            String   @id @default(uuid())
+  userId        String
+  vehicleId     String
+  datePerformed DateTime @default(now())
+  name          String
+  mileage       Int
+  partsCost     Int
+  laborCost     Int
+  totalCost     Int
+  notes         String
 
-  user                       User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vehicle                    Vehicle                  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([vehicleId])

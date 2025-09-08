@@ -3,7 +3,6 @@ import { CreateOrUpdateVehicleRequest, CreateOrUpdateVehicleRequestInternalSchem
 import * as vehicleModel from '../models/vehicle';
 import { Vehicle } from '@prisma/client';
 import * as vehicleShareModel from '../models/vehicleShare';
-import { removeVehicleAttachmentsFromStorage } from './attachmentService';
 import { decodedSizeFromBase64 } from './storageService';
 import { MAX_VEHICLE_BASE64_BYTES } from '../constants';
 
@@ -80,8 +79,6 @@ export const removeVehicle = async (id: string, userId: string) => {
   // Only the owner of the vehicle can delete it
   const vehicle = await checkIfCanAccessVehicle(id, userId, true);
 
-  // Remove attachments from storage
-  await removeVehicleAttachmentsFromStorage(vehicle.id, userId);
   const deletedVehicle = await vehicleModel.default.deleteVehicle(vehicle.id, userId);
 
   return formatVehicleResponse(deletedVehicle);

@@ -3,7 +3,6 @@ import APIError from '../errors/APIError';
 import * as userModel from '../models/user';
 import { CompleteRegistrationRequest, LoginRequest, RegisterRequest } from '../types/auth';
 import { GetUserRequest } from '../types/user';
-import { removeUserVehicleAttachmentsFromStorage } from './attachmentService';
 import { generateRegistrationToken, verifyPassword } from './authService';
 import { sendRegistrationEmail } from './emailService';
 
@@ -67,8 +66,6 @@ export const removeUser = async (userId: string) => {
     throw new APIError('No userId provided', 400);
   }
 
-  // Delete attachments from storage
-  await removeUserVehicleAttachmentsFromStorage(userId);
   return await userModel.default.deleteUser(userId);
 };
 

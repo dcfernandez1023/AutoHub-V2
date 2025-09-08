@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "set-db-provider:dev": "npx prisma migrate dev --name init && npx prisma generate",
-    "set-db-provider:prod": "npx prisma migrate deploy",
     "start:dev": "node dist/index.js dev",
     "start:prod": "node dist/index.js prod",
     "dev": "nodemon",
     "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "npx prisma migrate dev",
+    "prisma:deploy": "npx prisma migrate deploy",
     "build": "npm run prisma:generate && tsc -p tsconfig.json",
     "test": "jest"
   },

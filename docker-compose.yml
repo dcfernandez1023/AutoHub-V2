@@ -15,6 +15,19 @@
 version: "3.9"
 
 services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file:
+      - server/.env.prod # <-- add this so POSTGRES_* vars resolve for db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   autohub-server:
     image: dominicfernandez1023/autohub-server:1.0.1
     build:
@@ -27,3 +40,10 @@ services:
       - server/.env.prod
     environment:
       NODE_ENV: "production"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  db-data:

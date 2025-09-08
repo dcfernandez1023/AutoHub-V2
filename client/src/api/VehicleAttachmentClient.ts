@@ -81,23 +81,13 @@ class VehicleAttachmentClient extends BaseClient {
     );
   }
 
-  async getTemporaryAttachmentLink(
+  async download(
     userId: string,
     vehicleId: string,
     attachmentId: string
-  ): Promise<string> {
+  ): Promise<void> {
     const requestUrl = `${this._baseUrl}/api/users/${userId}/vehicles/${vehicleId}/attachments/${attachmentId}/download`;
-    const res = await fetch(requestUrl, {
-      ...this._defaultOptions,
-      method: 'GET',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      return data.url as string;
-    }
-    throw new Error(
-      `Failed to get download attachment. Status code: ${res.status}`
-    );
+    window.open(requestUrl, '_blank');
   }
 
   static get instance() {
