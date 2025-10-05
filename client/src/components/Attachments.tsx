@@ -1,4 +1,4 @@
-import { Button, Spinner, Table } from 'react-bootstrap';
+import { Button, Col, Row, Spinner, Table } from 'react-bootstrap';
 import useVehicleAttachments from '../hooks/useVehicleAttachments';
 import { useState } from 'react';
 import AttachmentModal, { AttachmentAction } from './AttachmentModal';
@@ -37,37 +37,32 @@ const Attachments: React.FC<AttachmentsProps> = ({ vehicleId }) => {
 
   return (
     <div>
-      <div>
-        <Button
-          style={{ float: 'right' }}
-          variant="success"
-          disabled={actionLoading}
-          onClick={openUploadModal}
-        >
-          Create Attachment
-        </Button>
-      </div>
+      <Row>
+        <Col>
+          <Button
+            style={{ float: 'right' }}
+            variant="success"
+            disabled={actionLoading}
+            onClick={openUploadModal}
+          >
+            Create Attachment
+          </Button>
+        </Col>
+      </Row>
 
       {vehicleAttachments.length === 0 ? (
         <div className="centered-div" style={{ fontSize: '20px' }}>
           No attachments
         </div>
       ) : (
-        <Table responsive className="fixed-table">
-          <colgroup>
-            <col style={{ width: '15%' }} />
-            <col style={{ width: '40%' }} />
-            <col style={{ width: '15%' }} />
-            <col style={{ width: '15%' }} />
-            <col style={{ width: '15%' }} />
-          </colgroup>
+        <Table responsive>
           <thead>
             <tr>
-              <th>Date Created</th>
-              <th>Attachment</th>
-              <th>Content Type</th>
-              <th>Size</th>
-              <th>Actions</th>
+              <th style={{ minWidth: '225px' }}>Date Created</th>
+              <th style={{ minWidth: '250px' }}>Attachment</th>
+              <th style={{ minWidth: '100px' }}>Content Type</th>
+              <th style={{ minWidth: '100px' }}>Size</th>
+              <th style={{ minWidth: '200px' }}>Actions</th>
             </tr>
           </thead>
           <tbody>

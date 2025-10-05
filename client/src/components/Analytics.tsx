@@ -99,63 +99,67 @@ const Analytics: React.FC<AnalyticsProps> = (props: AnalyticsProps) => {
   }, [scheduledLogUsage]);
 
   return (
-    <Row>
-      <Col md={4} style={{ minHeight: '200px', marginTop: '20px' }}>
+    <Row className="gy-5">
+      <Col md={6}>
         {loadingCost ? (
           <Spinner animation="border" />
         ) : (
-          <div>
-            <h3>Scheduled Service Cost vs. Repair Service Cost</h3>
-            <PieChart width={650} height={500}>
-              <Pie
-                data={costsData}
-                dataKey="value"
-                nameKey="name"
-                isAnimationActive={false}
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#82ca9d"
-                labelLine={false}
-                label={renderCustomizedLabel}
-              >
-                {costsData.map((d) => {
-                  return <Cell key={`cell-${d.name}`} fill={d.color} />;
-                })}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
+          <div style={{ width: '100%', height: 300 }}>
+            <h5>Scheduled Service Cost vs. Repair Service Cost</h5>
+            <ResponsiveContainer>
+              <PieChart width={650} height={500}>
+                <Pie
+                  data={costsData}
+                  dataKey="value"
+                  nameKey="name"
+                  isAnimationActive={false}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="#82ca9d"
+                  labelLine={false}
+                  label={renderCustomizedLabel}
+                >
+                  {costsData.map((d) => {
+                    return <Cell key={`cell-${d.name}`} fill={d.color} />;
+                  })}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         )}
       </Col>
-      <Col md={8} style={{ minHeight: '200px', marginTop: '20px' }}>
+      <Col md={6}>
         {loadingScheduledLogUsage ? (
           <Spinner animation="border" />
         ) : (
-          <div>
-            <h3>Scheduled Service Usage</h3>
-            <RadarChart
-              cx="50%"
-              cy="50%"
-              outerRadius="80%"
-              data={scheduledUsageData}
-              width={650}
-              height={500}
-            >
-              <PolarGrid />
-              <PolarAngleAxis dataKey="serviceName" />
-              <PolarRadiusAxis />
-              <Radar
-                name="Count"
-                dataKey="count"
-                stroke="#8884d8"
-                fill="#8884d8"
-                fillOpacity={0.6}
-              />
-              <Tooltip />
-              <Legend />
-            </RadarChart>
+          <div style={{ width: '100%', height: 400 }}>
+            <h5>Scheduled Service Usage</h5>
+            <ResponsiveContainer>
+              <RadarChart
+                cx="50%"
+                cy="50%"
+                outerRadius="80%"
+                data={scheduledUsageData}
+                width={650}
+                height={500}
+              >
+                <PolarGrid />
+                <PolarAngleAxis dataKey="serviceName" />
+                <PolarRadiusAxis />
+                <Radar
+                  name="Count"
+                  dataKey="count"
+                  stroke="#8884d8"
+                  fill="#8884d8"
+                  fillOpacity={0.6}
+                />
+                <Tooltip />
+                <Legend />
+              </RadarChart>
+            </ResponsiveContainer>
           </div>
         )}
       </Col>

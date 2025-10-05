@@ -125,8 +125,8 @@ const RepairLogTab: React.FC<RepairLogProps> = (props: RepairLogProps) => {
 
   return (
     <div>
-      <Row>
-        <Col xs={6}>
+      <Row className="g-3">
+        <Col sm={12} md={6} lg={4}>
           {/* <Button onClick={() => setShowFilterModal(true)}>Filter</Button> */}
           <Search
             placeholder="Search logs"
@@ -151,7 +151,7 @@ const RepairLogTab: React.FC<RepairLogProps> = (props: RepairLogProps) => {
             }}
           />
         </Col>
-        <Col xs={6} className="align-right">
+        <Col sm={12} md={6} lg={8} className="align-right">
           <Button
             variant="success"
             className="me-2"

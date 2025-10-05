@@ -7,6 +7,7 @@ import {
   Container,
   Dropdown,
   DropdownButton,
+  Nav,
   Row,
   Spinner,
   Tab,
@@ -63,84 +64,102 @@ const Vehicle: React.FC = () => {
 
   return (
     <Container fluid>
-      <Tabs
-        defaultActiveKey="info"
-        mountOnEnter={true}
-        unmountOnExit={false}
-        fill
-      >
-        <Tab eventKey="info" title="Info" className="div-spacing">
-          <Row>
-            <Col>
-              <Row>
-                <Col xs={6}></Col>
-                <Col xs={6} className="align-right">
-                  <DropdownButton title="Options">
-                    <Dropdown.Item
-                      onClick={() =>
-                        setVehicleModalState(VehicleModalState.Edit)
+      <Tab.Container id="left-tabs-example" defaultActiveKey="info">
+        <Row>
+          <Col sm={4} md={2} style={{ marginBottom: '30px' }}>
+            <Nav variant="pills" className="flex-column">
+              <Nav.Item>
+                <Nav.Link eventKey="info">Info</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="scheduled-log">Scheduled Log</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="repair-log">Repair Log</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="changelog">Changelog</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="attachments">Attachments</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="analytics">Analytics</Nav.Link>
+              </Nav.Item>
+            </Nav>
+          </Col>
+          <Col sm={8} md={10}>
+            <Tab.Content>
+              <Tab.Pane eventKey="info">
+                <Row>
+                  <Col>
+                    <Row>
+                      <Col xs={6}></Col>
+                      <Col xs={6} className="align-right">
+                        <DropdownButton title="Options">
+                          <Dropdown.Item
+                            onClick={() =>
+                              setVehicleModalState(VehicleModalState.Edit)
+                            }
+                          >
+                            Edit
+                          </Dropdown.Item>
+                          <Dropdown.Item
+                            disabled={!isOwner}
+                            onClick={() =>
+                              setVehicleModalState(VehicleModalState.Share)
+                            }
+                          >
+                            Share
+                          </Dropdown.Item>
+                          <Dropdown.Item
+                            disabled={!isOwner}
+                            onClick={() =>
+                              setVehicleModalState(VehicleModalState.Delete)
+                            }
+                          >
+                            Delete
+                          </Dropdown.Item>
+                        </DropdownButton>
+                      </Col>
+                    </Row>
+                    <VehicleTable
+                      vehicle={vehicle}
+                      onEditNotes={() =>
+                        setVehicleModalState(VehicleModalState.Notes)
                       }
-                    >
-                      Edit
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      disabled={!isOwner}
-                      onClick={() =>
-                        setVehicleModalState(VehicleModalState.Share)
+                      onRemoveImage={() =>
+                        setVehicleModalState(VehicleModalState.DeleteImage)
                       }
-                    >
-                      Share
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      disabled={!isOwner}
-                      onClick={() =>
-                        setVehicleModalState(VehicleModalState.Delete)
-                      }
-                    >
-                      Delete
-                    </Dropdown.Item>
-                  </DropdownButton>
-                </Col>
-              </Row>
-              <VehicleTable
-                vehicle={vehicle}
-                onEditNotes={() =>
-                  setVehicleModalState(VehicleModalState.Notes)
-                }
-                onRemoveImage={() =>
-                  setVehicleModalState(VehicleModalState.DeleteImage)
-                }
-              />
-            </Col>
-          </Row>
-          <Row className="div-spacing">
-            <Col>
-              <UpcomingMaintenance vehicleId={vehicleId} />
-            </Col>
-          </Row>
-          <br />
-        </Tab>
-        <Tab
-          eventKey="scheduled-log"
-          title="Scheduled Log"
-          className="div-spacing"
-        >
-          <ScheduledLogTab vehicle={vehicle} />
-        </Tab>
-        <Tab eventKey="repair-log" title="Repair Log" className="div-spacing">
-          <RepairLogTab vehicle={vehicle} />
-        </Tab>
-        <Tab eventKey="changelog" title="Changelog" className="div-spacing">
-          <Changelog vehicleId={vehicleId} />
-        </Tab>
-        <Tab eventKey="attachments" title="Attachments" className="div-spacing">
-          <Attachments vehicleId={vehicleId} />
-        </Tab>
-        <Tab eventKey="analytics" title="Analytics" className="div-spacing">
-          <Analytics vehicleId={vehicleId} />
-        </Tab>
-      </Tabs>
-
+                    />
+                  </Col>
+                </Row>
+                <Row className="div-spacing">
+                  <Col>
+                    <UpcomingMaintenance vehicleId={vehicleId} />
+                  </Col>
+                </Row>
+                <br />
+              </Tab.Pane>
+              <Tab.Pane eventKey="scheduled-log">
+                <ScheduledLogTab vehicle={vehicle} />
+              </Tab.Pane>
+              <Tab.Pane eventKey="repair-log">
+                <RepairLogTab vehicle={vehicle} />
+              </Tab.Pane>
+              <Tab.Pane eventKey="changelog">
+                <Changelog vehicleId={vehicleId} />
+              </Tab.Pane>
+              <Tab.Pane eventKey="attachments">
+                <Attachments vehicleId={vehicleId} />
+              </Tab.Pane>
+              <Tab.Pane eventKey="analytics">
+                <Analytics vehicleId={vehicleId} />
+              </Tab.Pane>
+            </Tab.Content>
+          </Col>
+        </Row>
+      </Tab.Container>
       <VehicleModal
         show={vehicleModalState === VehicleModalState.Edit}
         title="Edit Vehicle"

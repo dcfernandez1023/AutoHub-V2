@@ -22,15 +22,11 @@ const Changelog: React.FC<ChangelogProps> = (props: ChangelogProps) => {
     <>
       <h2>{vehicleId ? 'Vehicle Changelog' : 'Changelog'}</h2>
       <br />
-      <Table responsive className="fixed-table">
-        <colgroup>
-          <col style={{ width: '20%' }} />
-          <col style={{ width: '80%' }} />
-        </colgroup>
+      <Table responsive>
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Log</th>
+            <th style={{ minWidth: '100px' }}>Date</th>
+            <th style={{ minWidth: '300px' }}>Log</th>
           </tr>
         </thead>
         <tbody>
