@@ -81,11 +81,11 @@ const ScheduledServiceTypes: React.FC = () => {
         <div className="div-spacing">No scheduled service types</div>
       ) : (
         <div className="div-spacing">
-          <Table>
+          <Table responsive>
             <thead>
               <tr>
-                <th>Name</th>
-                <th></th>
+                <th style={{ minWidth: '200px' }}>Name</th>
+                <th style={{ minWidth: '200px' }}></th>
               </tr>
             </thead>
             <tbody>

@@ -12,6 +12,8 @@
 # docker login
 # docker compose push
 
+# docker buildx build --platform linux/amd64,linux/arm64 -t docker.io/dominicfernandez1023/autohub-server:1.0.1 --push .
+
 version: "3.9"
 
 services:

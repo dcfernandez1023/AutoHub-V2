@@ -9,8 +9,9 @@ import RichTextEditor from './RichTextEditor';
 import DatePickerWrapper from './DatePickerWrapper';
 import NotesModal from './NotesModal';
 import RepairLogFilterModal from './RepairLogFilterModal';
-import { type FilterOptions } from './FilterWidgets';
+import { SearchFilterOption, type FilterOptions } from './FilterWidgets';
 import { useCommunicationContext } from '../context/CommunicationContext';
+import Search from './Search';
 
 interface RepairLogProps {
   vehicle: Vehicle;
@@ -125,10 +126,32 @@ const RepairLogTab: React.FC<RepairLogProps> = (props: RepairLogProps) => {
   return (
     <div>
       <Row>
-        <Col xs={4}>
-          <Button onClick={() => setShowFilterModal(true)}>Filter</Button>
+        <Col xs={6}>
+          {/* <Button onClick={() => setShowFilterModal(true)}>Filter</Button> */}
+          <Search
+            placeholder="Search logs"
+            onSearch={(searchText: string) => {
+              const searchOptions: SearchFilterOption[] = [
+                {
+                  key: 'name',
+                  searchText,
+                },
+                {
+                  key: 'notes',
+                  searchText,
+                },
+              ];
+              setFilterOptions((prev) => {
+                return {
+                  date: prev?.date ?? [],
+                  number: prev?.number ?? [],
+                  search: searchOptions,
+                };
+              });
+            }}
+          />
         </Col>
-        <Col xs={8} className="align-right">
+        <Col xs={6} className="align-right">
           <Button
             variant="success"
             className="me-2"
@@ -161,18 +184,18 @@ const RepairLogTab: React.FC<RepairLogProps> = (props: RepairLogProps) => {
       {!repairLogs.length ? (
         <p>No repair logs</p>
       ) : (
-        <Table>
+        <Table responsive>
           <thead>
             <tr>
               <th></th>
-              <th>Date</th>
-              <th>Mileage</th>
-              <th>Service Name</th>
-              <th>Parts Cost</th>
-              <th>Labor Cost</th>
-              <th>Total Cost</th>
-              <th>Notes</th>
-              <th>Actions</th>
+              <th style={{ minWidth: '150px' }}>Date</th>
+              <th style={{ minWidth: '150px' }}>Mileage</th>
+              <th style={{ minWidth: '150px' }}>Service Name</th>
+              <th style={{ minWidth: '150px' }}>Parts Cost</th>
+              <th style={{ minWidth: '150px' }}>Labor Cost</th>
+              <th style={{ minWidth: '150px' }}>Total Cost</th>
+              <th style={{ minWidth: '200px' }}>Notes</th>
+              <th style={{ minWidth: '100px' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -335,7 +358,7 @@ const RepairLogTab: React.FC<RepairLogProps> = (props: RepairLogProps) => {
           setSelectedRepairLog(undefined);
         }}
       />
-      <RepairLogFilterModal
+      {/* <RepairLogFilterModal
         show={showFilterModal}
         title="Filter"
         onApply={(filterOptions: FilterOptions) => {
@@ -343,7 +366,7 @@ const RepairLogTab: React.FC<RepairLogProps> = (props: RepairLogProps) => {
           setShowFilterModal(false);
         }}
         onClose={() => setShowFilterModal(false)}
-      />
+      /> */}
     </div>
   );
 };

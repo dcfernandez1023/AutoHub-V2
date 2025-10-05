@@ -28,7 +28,7 @@ COPY server/ ./server/
 COPY client/ ./client/
 
 # Build client
-RUN npm --prefix client run build
+RUN PUBLIC_URL=/autohub npm --prefix client run build
 
 # Build server
 RUN npm --prefix server run build

@@ -9,7 +9,12 @@ const useAppNavbar = () => {
       if (!loading) {
         await UserClient.logout();
         setAuthContext(undefined);
-        window.location.href = '/';
+
+        if (window.location.origin.includes('localhost')) {
+          window.location.href = '/';
+        } else {
+          window.location.href = '/autohub';
+        }
       }
     } catch (error) {
       console.error('Failed to logout', error);

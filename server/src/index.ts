@@ -15,9 +15,10 @@ import scheduledLogRoutes from './routes/scheduledLog';
 import scheduledServiceInstanceRoutes from './routes/scheduledServiceInstance';
 import scheduledServiceTypeRoues from './routes/scheduledServiceType';
 import upcomingMaintenanceRoutes from './routes/upcomingMaintenance';
+import analyticsRoutes from './routes/analytics';
 import vehicleRoutes from './routes/vehicle';
 
-import logger from './middleware/logger';
+import getLoggerMiddleware from './middleware/logger';
 import { Server } from 'http';
 import { subscribers } from './eventbus/subscribers/subscribers';
 import Subscriber from './eventbus/subscribers/Subscriber';
@@ -60,20 +61,26 @@ class AutoHubServer {
     this._app.options('*', cors());
     this._app.use(express.json());
     this._app.use(cookieParser());
-    this._app.use(logger);
+
+    // Logger middleware
+    this._app.use(getLoggerMiddleware(this._environment === 'dev'));
+
+    const apiRoutePrefix =
+      this._environment === 'prod' ? `/autohub${AutoHubServer.API_ROUTE_PREFIX}` : AutoHubServer.API_ROUTE_PREFIX;
 
     // Routes
-    this._app.use(AutoHubServer.API_ROUTE_PREFIX, authRoutes);
-    this._app.use(AutoHubServer.API_ROUTE_PREFIX, userRoutes);
-    this._app.use(AutoHubServer.API_ROUTE_PREFIX, changelogRoutes);
-    this._app.use(AutoHubServer.API_ROUTE_PREFIX, importRoutes);
-    this._app.use(AutoHubServer.API_ROUTE_PREFIX, exportRoutes);
-    this._app.use(AutoHubServer.API_ROUTE_PREFIX, upcomingMaintenanceRoutes);
-    this._app.use(AutoHubServer.API_ROUTE_PREFIX, scheduledServiceTypeRoues);
-    this._app.use(AutoHubServer.API_ROUTE_PREFIX, scheduledLogRoutes);
-    this._app.use(AutoHubServer.API_ROUTE_PREFIX, repairLogRoutes);
-    this._app.use(AutoHubServer.API_ROUTE_PREFIX, scheduledServiceInstanceRoutes);
-    this._app.use(AutoHubServer.API_ROUTE_PREFIX, vehicleRoutes);
+    this._app.use(apiRoutePrefix, authRoutes);
+    this._app.use(apiRoutePrefix, userRoutes);
+    this._app.use(apiRoutePrefix, changelogRoutes);
+    this._app.use(apiRoutePrefix, importRoutes);
+    this._app.use(apiRoutePrefix, exportRoutes);
+    this._app.use(apiRoutePrefix, upcomingMaintenanceRoutes);
+    this._app.use(apiRoutePrefix, scheduledServiceTypeRoues);
+    this._app.use(apiRoutePrefix, scheduledLogRoutes);
+    this._app.use(apiRoutePrefix, repairLogRoutes);
+    this._app.use(apiRoutePrefix, scheduledServiceInstanceRoutes);
+    this._app.use(apiRoutePrefix, analyticsRoutes);
+    this._app.use(apiRoutePrefix, vehicleRoutes);
 
     if (this._environment === 'dev') {
       this._app.get('/', (req, res) => {
@@ -82,10 +89,10 @@ class AutoHubServer {
     } else {
       const client_build_dir = path.resolve(__dirname, '../../client/build');
       // Serve static files (JS/CSS/images)
-      this._app.use(express.static(client_build_dir));
+      this._app.use('/autohub', express.static(client_build_dir));
 
       // SPA fallback for any other GET (after /api and static)
-      this._app.get('*', (req, res) => {
+      this._app.get('/autohub/*', (req, res) => {
         res.sendFile(path.join(client_build_dir, 'index.html'));
       });
     }
@@ -99,6 +106,10 @@ class AutoHubServer {
     this._server = this._app.listen(this._port, () => {
       console.log(`🚀 Server is running - Environment: ${this._environment}`);
     });
+  }
+
+  getEnvironment(): string {
+    return this._environment;
   }
 
   getApp(): Express {

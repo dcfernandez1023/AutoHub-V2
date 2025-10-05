@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  serviceName: "postgres-internal"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      # Hard pin to a specific node by name
+      nodeName: node2
+
+      containers:
+        - name: postgres
+          image: postgres:16
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+              name: postgres
+
+          # Pull all env vars (e.g., POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, etc.)
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+
+          # Health checks (assumes POSTGRES_USER/DB set via the ConfigMap)
+          readinessProbe:
+            exec:
+              command:
+                [
+                  "sh",
+                  "-c",
+                  "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -h 127.0.0.1",
+                ]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                [
+                  "sh",
+                  "-c",
+                  "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -h 127.0.0.1",
+                ]
+            initialDelaySeconds: 20
+            periodSeconds: 10
+
+          volumeMounts:
+            - name: pgdata
+              mountPath: /var/lib/postgresql/data
+              subPath: data
+
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+
+  volumeClaimTemplates:
+    - metadata:
+        name: pgdata
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 20Gi

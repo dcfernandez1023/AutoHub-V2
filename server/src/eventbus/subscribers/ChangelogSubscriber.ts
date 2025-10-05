@@ -7,9 +7,7 @@ class ChangelogSubscriber extends Subscriber {
   subscribe(): void {
     this.off = EventBus.on('user:changelog:create', (payload: ChangelogRequest) => {
       const { userId, description } = payload;
-      void changelogModel.default.createChangelog(userId, description).catch((err) => {
-        // TODO: Log this somewhere
-      });
+      void changelogModel.default.createChangelog(userId, description).catch(() => {});
     });
   }
 

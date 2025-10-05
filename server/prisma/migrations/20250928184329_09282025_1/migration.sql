@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "AppLog" ADD COLUMN     "duration" INTEGER NOT NULL DEFAULT 0;

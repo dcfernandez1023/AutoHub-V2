@@ -53,7 +53,7 @@ const Attachments: React.FC<AttachmentsProps> = ({ vehicleId }) => {
           No attachments
         </div>
       ) : (
-        <Table className="fixed-table">
+        <Table responsive className="fixed-table">
           <colgroup>
             <col style={{ width: '15%' }} />
             <col style={{ width: '40%' }} />

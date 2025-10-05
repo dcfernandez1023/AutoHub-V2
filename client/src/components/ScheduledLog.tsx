@@ -12,9 +12,10 @@ import ScheduledServiceInstanceSelector from './ScheduledServiceInstanceSelector
 import DatePickerWrapper from './DatePickerWrapper';
 import NotesModal from './NotesModal';
 import ScheduledLogFilterModal from './ScheduledLogFilterModal';
-import { type FilterOptions } from './FilterWidgets';
+import { SearchFilterOption, type FilterOptions } from './FilterWidgets';
 import useVehicleOwner from '../hooks/useVehicleOwner';
 import { useCommunicationContext } from '../context/CommunicationContext';
+import Search from './Search';
 
 interface ScheduledLogProps {
   vehicle: Vehicle;
@@ -150,10 +151,32 @@ const ScheduledLogTab: React.FC<ScheduledLogProps> = (
   return (
     <div>
       <Row>
-        <Col xs={4}>
-          <Button onClick={() => setShowFilterModal(true)}>Filter</Button>
+        <Col xs={6}>
+          {/* <Button onClick={() => setShowFilterModal(true)}>Filter</Button> */}
+          <Search
+            placeholder="Search logs"
+            onSearch={(searchText: string) => {
+              const searchOptions: SearchFilterOption[] = [
+                {
+                  key: 'scheduledServiceInstanceId',
+                  searchText,
+                },
+                {
+                  key: 'notes',
+                  searchText,
+                },
+              ];
+              setFilterOptions((prev) => {
+                return {
+                  date: prev?.date ?? [],
+                  number: prev?.number ?? [],
+                  search: searchOptions,
+                };
+              });
+            }}
+          />
         </Col>
-        <Col xs={8} className="align-right">
+        <Col xs={6} className="align-right">
           <Button
             variant="success"
             className="me-2"
@@ -186,20 +209,20 @@ const ScheduledLogTab: React.FC<ScheduledLogProps> = (
       {!scheduledLogs.length ? (
         <p>No scheduled logs</p>
       ) : (
-        <Table>
+        <Table responsive>
           <thead>
             <tr>
               <th></th>
-              <th>Date</th>
-              <th>Mileage</th>
-              <th>Service</th>
-              <th>Next Mileage</th>
-              <th>Next Date</th>
-              <th>Parts Cost</th>
-              <th>Labor Cost</th>
-              <th>Total Cost</th>
-              <th>Notes</th>
-              <th>Actions</th>
+              <th style={{ minWidth: '150px' }}>Date</th>
+              <th style={{ minWidth: '150px' }}>Mileage</th>
+              <th style={{ minWidth: '200px' }}>Service</th>
+              <th style={{ minWidth: '150px' }}>Next Mileage</th>
+              <th style={{ minWidth: '150px' }}>Next Date</th>
+              <th style={{ minWidth: '150px' }}>Parts Cost</th>
+              <th style={{ minWidth: '150px' }}>Labor Cost</th>
+              <th style={{ minWidth: '150px' }}>Total Cost</th>
+              <th style={{ minWidth: '200px' }}>Notes</th>
+              <th style={{ minWidth: '100px' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -393,7 +416,7 @@ const ScheduledLogTab: React.FC<ScheduledLogProps> = (
           setSelectedScheduledLog(undefined);
         }}
       />
-      <ScheduledLogFilterModal
+      {/* <ScheduledLogFilterModal
         show={showFilterModal}
         title="Filter"
         onApply={(filterOptions: FilterOptions) => {
@@ -401,7 +424,7 @@ const ScheduledLogTab: React.FC<ScheduledLogProps> = (
           setShowFilterModal(false);
         }}
         onClose={() => setShowFilterModal(false)}
-      />
+      /> */}
     </div>
   );
 };

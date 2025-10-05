@@ -83,8 +83,13 @@ const useScheduledLog = ({
         }
 
         // Apply search filters
+        let passesSearchFilter = false;
         for (const searchFilter of filterOptions.search) {
           const { searchText } = searchFilter;
+          if (!searchText.trim().length) {
+            passesSearchFilter = true;
+            continue;
+          }
           const key = searchFilter.key as keyof ScheduledLog;
           const stringVal =
             key === 'scheduledServiceInstanceId'
@@ -98,13 +103,13 @@ const useScheduledLog = ({
             key in scheduledLog &&
             typeof stringVal === 'string'
           ) {
-            passesFilter =
-              passesFilter &&
+            passesSearchFilter =
+              passesSearchFilter ||
               stringVal.toLowerCase().includes(searchText.toLowerCase());
           }
         }
 
-        if (passesFilter) {
+        if (passesFilter && passesSearchFilter) {
           filtered.push(scheduledLog);
         }
       }

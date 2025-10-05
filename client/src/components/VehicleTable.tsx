@@ -12,7 +12,7 @@ const VehicleTable: React.FC<VehiceTableProps> = (props: VehiceTableProps) => {
   const { vehicle, onEditNotes, onRemoveImage } = props;
 
   return (
-    <Table>
+    <Table responsive>
       <tbody>
         <tr>
           <td>

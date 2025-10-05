@@ -85,7 +85,7 @@ const ScheduledLogFilterModal: React.FC<ScheduledLogFilterModalProps> = (
           }}
         />
         <br />
-        <SearchTextFilter
+        {/* <SearchTextFilter
           label="Service Name"
           placeholder="e.g. Oil Change"
           searchFilterOption={scheduledServiceFilterOption}
@@ -97,7 +97,7 @@ const ScheduledLogFilterModal: React.FC<ScheduledLogFilterModalProps> = (
             mutableFilterOption.searchText = searchText;
             setScheduledServiceFilterOption(mutableFilterOption);
           }}
-        />
+        /> */}
         <br />
         <div className="d-flex gap-2" style={{ float: 'right' }}>
           <Button

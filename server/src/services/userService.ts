@@ -5,6 +5,7 @@ import { CompleteRegistrationRequest, LoginRequest, RegisterRequest } from '../t
 import { GetUserRequest } from '../types/user';
 import { generateRegistrationToken, verifyPassword } from './authService';
 import { sendRegistrationEmail } from './emailService';
+import AutohubServer from '../index';
 
 export const getUser = async (request: GetUserRequest) => {
   const { id, email } = request;
@@ -53,7 +54,9 @@ export const register = async (request: RegisterRequest): Promise<string> => {
 
   const user = existingUser ?? (await userModel.default.createUser(username, email, password, ROLES.USER_ROLE));
   const registrationToken = generateRegistrationToken(user.id, email);
-  const completeLink = `${baseUrl}/api/users/register/complete?token=${registrationToken}`;
+  const env = AutohubServer.getEnvironment();
+  const resolvedUrl = env === 'prod' ? `${baseUrl}/autohub` : baseUrl;
+  const completeLink = `${resolvedUrl}/api/users/register/complete?token=${registrationToken}`;
 
   if (!request.doNotSendEmail) {
     await sendRegistrationEmail(email, completeLink);

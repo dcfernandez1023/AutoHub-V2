@@ -9,11 +9,15 @@ import { BrowserRouter } from 'react-router-dom';
 import { CommunicationProvider } from './context/CommunicationContext';
 import CommunicationToast from './components/CommunicationToast';
 
+const basename = window.location.hostname.includes('localhost')
+  ? '/'
+  : '/autohub';
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <BrowserRouter>
+  <BrowserRouter basename={basename}>
     <AuthProvider>
       <CommunicationProvider>
         <App />

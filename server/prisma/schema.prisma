@@ -194,6 +194,16 @@ model RepairLog {
   @@index([vehicleId])
 }
 
+model AppLog {
+  id        String      @id @default(uuid())
+  timestamp DateTime    @default(now())
+  userId    String
+  event     String
+  duration  Int         @default(0)
+  level     AppLogLevel
+  data      String      @db.Text
+}
+
 enum Role {
   USER
   ADMIN
@@ -204,4 +214,11 @@ enum TimeUnits {
   WEEK
   MONTH
   YEAR
+}
+
+enum AppLogLevel {
+  INFO
+  DEBUG
+  WARNING
+  ERROR
 }

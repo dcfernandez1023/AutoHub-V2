@@ -172,6 +172,61 @@ const importScheduledLogs = async (userId: string, recordImport: ScheduledLogImp
   return await db.scheduledLog.createMany({ data: recordImport.map((record) => ({ userId, ...record })) });
 };
 
+const getVehicleScheduledLogCost = async (userId: string, vehicleId: string) => {
+  return (
+    await db.scheduledLog.aggregate({
+      _sum: {
+        partsCost: true,
+        laborCost: true,
+        totalCost: true,
+      },
+      where: {
+        userId,
+        vehicleId,
+      },
+    })
+  )._sum;
+};
+
+const getScheduledServiceTypeUsageFromLogs = async (userId: string, vehicleId: string, take: number = 10) => {
+  // Group by scheduledServiceInstanceId
+  const grouped = await db.scheduledLog.groupBy({
+    by: ['scheduledServiceInstanceId'],
+    _count: { scheduledServiceInstanceId: true },
+    where: {
+      userId,
+      vehicleId,
+    },
+    orderBy: {
+      _count: {
+        scheduledServiceInstanceId: 'desc',
+      },
+    },
+    take,
+  });
+
+  // Extract scheduledServiceInstance ids
+  const instanceIds = grouped.map((g) => g.scheduledServiceInstanceId);
+
+  // Fetch scheduledServiceInstances with scheduledServiceTypes
+  const instancesWithScheduledServiceTypes = await db.scheduledServiceInstance.findMany({
+    where: { id: { in: instanceIds } },
+    include: { scheduledServiceType: true },
+  });
+
+  // Merge the two result sets
+  const result = grouped
+    .map((g) => ({
+      scheduledServiceInstanceId: g.scheduledServiceInstanceId,
+      count: g._count.scheduledServiceInstanceId,
+      name: instancesWithScheduledServiceTypes.find((d) => d.id === g.scheduledServiceInstanceId)?.scheduledServiceType
+        ?.name,
+    }))
+    .filter((d) => d.scheduledServiceInstanceId && isFinite(d.count) && d.name);
+
+  return result;
+};
+
 export default {
   createScheduledLog,
   updateScheduledLogs,
@@ -184,4 +239,6 @@ export default {
   getMostRecentScheduledLogsByVehicleId,
   importScheduledLogs,
   getScheduledLogs,
+  getVehicleScheduledLogCost,
+  getScheduledServiceTypeUsageFromLogs,
 };

@@ -1,0 +1,16 @@
+# ClusterIP service so workloads on any node can reach Postgres via DNS.
+# DNS name: postgres.default.svc.cluster.local (if in "default" namespace).
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  type: ClusterIP
+  selector:
+    app: postgres
+  ports:
+    - name: postgres
+      port: 5432 # Service port inside the cluster
+      targetPort: 5432 # Container port

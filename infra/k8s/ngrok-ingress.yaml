@@ -6,10 +6,10 @@ metadata:
 spec:
   ingressClassName: ngrok
   rules:
-    - host: <YOUR_NGROK_DOMAIN>
+    - host: $NGROK_DOMAIN
       http:
         paths:
-          - path: /
+          - path: /autohub
             pathType: Prefix
             backend:
               service:

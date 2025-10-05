@@ -82,13 +82,13 @@ const ScheduledServiceInstanceTable: React.FC<
       </Row>
       <br />
       {scheduledServiceInstances.length ? (
-        <Table>
+        <Table responsive>
           <thead>
             <tr>
-              <th>Scheduled Service Type</th>
-              <th>Mile Interval</th>
-              <th>Time Interval</th>
-              <th></th>
+              <th style={{ minWidth: '200px' }}>Scheduled Service Type</th>
+              <th style={{ minWidth: '200px' }}>Mile Interval</th>
+              <th style={{ minWidth: '200px' }}>Time Interval</th>
+              <th style={{ minWidth: '200px' }}></th>
             </tr>
           </thead>
           <tbody>

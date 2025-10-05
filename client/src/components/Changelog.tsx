@@ -22,7 +22,7 @@ const Changelog: React.FC<ChangelogProps> = (props: ChangelogProps) => {
     <>
       <h2>{vehicleId ? 'Vehicle Changelog' : 'Changelog'}</h2>
       <br />
-      <Table className="fixed-table">
+      <Table responsive className="fixed-table">
         <colgroup>
           <col style={{ width: '20%' }} />
           <col style={{ width: '80%' }} />

@@ -37,6 +37,22 @@ const importRepairLogs = async (userId: string, recordImport: RepairLogImportDto
   return await db.repairLog.createMany({ data: recordImport.map((record) => ({ userId, ...record })) });
 };
 
+const getVehicleRepairCost = async (userId: string, vehicleId: string) => {
+  return (
+    await db.repairLog.aggregate({
+      _sum: {
+        partsCost: true,
+        laborCost: true,
+        totalCost: true,
+      },
+      where: {
+        userId,
+        vehicleId,
+      },
+    })
+  )._sum;
+};
+
 export default {
   createRepairLog,
   updateRepairLogs,
@@ -44,4 +60,5 @@ export default {
   deleteRepairLogs,
   importRepairLogs,
   getRepairLogs,
+  getVehicleRepairCost,
 };

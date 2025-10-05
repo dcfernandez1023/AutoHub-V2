@@ -63,8 +63,13 @@ const useRepairLog = ({ vehicleId }: UseRepairLogProps) => {
         }
 
         // Apply search filters
+        let passesSearchFilter = false;
         for (const searchFilter of filterOptions.search) {
           const { searchText } = searchFilter;
+          if (!searchText.trim().length) {
+            passesSearchFilter = true;
+            continue;
+          }
           const key = searchFilter.key as keyof RepairLog;
           const stringVal = repairLog[key];
           if (
@@ -72,13 +77,13 @@ const useRepairLog = ({ vehicleId }: UseRepairLogProps) => {
             key in repairLog &&
             typeof stringVal === 'string'
           ) {
-            passesFilter =
-              passesFilter &&
+            passesSearchFilter =
+              passesSearchFilter ||
               stringVal.toLowerCase().includes(searchText.toLowerCase());
           }
         }
 
-        if (passesFilter) {
+        if (passesFilter && passesSearchFilter) {
           filtered.push(repairLog);
         }
       }
