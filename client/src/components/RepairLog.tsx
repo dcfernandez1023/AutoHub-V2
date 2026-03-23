@@ -12,6 +12,7 @@ import RepairLogFilterModal from './RepairLogFilterModal';
 import { SearchFilterOption, type FilterOptions } from './FilterWidgets';
 import { useCommunicationContext } from '../context/CommunicationContext';
 import Search from './Search';
+import { roundDecimal } from '../utils/num';
 
 interface RepairLogProps {
   vehicle: Vehicle;
@@ -87,7 +88,8 @@ const RepairLogTab: React.FC<RepairLogProps> = (props: RepairLogProps) => {
       mutableEditedLogs.add(log.id);
       editApplied = true;
     } else if (type === 'number') {
-      const intVal = value.trim().length === 0 ? 0 : parseInt(value);
+      const intVal =
+        value.trim().length === 0 ? 0 : roundDecimal(parseFloat(value));
       if (!isNaN(intVal)) {
         // @ts-ignore
         log[property] = intVal;
@@ -239,6 +241,8 @@ const RepairLogTab: React.FC<RepairLogProps> = (props: RepairLogProps) => {
                   <td className="vertical-align">
                     <FormControl
                       value={repairLog.partsCost}
+                      type="number"
+                      step="0.01"
                       onChange={(e) => {
                         editLog(
                           repairLog,
@@ -253,6 +257,8 @@ const RepairLogTab: React.FC<RepairLogProps> = (props: RepairLogProps) => {
                     {' '}
                     <FormControl
                       value={repairLog.laborCost}
+                      type="number"
+                      step="0.01"
                       onChange={(e) => {
                         editLog(
                           repairLog,
@@ -267,6 +273,8 @@ const RepairLogTab: React.FC<RepairLogProps> = (props: RepairLogProps) => {
                     {' '}
                     <FormControl
                       value={repairLog.totalCost}
+                      type="number"
+                      step="0.01"
                       onChange={(e) => {
                         editLog(
                           repairLog,

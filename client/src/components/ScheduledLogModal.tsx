@@ -18,6 +18,7 @@ import {
 } from '../types/scheduledService';
 import RichTextEditor from './RichTextEditor';
 import DatePickerWrapper from './DatePickerWrapper';
+import { roundDecimal } from '../utils/num';
 
 interface ScheduledLogModalProps extends ModalBaseProps {
   vehicle: Vehicle;
@@ -70,7 +71,7 @@ const ScheduledLogModal: React.FC<ScheduledLogModalProps> = (
       // @ts-ignore
       mutableCreateScheduledLogRequest[property] = value;
     } else if (type === 'number') {
-      const intVal = value.length === 0 ? 0 : parseInt(value);
+      const intVal = value.length === 0 ? 0 : roundDecimal(parseFloat(value));
       if (!isNaN(intVal)) {
         // @ts-ignore
         mutableCreateScheduledLogRequest[property] = intVal;
@@ -120,6 +121,8 @@ const ScheduledLogModal: React.FC<ScheduledLogModalProps> = (
             <FormLabel htmlFor="partsCost">Parts Cost</FormLabel>
             <FormControl
               id="partsCost"
+              type="number"
+              step="0.01"
               value={createScheduledLogRequest.partsCost}
               onChange={(e) => {
                 handleChange(e.target.value, 'partsCost', 'number');
@@ -130,6 +133,8 @@ const ScheduledLogModal: React.FC<ScheduledLogModalProps> = (
             <FormLabel htmlFor="laborCost">Labor Cost</FormLabel>
             <FormControl
               id="laborCost"
+              type="number"
+              step="0.01"
               value={createScheduledLogRequest.laborCost}
               onChange={(e) => {
                 handleChange(e.target.value, 'laborCost', 'number');
@@ -140,6 +145,8 @@ const ScheduledLogModal: React.FC<ScheduledLogModalProps> = (
             <FormLabel htmlFor="totalCost">Total Cost</FormLabel>
             <FormControl
               id="totalCost"
+              type="number"
+              step="0.01"
               value={createScheduledLogRequest.totalCost}
               onChange={(e) => {
                 handleChange(e.target.value, 'totalCost', 'number');

@@ -161,9 +161,9 @@ model ScheduledLog {
   scheduledServiceInstanceId String
   datePerformed              DateTime @default(now())
   mileage                    Int
-  partsCost                  Int
-  laborCost                  Int
-  totalCost                  Int
+  partsCost                  Float
+  laborCost                  Float
+  totalCost                  Float
   notes                      String
 
   user                     User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -182,9 +182,9 @@ model RepairLog {
   datePerformed DateTime @default(now())
   name          String
   mileage       Int
-  partsCost     Int
-  laborCost     Int
-  totalCost     Int
+  partsCost     Float
+  laborCost     Float
+  totalCost     Float
   notes         String
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)

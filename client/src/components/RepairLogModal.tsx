@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { Vehicle } from '../types/vehicle';
 import RichTextEditor from './RichTextEditor';
 import DatePickerWrapper from './DatePickerWrapper';
+import { roundDecimal } from '../utils/num';
 
 interface RepairLogModalProps extends ModalBaseProps {
   vehicle: Vehicle;
@@ -54,7 +55,7 @@ const RepairLogModal: React.FC<RepairLogModalProps> = (
       // @ts-ignore
       mutableCreateRepairLogRequest[property] = value;
     } else if (type === 'number') {
-      const intVal = value.length === 0 ? 0 : parseInt(value);
+      const intVal = value.length === 0 ? 0 : roundDecimal(parseFloat(value));
       if (!isNaN(intVal)) {
         // @ts-ignore
         mutableCreateRepairLogRequest[property] = intVal;
@@ -104,6 +105,8 @@ const RepairLogModal: React.FC<RepairLogModalProps> = (
             <FormLabel htmlFor="partsCost">Parts Cost</FormLabel>
             <FormControl
               id="partsCost"
+              type="number"
+              step="0.01"
               value={createRepairLogRequest.partsCost}
               onChange={(e) => {
                 handleChange(e.target.value, 'partsCost', 'number');
@@ -114,6 +117,8 @@ const RepairLogModal: React.FC<RepairLogModalProps> = (
             <FormLabel htmlFor="laborCost">Labor Cost</FormLabel>
             <FormControl
               id="laborCost"
+              type="number"
+              step="0.01"
               value={createRepairLogRequest.laborCost}
               onChange={(e) => {
                 handleChange(e.target.value, 'laborCost', 'number');
@@ -124,6 +129,8 @@ const RepairLogModal: React.FC<RepairLogModalProps> = (
             <FormLabel htmlFor="totalCost">Total Cost</FormLabel>
             <FormControl
               id="totalCost"
+              type="number"
+              step="0.01"
               value={createRepairLogRequest.totalCost}
               onChange={(e) => {
                 handleChange(e.target.value, 'totalCost', 'number');

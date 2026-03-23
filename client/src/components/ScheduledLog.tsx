@@ -16,6 +16,7 @@ import { SearchFilterOption, type FilterOptions } from './FilterWidgets';
 import useVehicleOwner from '../hooks/useVehicleOwner';
 import { useCommunicationContext } from '../context/CommunicationContext';
 import Search from './Search';
+import { roundDecimal } from '../utils/num';
 
 interface ScheduledLogProps {
   vehicle: Vehicle;
@@ -108,7 +109,8 @@ const ScheduledLogTab: React.FC<ScheduledLogProps> = (
       mutableEditedLogs.add(log.id);
       editApplied = true;
     } else if (type === 'number') {
-      const intVal = value.trim().length === 0 ? 0 : parseInt(value);
+      const intVal =
+        value.trim().length === 0 ? 0 : roundDecimal(parseFloat(value));
       if (!isNaN(intVal)) {
         // @ts-ignore
         log[property] = intVal;
@@ -295,6 +297,8 @@ const ScheduledLogTab: React.FC<ScheduledLogProps> = (
                   <td className="vertical-align">
                     <FormControl
                       value={scheduledLog.partsCost}
+                      type="number"
+                      step="0.01"
                       onChange={(e) => {
                         editLog(
                           scheduledLog,
@@ -308,6 +312,8 @@ const ScheduledLogTab: React.FC<ScheduledLogProps> = (
                   <td className="vertical-align">
                     {' '}
                     <FormControl
+                      type="number"
+                      step="0.01"
                       value={scheduledLog.laborCost}
                       onChange={(e) => {
                         editLog(
@@ -322,6 +328,8 @@ const ScheduledLogTab: React.FC<ScheduledLogProps> = (
                   <td className="vertical-align">
                     {' '}
                     <FormControl
+                      type="number"
+                      step="0.01"
                       value={scheduledLog.totalCost}
                       onChange={(e) => {
                         editLog(
