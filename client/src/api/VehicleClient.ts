@@ -140,7 +140,7 @@ class VehicleClient extends BaseClient {
   ): Promise<UpcomingMaintenance[] | null> {
     try {
       const requestUrl = vehicleId
-        ? `${this._baseUrl}/api/users/${userId}/vehicles/${vehicleId}/upcomingMaintenance`
+        ? `${this._baseUrl}/api/users/${userId}/vehicles/${vehicleId}/upcomingMaintenance${shared ? '?shared=true' : ''}`
         : `${this._baseUrl}/api/users/${userId}/vehicles/upcomingMaintenance${shared ? '?shared=true' : ''}`;
       const res = await fetch(requestUrl, {
         ...this._defaultOptions,

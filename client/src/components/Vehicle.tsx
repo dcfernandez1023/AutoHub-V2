@@ -48,9 +48,9 @@ const Vehicle: React.FC = () => {
     setValidationError,
   } = useVehiclesActions();
 
-  const { isOwner } = useVehicleOwner({ vehicle });
+  const { isOwner, isLoading: isOwnerLoading } = useVehicleOwner({ vehicle });
 
-  if (loading) {
+  if (loading || isOwnerLoading) {
     return (
       <div className="centered-div">
         <Spinner animation="border" />
@@ -136,7 +136,10 @@ const Vehicle: React.FC = () => {
                 </Row>
                 <Row className="div-spacing">
                   <Col>
-                    <UpcomingMaintenance vehicleId={vehicleId} />
+                    <UpcomingMaintenance
+                      vehicleId={vehicleId}
+                      shared={!isOwner}
+                    />
                   </Col>
                 </Row>
                 <br />

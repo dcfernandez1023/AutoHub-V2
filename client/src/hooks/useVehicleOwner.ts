@@ -9,7 +9,7 @@ type UseVehicleOwnerProps = {
 const useVehicleOwner = (props: UseVehicleOwnerProps) => {
   const { vehicle } = props;
 
-  const [isOwner, setIsOwner] = useState<boolean>(true);
+  const [isOwner, setIsOwner] = useState<boolean | undefined>();
 
   const { authContext } = useAuthContext();
 
@@ -23,6 +23,7 @@ const useVehicleOwner = (props: UseVehicleOwnerProps) => {
 
   return {
     isOwner,
+    isLoading: isOwner === undefined,
   };
 };
 

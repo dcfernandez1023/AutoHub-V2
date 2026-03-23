@@ -6,12 +6,13 @@ import { useCommunicationContext } from '../context/CommunicationContext';
 
 type UseScheduledServiceTypeProps = {
   sharedVehicleId?: string;
+  defer?: boolean;
 };
 
 export const useScheduledServiceTypes = (
   props?: UseScheduledServiceTypeProps
 ) => {
-  const { sharedVehicleId } = props ?? {};
+  const { sharedVehicleId, defer } = props ?? {};
 
   const [scheduledServiceTypes, setScheduledServiceTypes] = useState<
     ScheduledServiceType[]
@@ -136,8 +137,10 @@ export const useScheduledServiceTypes = (
   };
 
   useEffect(() => {
-    void getScheduledServiceTypes();
-  }, [getScheduledServiceTypes]);
+    if (!defer) {
+      void getScheduledServiceTypes();
+    }
+  }, [getScheduledServiceTypes, defer]);
 
   return {
     scheduledServiceTypes,

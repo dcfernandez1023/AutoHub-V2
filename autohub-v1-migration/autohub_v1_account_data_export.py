@@ -40,8 +40,12 @@ def notes_to_html(notes):
     return f"<p>{plain}</p>"
 
 def image_url_to_base64_string(url):
-    res = requests.get(url)
-    return "data:image/jpeg;base64," + base64.b64encode(res.content).decode("utf-8")
+    try:
+        res = requests.get(url)
+        return "data:image/jpeg;base64," + base64.b64encode(res.content).decode("utf-8")
+    except Exception as e:
+        write_log(f"Error fetching image from url {url}: {str(e)}")
+        return ""
 
 def safe_num_parse(val, dtype = "int"):
     try:
@@ -128,7 +132,7 @@ def export_logs(db, v1_email, vehicle_id_map, sst_id_map, ssis_v2):
 
         scheduled_log = data["scheduledLog"]
         for log in scheduled_log:
-            ssi_v2 = next((ssi for ssi in ssis_v2 if ssi["scheduledServiceTypeId"] == sst_id_map[log["sstRefId"]] and ssi["vehicleId"] == vehicle_id_map[log["carReferenceId"]]), None)
+            ssi_v2 = next((ssi for ssi in ssis_v2 if ssi.get("scheduledServiceTypeId") == sst_id_map.get(log.get("sstRefId")) and ssi.get("vehicleId") == vehicle_id_map.get(log.get("carReferenceId"))), None)
             if ssi_v2 is None:
                 write_log(f"Could not find ssi_v2 while creating scheduled log. Not migrating log {json.dumps(log)}")
                 continue

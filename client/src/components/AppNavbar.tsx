@@ -24,7 +24,7 @@ const AppNavbar: React.FC = () => {
     <Navbar bg="light" expand={false} className="app-navbar-padding">
       <Container fluid>
         <Navbar.Brand as={NavLink} to="/">
-          AutoHub V2 (Beta)
+          AutoHub V2
         </Navbar.Brand>
 
         {Boolean(authContext) && (

@@ -168,6 +168,48 @@ const getMostRecentScheduledLogsByVehicleId = async (userId: string, vehicleId: 
   return latestLogs as unknown[];
 };
 
+const getMostRecentScheduledLogsByVehicleIdShared = async (userId: string, vehicleId: string): Promise<unknown[]> => {
+  const latestLogs = await db.$queryRaw`
+    SELECT
+      sl."id" as "scheduledLogId",
+      v."id" as "vehicleId",
+      v."name" as "vehicleName",
+      v."make" as "vehicleMake",
+      v."model" as "vehicleModel",
+      v."year" as "vehicleYear",
+      v."mileage" as "vehicleMileage",
+      sst."id" as "scheduledServiceTypeId",
+      sst."name" as "scheduledServiceTypeName",
+      ssi."id" as "scheduledServiceInstanceId",
+      ssi."timeInterval" as "timeInterval",
+      ssi."timeUnits" as "timeUnits",
+      ssi."mileInterval" as "mileInterval",
+      sl."datePerformed" as "scheduledLogLastDatePerformed",
+      sl."mileage" as "scheduledLogLastMileagePerformed"
+    FROM "ScheduledLog" sl
+    INNER JOIN (
+      SELECT "scheduledServiceInstanceId", MAX("datePerformed") AS max_date
+      FROM "ScheduledLog"
+      WHERE "vehicleId" = ${vehicleId}
+      GROUP BY "scheduledServiceInstanceId"
+    ) latest
+      ON sl."scheduledServiceInstanceId" = latest."scheduledServiceInstanceId"
+      AND sl."datePerformed" = latest.max_date
+    INNER JOIN "Vehicle" v
+      ON sl."vehicleId" = v."id"
+    INNER JOIN "ScheduledServiceInstance" ssi
+      ON sl."scheduledServiceInstanceId" = ssi."id"
+    INNER JOIN "ScheduledServiceType" sst
+      ON ssi."scheduledServiceTypeId" = sst."id"
+    INNER JOIN "VehicleShare" vs
+      ON v."id" = vs."vehicleId"
+    WHERE vs."userId" = ${userId} AND sl."vehicleId" = ${vehicleId};
+  `;
+
+  // TODO: Better typing for this
+  return latestLogs as unknown[];
+};
+
 const importScheduledLogs = async (userId: string, recordImport: ScheduledLogImportDto[]) => {
   return await db.scheduledLog.createMany({ data: recordImport.map((record) => ({ userId, ...record })) });
 };
@@ -237,6 +279,7 @@ export default {
   getMostRecentScheduledLogs,
   getMostRecentScheduledLogsShared,
   getMostRecentScheduledLogsByVehicleId,
+  getMostRecentScheduledLogsByVehicleIdShared,
   importScheduledLogs,
   getScheduledLogs,
   getVehicleScheduledLogCost,

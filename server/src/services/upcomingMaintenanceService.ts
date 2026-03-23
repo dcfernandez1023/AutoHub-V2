@@ -15,10 +15,13 @@ export const findUpcomingMaintenance = async (userId: string, vehicleId?: string
 
   let logData;
 
-  // TODO: Support for getting upcoming maintenance for shared vehicles
   if (vehicleId) {
     const vehicle = await checkIfCanAccessVehicle(vehicleId, userId);
-    logData = await scheduledLogModel.default.getMostRecentScheduledLogsByVehicleId(userId, vehicle.id);
+    if (shared) {
+      logData = await scheduledLogModel.default.getMostRecentScheduledLogsByVehicleIdShared(userId, vehicle.id);
+    } else {
+      logData = await scheduledLogModel.default.getMostRecentScheduledLogsByVehicleId(userId, vehicle.id);
+    }
   } else {
     if (shared) {
       logData = await scheduledLogModel.default.getMostRecentScheduledLogsShared(userId);
@@ -41,13 +44,14 @@ const transformToUpcomingMaintenanceDto = (userId: string, logData: any[]): Upco
       timeUnits: d.timeUnits,
     });
 
-    const { nextServiceMileage, nextServiceDate } = calculateNextServiceMileageAndDate(
-      nextScheduledServiceMetadata.datePerformed,
-      nextScheduledServiceMetadata.mileagePerformed,
-      nextScheduledServiceMetadata.mileInterval,
-      nextScheduledServiceMetadata.timeInterval,
-      nextScheduledServiceMetadata.timeUnits
-    );
+    const { nextServiceMileage, nextServiceDate, isMileIntervalValid, isTimeIntervalValid } =
+      calculateNextServiceMileageAndDate(
+        nextScheduledServiceMetadata.datePerformed,
+        nextScheduledServiceMetadata.mileagePerformed,
+        nextScheduledServiceMetadata.mileInterval,
+        nextScheduledServiceMetadata.timeInterval,
+        nextScheduledServiceMetadata.timeUnits
+      );
 
     const upcomingMaintenanceDto = UpcomingMaintenanceDtoSchema.parse({
       userId,
@@ -72,8 +76,8 @@ const transformToUpcomingMaintenanceDto = (userId: string, logData: any[]): Upco
     });
 
     const now = new Date();
-    const isDateOverdue = nextServiceDate < now;
-    const isMileageOverdue = nextServiceMileage < upcomingMaintenanceDto.vehicleMileage;
+    const isDateOverdue = isTimeIntervalValid && nextServiceDate < now;
+    const isMileageOverdue = isMileIntervalValid && nextServiceMileage < upcomingMaintenanceDto.vehicleMileage;
 
     if (isDateOverdue || isMileageOverdue) {
       upcomingMaintenanceDto.isOverdue = true;

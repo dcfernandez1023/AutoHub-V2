@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { AuthContextData, AuthContextType } from '../types/auth';
 import AuthClient from '../api/AuthClient';
+import { useCommunicationContext } from './CommunicationContext';
 
 const defaultContext: AuthContextData = {
   authContext: undefined,
@@ -19,6 +20,8 @@ const AuthContext = createContext(defaultContext);
 export const useAuthContext = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const { setCommunicationContext } = useCommunicationContext();
+
   const [authContext, setAuthContext] = useState<AuthContextType | undefined>();
   const [loading, setLoading] = useState(true);
 
@@ -34,6 +37,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } catch (err) {
         console.error('Auth check failed', err);
         setAuthContext(undefined);
+        setCommunicationContext({
+          kind: 'warning',
+          message: 'Failed to fetch user data. Please log in again.',
+        });
       } finally {
         setLoading(false);
       }

@@ -134,7 +134,10 @@ export const calculateNextServiceMileageAndDate = (
 
   const nextServiceMileage = mileagePerformed + mileInterval;
 
-  return { nextServiceMileage, nextServiceDate };
+  const isMileIntervalValid = mileInterval > 0;
+  const isTimeIntervalValid = timeInterval > 0;
+
+  return { nextServiceMileage, nextServiceDate, isMileIntervalValid, isTimeIntervalValid };
 };
 
 const transformToCalculatedScheduledLogDto = (

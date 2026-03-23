@@ -35,10 +35,12 @@ const ScheduledLogTab: React.FC<ScheduledLogProps> = (
     useState<ScheduledLog>();
   const [showFilterModal, setShowFilterModal] = useState<boolean>(false);
 
-  const { isOwner } = useVehicleOwner({ vehicle });
+  const { isOwner, isLoading: isOwnerLoading } = useVehicleOwner({ vehicle });
   const { scheduledServiceTypes, loading: loadingScheduledServiceTypes } =
     useScheduledServiceTypes(
-      isOwner ? { sharedVehicleId: vehicle.id } : undefined
+      !isOwner
+        ? { sharedVehicleId: vehicleId, defer: isOwnerLoading }
+        : { defer: isOwnerLoading }
     );
   const {
     scheduledServiceInstances,
