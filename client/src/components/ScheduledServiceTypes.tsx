@@ -39,7 +39,10 @@ const ScheduledServiceTypes: React.FC = () => {
     setError,
     createOrUpdateScheduledServiceType,
     deleteScheduledServiceType,
-  } = useScheduledServiceTypes();
+    updateScheduledServiceTypesOnScheduledServiceInstanceCreation,
+  } = useScheduledServiceTypes({
+    withUsedIndicator: true,
+  });
   const { vehicles, loading: loadingVehicles } = useVehicles();
 
   const [modalState, setModalState] =
@@ -108,19 +111,25 @@ const ScheduledServiceTypes: React.FC = () => {
                       >
                         Edit
                       </Button>
-                      <Button
-                        className="button-group-spacing"
-                        variant="danger"
-                        size="sm"
-                        onClick={() => {
-                          setModalState(
-                            ScheduledServiceTypeModalState.DeleteScheduledServiceType
-                          );
-                          setSelectedScheduledServiceType(scheduledServiceType);
-                        }}
-                      >
-                        Delete
-                      </Button>
+                      {!scheduledServiceType.hasScheduledServiceInstances ? (
+                        <Button
+                          className="button-group-spacing"
+                          variant="danger"
+                          size="sm"
+                          onClick={() => {
+                            setModalState(
+                              ScheduledServiceTypeModalState.DeleteScheduledServiceType
+                            );
+                            setSelectedScheduledServiceType(
+                              scheduledServiceType
+                            );
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      ) : (
+                        <></>
+                      )}
                     </td>
                   </tr>
                 );
@@ -144,6 +153,9 @@ const ScheduledServiceTypes: React.FC = () => {
                             scheduledServiceTypes={scheduledServiceTypes}
                             onEdit={() => {}}
                             onDelete={() => {}}
+                            onApplySideEffect={
+                              updateScheduledServiceTypesOnScheduledServiceInstanceCreation
+                            }
                           />
                         </Accordion.Body>
                       </Accordion.Item>

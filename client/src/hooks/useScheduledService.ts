@@ -6,13 +6,14 @@ import { useCommunicationContext } from '../context/CommunicationContext';
 
 type UseScheduledServiceTypeProps = {
   sharedVehicleId?: string;
+  withUsedIndicator?: boolean;
   defer?: boolean;
 };
 
 export const useScheduledServiceTypes = (
   props?: UseScheduledServiceTypeProps
 ) => {
-  const { sharedVehicleId, defer } = props ?? {};
+  const { sharedVehicleId, withUsedIndicator, defer } = props ?? {};
 
   const [scheduledServiceTypes, setScheduledServiceTypes] = useState<
     ScheduledServiceType[]
@@ -24,6 +25,21 @@ export const useScheduledServiceTypes = (
   const { authContext } = useAuthContext();
   const { setCommunicationContext } = useCommunicationContext();
 
+  const updateScheduledServiceTypesOnScheduledServiceInstanceCreation =
+    useCallback(
+      (scheduledServiceTypeIds: string[]) => {
+        const copy = scheduledServiceTypes.slice();
+        copy.forEach((sst) => {
+          if (scheduledServiceTypeIds.includes(sst.id)) {
+            sst.hasScheduledServiceInstances = true;
+          }
+        });
+
+        setScheduledServiceTypes(copy);
+      },
+      [scheduledServiceTypes]
+    );
+
   const getScheduledServiceTypes = useCallback(async () => {
     try {
       if (!authContext) {
@@ -34,7 +50,8 @@ export const useScheduledServiceTypes = (
       const data: ScheduledServiceType[] =
         await ScheduledServiceClient.getScheduledServiceTypes(
           authContext.userId,
-          sharedVehicleId
+          sharedVehicleId,
+          withUsedIndicator
         );
       setScheduledServiceTypes(data);
     } catch (error) {
@@ -83,7 +100,10 @@ export const useScheduledServiceTypes = (
       } else {
         const index = copy?.findIndex((sst) => sst.id === data.id);
         if (index !== -1) {
-          copy[index] = data;
+          copy[index] = {
+            ...copy[index],
+            ...data,
+          };
         }
       }
       setScheduledServiceTypes(copy);
@@ -153,5 +173,6 @@ export const useScheduledServiceTypes = (
     setLoadingAction,
     createOrUpdateScheduledServiceType,
     deleteScheduledServiceType,
+    updateScheduledServiceTypesOnScheduledServiceInstanceCreation,
   };
 };

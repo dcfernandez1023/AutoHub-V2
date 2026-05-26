@@ -2,6 +2,7 @@ import APIError from '../errors/APIError';
 import * as scheduledServiceTypeModel from '../models/scheduledServiceType';
 import * as scheduledServiceInstanceModel from '../models/scheduledServiceInstance';
 import { checkIfCanAccessVehicle } from './vehicleService';
+import { findVehicleScheduledServiceInstancesByScheduledServiceTypeId } from './scheduledServiceInstanceService';
 
 export const createScheduledServiceType = async (userId: string, name: string) => {
   if (!userId) {
@@ -38,12 +39,22 @@ export const removeScheduledServiceType = async (id: string, userId: string) => 
     throw new APIError('No userId provided', 400);
   }
 
+  const scheduledServiceInstances = await findVehicleScheduledServiceInstancesByScheduledServiceTypeId(userId, id);
+
+  if (scheduledServiceInstances.length) {
+    throw new APIError('Cannot delete scheduled service type with existing scheduled service instances', 400);
+  }
+
   const scheduledServiceType = await scheduledServiceTypeModel.default.deleteScheduledServiceType(id, userId);
   return scheduledServiceType;
 };
 
 // optional param vehicleId for getting scheduled service types related to shared vehicle
-export const findScheduledServiceTypes = async (userId: string, vehicleId?: string) => {
+export const findScheduledServiceTypes = async (
+  userId: string,
+  vehicleId?: string,
+  withScheduledServiceInstanceIndicator: boolean = false
+) => {
   if (!userId) {
     throw new APIError('No userId provided', 400);
   }
@@ -57,6 +68,9 @@ export const findScheduledServiceTypes = async (userId: string, vehicleId?: stri
     return result.map((d) => d.scheduledServiceType);
   }
 
-  const scheduledServiceTypes = await scheduledServiceTypeModel.default.getScheduledServiceTypes(userId);
+  const scheduledServiceTypes = await scheduledServiceTypeModel.default.getScheduledServiceTypes(
+    userId,
+    withScheduledServiceInstanceIndicator
+  );
   return scheduledServiceTypes;
 };

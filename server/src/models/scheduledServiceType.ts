@@ -18,7 +18,30 @@ const deleteScheduledServiceType = async (id: string, userId: string) => {
   return db.scheduledServiceType.delete({ where: { id, userId } });
 };
 
-const getScheduledServiceTypes = async (userId: string) => {
+const getScheduledServiceTypes = async (userId: string, includeHasScheduledServiceInstances: boolean = false) => {
+  if (includeHasScheduledServiceInstances) {
+    const scheduledServiceTypes = await db.scheduledServiceType.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+        userId: true,
+        name: true,
+        _count: {
+          select: {
+            ScheduledServiceInstance: true,
+          },
+        },
+      },
+    });
+
+    return scheduledServiceTypes.map(({ _count, ...type }) => ({
+      ...type,
+      hasScheduledServiceInstances: _count.ScheduledServiceInstance > 0,
+    }));
+  }
+
   return db.scheduledServiceType.findMany({ where: { userId } });
 };
 

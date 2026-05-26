@@ -9,6 +9,7 @@ import {
 import * as scheduledServiceTypeModel from '../models/scheduledServiceType';
 import * as scheduledServiceInstanceModel from '../models/scheduledServiceInstance';
 import { checkIfCanAccessVehicle } from './vehicleService';
+import vehicle from '../routes/vehicle';
 
 export const createScheduledServiceInstances = async (
   vehicleId: string,
@@ -90,6 +91,26 @@ export const findVehicleScheduledServiceInstances = async (vehicleId: string, us
   const scheduledServiceInstances = await scheduledServiceInstanceModel.default.getVehicleScheduledServiceInstances(
     vehicle.id
   );
+
+  return scheduledServiceInstances;
+};
+
+export const findVehicleScheduledServiceInstancesByScheduledServiceTypeId = async (
+  userId: string,
+  scheduledServiceTypeId: string
+) => {
+  if (!userId) {
+    throw new APIError('No userId provided', 400);
+  }
+  if (!scheduledServiceTypeId) {
+    throw new APIError('No scheduledServiceTypeId provided', 400);
+  }
+
+  const scheduledServiceInstances =
+    await scheduledServiceInstanceModel.default.getVehicleScheduledServiceInstancesByScheduledServiceTypeId(
+      userId,
+      scheduledServiceTypeId
+    );
 
   return scheduledServiceInstances;
 };

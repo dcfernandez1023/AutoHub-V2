@@ -18,9 +18,10 @@ class ScheduledServiceClient extends BaseClient {
 
   async getScheduledServiceTypes(
     userId: string,
-    sharedVehicleId?: string
+    sharedVehicleId?: string,
+    withUsedIndicator?: boolean
   ): Promise<ScheduledServiceType[]> {
-    const requestUrl = `${this._baseUrl}/api/users/${userId}/scheduledServiceTypes${sharedVehicleId ? `?sharedVehicle=${sharedVehicleId}` : ''}`;
+    const requestUrl = `${this._baseUrl}/api/users/${userId}/scheduledServiceTypes${sharedVehicleId ? `?sharedVehicle=${sharedVehicleId}` : ''}${withUsedIndicator && sharedVehicleId ? `&withScheduledServiceInstanceIndicator=true` : withUsedIndicator ? `?withScheduledServiceInstanceIndicator=true` : ''}`;
     const res = await fetch(requestUrl, {
       ...this._defaultOptions,
       headers: this._defaultHeaders,

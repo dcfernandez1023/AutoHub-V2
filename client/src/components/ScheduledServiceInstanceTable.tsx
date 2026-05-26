@@ -14,6 +14,7 @@ type ScheduledServiceInstanceTableProps = {
   scheduledServiceTypes: ScheduledServiceType[];
   onEdit: () => void;
   onDelete: () => void;
+  onApplySideEffect?: (scheduledServiceTypeIds: string[]) => void;
 };
 
 enum ModalState {
@@ -25,7 +26,13 @@ enum ModalState {
 const ScheduledServiceInstanceTable: React.FC<
   ScheduledServiceInstanceTableProps
 > = (props: ScheduledServiceInstanceTableProps) => {
-  const { vehicle, scheduledServiceTypes, onEdit, onDelete } = props;
+  const {
+    vehicle,
+    scheduledServiceTypes,
+    onEdit,
+    onDelete,
+    onApplySideEffect,
+  } = props;
   const { id: vehicleId } = vehicle;
 
   const {
@@ -151,9 +158,15 @@ const ScheduledServiceInstanceTable: React.FC<
         action={modalState}
         onApply={(records: CreateScheduledServiceInstanceRequest[]) => {
           if (modalState === 'Apply') {
-            void createScheduledServiceInstances(vehicleId, records, () =>
-              setModalState(undefined)
-            );
+            void createScheduledServiceInstances(vehicleId, records, () => {
+              setModalState(undefined);
+              if (onApplySideEffect) {
+                const scheduledServiceTypeIds = records.map(
+                  (record) => record.scheduledServiceTypeId
+                );
+                onApplySideEffect(scheduledServiceTypeIds);
+              }
+            });
           }
         }}
         onEdit={(scheduledServiceInstance: ScheduledServiceInstance) => {

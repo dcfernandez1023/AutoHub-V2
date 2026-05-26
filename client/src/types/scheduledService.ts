@@ -2,6 +2,7 @@ export type ScheduledServiceType = {
   id: string;
   userId: string;
   name: string;
+  hasScheduledServiceInstances?: boolean;
 };
 
 export type ScheduledServiceInstance = {

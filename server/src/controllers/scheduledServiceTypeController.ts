@@ -62,10 +62,12 @@ export const getScheduledServiceTypes = async (req: Request, res: Response) => {
     const params = req.params;
     const userId = params.userId;
     const sharedVehicleId = req.query.sharedVehicle;
+    const withScheduledServiceInstanceIndicator = req.query.withScheduledServiceInstanceIndicator === 'true';
 
     const scheduledServiceTypes = await findScheduledServiceTypes(
       userId,
-      typeof sharedVehicleId === 'string' ? sharedVehicleId : undefined
+      typeof sharedVehicleId === 'string' ? sharedVehicleId : undefined,
+      withScheduledServiceInstanceIndicator
     );
 
     res.status(200).json(scheduledServiceTypes);
